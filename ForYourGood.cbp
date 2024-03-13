@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<CodeBlocks_project_file>
+	<FileVersion major="1" minor="6" />
+	<Project>
+		<Option title="ForYourGood" />
+		<Option pch_mode="2" />
+		<Option compiler="gcc" />
+		<Build>
+			<Target title="Debug">
+				<Option output="bin/Debug/PKGPro3D" prefix_auto="1" extension_auto="1" />
+				<Option object_output="obj/Debug/" />
+				<Option type="1" />
+				<Option compiler="gcc" />
+				<Compiler>
+					<Add option="-g" />
+				</Compiler>
+			</Target>
+			<Target title="Release">
+				<Option output="bin/Release/PKGPro3D" prefix_auto="1" extension_auto="1" />
+				<Option object_output="obj/Release/" />
+				<Option type="0" />
+				<Option compiler="gcc" />
+				<Compiler>
+					<Add option="-O2" />
+				</Compiler>
+				<Linker>
+					<Add option="-s" />
+				</Linker>
+			</Target>
+		</Build>
+		<Compiler>
+			<Add option="-Wall" />
+			<Add directory="C:/SDL2/include" />
+			<Add directory="C:/ASSIMP/assimp-master/bolid/include" />
+		</Compiler>
+		<Linker>
+			<Add library="mingw32" />
+			<Add library="opengl32" />
+			<Add library="glu32" />
+			<Add library="gdi32" />
+			<Add library="glew32" />
+			<Add library="SDL2main" />
+			<Add library="SDL2.dll" />
+			<Add library="user32" />
+			<Add library="winmm" />
+			<Add library="dxguid" />
+			<Add library="glm_shared" />
+			<Add library="glm_static" />
+			<Add library="libassimp" />
+			<Add directory="C:/SDL2/lib" />
+			<Add directory="C:/glew-2.1.0/glew-2.1.0/build/bolid/lib" />
+			<Add directory="C:/glm-0.9.9.8/glm/bolid/glm" />
+			<Add directory="C:/ASSIMP/assimp-master/bolid/lib" />
+		</Linker>
+		<ExtraCommands>
+			<Add after="XCOPY $(#sdl2)\bin\*.dll $(TARGET_OUTPUT_DIR) /D /Y" />
+		</ExtraCommands>
+		<Unit filename="cameraworks.h" />
+		<Unit filename="globals.h" />
+		<Unit filename="main.cpp" />
+		<Unit filename="mesh.h" />
+		<Unit filename="metaphysical.h" />
+		<Unit filename="mindless.h" />
+		<Unit filename="model.h" />
+		<Unit filename="shaders.h" />
+		<Unit filename="weird.cpp" />
+		<Extensions>
+			<lib_finder disable_auto="1" />
+		</Extensions>
+	</Project>
+</CodeBlocks_project_file>

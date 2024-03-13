@@ -1,0 +1,929 @@
+# depslib dependency file v1.0
+1702028299 source:c:\users\micha\onedrive\pulpit\blagam\pkgpro3d\main.cpp
+	<iostream>
+	<time.h>
+	<GL/glew.h>
+	<SDL2/SDL.h>
+	<SDL2/SDL_opengl.h>
+	<vector>
+	"globals.h"
+	"mindless.h"
+
+1680716747 c:\sdl2\include\sdl2\sdl.h
+	"SDL_main.h"
+	"SDL_stdinc.h"
+	"SDL_assert.h"
+	"SDL_atomic.h"
+	"SDL_audio.h"
+	"SDL_clipboard.h"
+	"SDL_cpuinfo.h"
+	"SDL_endian.h"
+	"SDL_error.h"
+	"SDL_events.h"
+	"SDL_filesystem.h"
+	"SDL_gamecontroller.h"
+	"SDL_guid.h"
+	"SDL_haptic.h"
+	"SDL_hidapi.h"
+	"SDL_hints.h"
+	"SDL_joystick.h"
+	"SDL_loadso.h"
+	"SDL_log.h"
+	"SDL_messagebox.h"
+	"SDL_metal.h"
+	"SDL_mutex.h"
+	"SDL_power.h"
+	"SDL_render.h"
+	"SDL_rwops.h"
+	"SDL_sensor.h"
+	"SDL_shape.h"
+	"SDL_system.h"
+	"SDL_thread.h"
+	"SDL_timer.h"
+	"SDL_version.h"
+	"SDL_video.h"
+	"SDL_locale.h"
+	"SDL_misc.h"
+	"begin_code.h"
+	"close_code.h"
+
+1680716747 c:\sdl2\include\sdl2\sdl_main.h
+	"SDL_stdinc.h"
+	"begin_code.h"
+	"close_code.h"
+
+1680716747 c:\sdl2\include\sdl2\sdl_stdinc.h
+	"SDL_config.h"
+	<sys/types.h>
+	<stdio.h>
+	<stdlib.h>
+	<stddef.h>
+	<stdarg.h>
+	<stdlib.h>
+	<malloc.h>
+	<stddef.h>
+	<stdarg.h>
+	<memory.h>
+	<string.h>
+	<strings.h>
+	<wchar.h>
+	<inttypes.h>
+	<stdint.h>
+	<ctype.h>
+	<math.h>
+	<float.h>
+	<alloca.h>
+	<malloc.h>
+	<malloc.h>
+	<malloc.h>
+	<stdlib.h>
+	<sal.h>
+	"begin_code.h"
+	"close_code.h"
+
+1683711142 c:\sdl2\include\sdl2\sdl_config.h
+	"SDL_platform.h"
+
+1680716747 c:\sdl2\include\sdl2\sdl_platform.h
+	<AvailabilityMacros.h>
+	<TargetConditionals.h>
+	<winapifamily.h>
+	"begin_code.h"
+	"close_code.h"
+
+1680716747 c:\sdl2\include\sdl2\begin_code.h
+
+1680716747 c:\sdl2\include\sdl2\close_code.h
+
+1680716747 c:\sdl2\include\sdl2\sdl_assert.h
+	"SDL_stdinc.h"
+	"begin_code.h"
+	<signal.h>
+	"close_code.h"
+
+1680716747 c:\sdl2\include\sdl2\sdl_atomic.h
+	"SDL_stdinc.h"
+	"SDL_platform.h"
+	"begin_code.h"
+	<sys/cpuinline.h>
+	<mbarrier.h>
+	"close_code.h"
+
+1680716747 c:\sdl2\include\sdl2\sdl_audio.h
+	"SDL_stdinc.h"
+	"SDL_error.h"
+	"SDL_endian.h"
+	"SDL_mutex.h"
+	"SDL_thread.h"
+	"SDL_rwops.h"
+	"begin_code.h"
+	"close_code.h"
+
+1680716747 c:\sdl2\include\sdl2\sdl_error.h
+	"SDL_stdinc.h"
+	"begin_code.h"
+	"close_code.h"
+
+1680716747 c:\sdl2\include\sdl2\sdl_endian.h
+	"SDL_stdinc.h"
+	<intrin.h>
+	<endian.h>
+	<endian.h>
+	<sys/endian.h>
+	"begin_code.h"
+	"close_code.h"
+
+1680716747 c:\sdl2\include\sdl2\sdl_mutex.h
+	"SDL_stdinc.h"
+	"SDL_error.h"
+	"begin_code.h"
+	"close_code.h"
+
+1680716747 c:\sdl2\include\sdl2\sdl_thread.h
+	"SDL_stdinc.h"
+	"SDL_error.h"
+	"SDL_atomic.h"
+	"SDL_mutex.h"
+	<process.h>
+	<process.h>
+	<stdlib.h>
+	"begin_code.h"
+	"close_code.h"
+
+1680716747 c:\sdl2\include\sdl2\sdl_rwops.h
+	"SDL_stdinc.h"
+	"SDL_error.h"
+	"begin_code.h"
+	"close_code.h"
+
+1680716747 c:\sdl2\include\sdl2\sdl_clipboard.h
+	"SDL_stdinc.h"
+	"begin_code.h"
+	"close_code.h"
+
+1680716747 c:\sdl2\include\sdl2\sdl_cpuinfo.h
+	"SDL_stdinc.h"
+	<intrin.h>
+	<intrin.h>
+	<arm_neon.h>
+	<altivec.h>
+	<arm_neon.h>
+	<armintr.h>
+	<arm_neon.h>
+	<arm64intr.h>
+	<arm64_neon.h>
+	<mm3dnow.h>
+	<lsxintrin.h>
+	<lasxintrin.h>
+	<immintrin.h>
+	<mmintrin.h>
+	<xmmintrin.h>
+	<emmintrin.h>
+	<pmmintrin.h>
+	"begin_code.h"
+	"close_code.h"
+
+1680716747 c:\sdl2\include\sdl2\sdl_events.h
+	"SDL_stdinc.h"
+	"SDL_error.h"
+	"SDL_video.h"
+	"SDL_keyboard.h"
+	"SDL_mouse.h"
+	"SDL_joystick.h"
+	"SDL_gamecontroller.h"
+	"SDL_quit.h"
+	"SDL_gesture.h"
+	"SDL_touch.h"
+	"begin_code.h"
+	"close_code.h"
+
+1680716747 c:\sdl2\include\sdl2\sdl_video.h
+	"SDL_stdinc.h"
+	"SDL_pixels.h"
+	"SDL_rect.h"
+	"SDL_surface.h"
+	"begin_code.h"
+	"close_code.h"
+
+1680716747 c:\sdl2\include\sdl2\sdl_pixels.h
+	"SDL_stdinc.h"
+	"SDL_endian.h"
+	"begin_code.h"
+	"close_code.h"
+
+1680716747 c:\sdl2\include\sdl2\sdl_rect.h
+	"SDL_stdinc.h"
+	"SDL_error.h"
+	"SDL_pixels.h"
+	"SDL_rwops.h"
+	"begin_code.h"
+	"close_code.h"
+
+1680716747 c:\sdl2\include\sdl2\sdl_surface.h
+	"SDL_stdinc.h"
+	"SDL_pixels.h"
+	"SDL_rect.h"
+	"SDL_blendmode.h"
+	"SDL_rwops.h"
+	"begin_code.h"
+	"close_code.h"
+
+1680716747 c:\sdl2\include\sdl2\sdl_blendmode.h
+	"begin_code.h"
+	"close_code.h"
+
+1680716747 c:\sdl2\include\sdl2\sdl_keyboard.h
+	"SDL_stdinc.h"
+	"SDL_error.h"
+	"SDL_keycode.h"
+	"SDL_video.h"
+	"begin_code.h"
+	"close_code.h"
+
+1680716747 c:\sdl2\include\sdl2\sdl_keycode.h
+	"SDL_stdinc.h"
+	"SDL_scancode.h"
+
+1680716747 c:\sdl2\include\sdl2\sdl_scancode.h
+	"SDL_stdinc.h"
+
+1680716747 c:\sdl2\include\sdl2\sdl_mouse.h
+	"SDL_stdinc.h"
+	"SDL_error.h"
+	"SDL_video.h"
+	"begin_code.h"
+	"close_code.h"
+
+1680716747 c:\sdl2\include\sdl2\sdl_joystick.h
+	"SDL_stdinc.h"
+	"SDL_error.h"
+	"SDL_guid.h"
+	"begin_code.h"
+	"close_code.h"
+
+1680716747 c:\sdl2\include\sdl2\sdl_guid.h
+	"SDL_stdinc.h"
+	"SDL_error.h"
+	"begin_code.h"
+	"close_code.h"
+
+1680716747 c:\sdl2\include\sdl2\sdl_gamecontroller.h
+	"SDL_stdinc.h"
+	"SDL_error.h"
+	"SDL_rwops.h"
+	"SDL_sensor.h"
+	"SDL_joystick.h"
+	"begin_code.h"
+	"close_code.h"
+
+1680716747 c:\sdl2\include\sdl2\sdl_sensor.h
+	"SDL_stdinc.h"
+	"SDL_error.h"
+	"begin_code.h"
+	"close_code.h"
+
+1680716747 c:\sdl2\include\sdl2\sdl_quit.h
+	"SDL_stdinc.h"
+	"SDL_error.h"
+
+1680716747 c:\sdl2\include\sdl2\sdl_gesture.h
+	"SDL_stdinc.h"
+	"SDL_error.h"
+	"SDL_video.h"
+	"SDL_touch.h"
+	"begin_code.h"
+	"close_code.h"
+
+1680716747 c:\sdl2\include\sdl2\sdl_touch.h
+	"SDL_stdinc.h"
+	"SDL_error.h"
+	"SDL_video.h"
+	"begin_code.h"
+	"close_code.h"
+
+1680716747 c:\sdl2\include\sdl2\sdl_filesystem.h
+	"SDL_stdinc.h"
+	"begin_code.h"
+	"close_code.h"
+
+1680716747 c:\sdl2\include\sdl2\sdl_haptic.h
+	"SDL_stdinc.h"
+	"SDL_error.h"
+	"SDL_joystick.h"
+	"begin_code.h"
+	"close_code.h"
+
+1680716747 c:\sdl2\include\sdl2\sdl_hidapi.h
+	"SDL_stdinc.h"
+	"begin_code.h"
+	"close_code.h"
+
+1680716747 c:\sdl2\include\sdl2\sdl_hints.h
+	"SDL_stdinc.h"
+	"begin_code.h"
+	"close_code.h"
+
+1680716747 c:\sdl2\include\sdl2\sdl_loadso.h
+	"SDL_stdinc.h"
+	"SDL_error.h"
+	"begin_code.h"
+	"close_code.h"
+
+1680716747 c:\sdl2\include\sdl2\sdl_log.h
+	"SDL_stdinc.h"
+	"begin_code.h"
+	"close_code.h"
+
+1680716747 c:\sdl2\include\sdl2\sdl_messagebox.h
+	"SDL_stdinc.h"
+	"SDL_video.h"
+	"begin_code.h"
+	"close_code.h"
+
+1680716747 c:\sdl2\include\sdl2\sdl_metal.h
+	"SDL_video.h"
+	"begin_code.h"
+	"close_code.h"
+
+1680716747 c:\sdl2\include\sdl2\sdl_power.h
+	"SDL_stdinc.h"
+	"begin_code.h"
+	"close_code.h"
+
+1680716747 c:\sdl2\include\sdl2\sdl_render.h
+	"SDL_stdinc.h"
+	"SDL_rect.h"
+	"SDL_video.h"
+	"begin_code.h"
+	"close_code.h"
+
+1680716747 c:\sdl2\include\sdl2\sdl_shape.h
+	"SDL_stdinc.h"
+	"SDL_pixels.h"
+	"SDL_rect.h"
+	"SDL_surface.h"
+	"SDL_video.h"
+	"begin_code.h"
+	"close_code.h"
+
+1680716747 c:\sdl2\include\sdl2\sdl_system.h
+	"SDL_stdinc.h"
+	"SDL_keyboard.h"
+	"SDL_render.h"
+	"SDL_video.h"
+	"begin_code.h"
+	"close_code.h"
+
+1680716747 c:\sdl2\include\sdl2\sdl_timer.h
+	"SDL_stdinc.h"
+	"SDL_error.h"
+	"begin_code.h"
+	"close_code.h"
+
+1680716747 c:\sdl2\include\sdl2\sdl_version.h
+	"SDL_stdinc.h"
+	"begin_code.h"
+	"close_code.h"
+
+1680716747 c:\sdl2\include\sdl2\sdl_locale.h
+	"SDL_stdinc.h"
+	"SDL_error.h"
+	"begin_code.h"
+	"close_code.h"
+
+1680716747 c:\sdl2\include\sdl2\sdl_misc.h
+	"SDL_stdinc.h"
+	"begin_code.h"
+	"close_code.h"
+
+1701696736 c:\users\micha\onedrive\pulpit\blagam\pkgpro3d\globals.h
+
+1702025423 c:\users\micha\onedrive\pulpit\blagam\pkgpro3d\mindless.h
+	"metaphysical.h"
+
+1680716747 c:\sdl2\include\sdl2\sdl_opengl.h
+	"SDL_config.h"
+	"gl_mangle.h"
+	<windows.h>
+	"SDL_opengl_glext.h"
+
+1680716747 c:\sdl2\include\sdl2\sdl_opengl_glext.h
+	<windows.h>
+	<stdint.h>
+	<inttypes.h>
+	<stdint.h>
+
+1702028547 c:\users\micha\onedrive\pulpit\blagam\pkgpro3d\metaphysical.h
+
+1702146626 source:c:\users\ja\desktop\pro\pkgpro3d\main.cpp
+	<iostream>
+	<time.h>
+	<GL/glew.h>
+	<glm/glm.hpp>
+	<SDL2/SDL.h>
+	<SDL2/SDL_opengl.h>
+	<vector>
+	"globals.h"
+	"mindless.h"
+	"shaders.h"
+
+1702139272 c:\users\ja\desktop\pro\pkgpro3d\globals.h
+
+1702146690 c:\users\ja\desktop\pro\pkgpro3d\mindless.h
+	"metaphysical.h"
+
+1702122086 c:\users\ja\desktop\pro\pkgpro3d\metaphysical.h
+
+1702145369 c:\users\ja\desktop\pro\pkgpro3d\shaders.h
+
+1706183862 source:c:\users\micha\onedrive\pulpit\blagam\pkgpro3d_ver_0.5\pkgpro3d\main.cpp
+	<iostream>
+	<time.h>
+	"stb_image.h"
+	<GL/glew.h>
+	<glm/glm.hpp>
+	<glm/gtc/matrix_transform.hpp>
+	<glm/gtc/type_ptr.hpp>
+	<SDL2/SDL.h>
+	<SDL2/SDL_opengl.h>
+	<memory>
+	<unordered_map>
+	<vector>
+	"cameraworks.h"
+	"globals.h"
+	"mindless.h"
+	"shaders.h"
+
+1702366708 c:\users\micha\onedrive\pulpit\blagam\pkgpro3d_ver_0.5\pkgpro3d\globals.h
+
+1706206201 c:\users\micha\onedrive\pulpit\blagam\pkgpro3d_ver_0.5\pkgpro3d\mindless.h
+	"metaphysical.h"
+
+1706215587 c:\users\micha\onedrive\pulpit\blagam\pkgpro3d_ver_0.5\pkgpro3d\metaphysical.h
+
+1706219742 c:\users\micha\onedrive\pulpit\blagam\pkgpro3d_ver_0.5\pkgpro3d\shaders.h
+
+1706219741 c:\users\micha\onedrive\pulpit\blagam\pkgpro3d_ver_0.5\pkgpro3d\cameraworks.h
+
+1702329012 c:\users\micha\onedrive\pulpit\blagam\pkgpro3d_ver_0.5\pkgpro3d\stb_image.h
+	"stb_image.h"
+	<stdio.h>
+	<stdlib.h>
+	<stdarg.h>
+	<stddef.h>
+	<stdlib.h>
+	<string.h>
+	<limits.h>
+	<math.h>
+	<stdio.h>
+	<assert.h>
+	<stdint.h>
+	<emmintrin.h>
+	<intrin.h>
+	<arm_neon.h>
+
+1702329409 source:c:\users\micha\onedrive\pulpit\blagam\pkgpro3d_ver_0.5\pkgpro3d\weird.cpp
+	"stb_image.h"
+
+1706283817 source:c:\users\ja\desktop\pkgpro3d\main.cpp
+	<iostream>
+	<time.h>
+	"stb_image.h"
+	<GL/glew.h>
+	<glm/glm.hpp>
+	<glm/gtc/matrix_transform.hpp>
+	<glm/gtc/type_ptr.hpp>
+	<SDL2/SDL.h>
+	<SDL2/SDL_opengl.h>
+	<memory>
+	<unordered_map>
+	<vector>
+	"cameraworks.h"
+	"globals.h"
+	"mindless.h"
+	"shaders.h"
+
+1702329012 c:\users\ja\desktop\pkgpro3d\stb_image.h
+	"stb_image.h"
+	<stdio.h>
+	<stdlib.h>
+	<stdarg.h>
+	<stddef.h>
+	<stdlib.h>
+	<string.h>
+	<limits.h>
+	<math.h>
+	<stdio.h>
+	<assert.h>
+	<stdint.h>
+	<emmintrin.h>
+	<intrin.h>
+	<arm_neon.h>
+
+1706283817 c:\users\ja\desktop\pkgpro3d\cameraworks.h
+
+1702366708 c:\users\ja\desktop\pkgpro3d\globals.h
+
+1706283817 c:\users\ja\desktop\pkgpro3d\mindless.h
+	"metaphysical.h"
+
+1706283817 c:\users\ja\desktop\pkgpro3d\metaphysical.h
+
+1706283817 c:\users\ja\desktop\pkgpro3d\shaders.h
+
+1702329409 source:c:\users\ja\desktop\pkgpro3d\weird.cpp
+	"stb_image.h"
+
+1708770311 source:c:\garigette\foryourgood\main.cpp
+	<iostream>
+	<fstream>
+	<sstream>
+	<time.h>
+	<memory>
+	<algorithm>
+	<unordered_map>
+	<vector>
+	<GL/glew.h>
+	<glm/glm.hpp>
+	<glm/gtc/matrix_transform.hpp>
+	<glm/gtc/type_ptr.hpp>
+	<SDL2/SDL.h>
+	<SDL2/SDL_opengl.h>
+	<assimp/Importer.hpp>
+	<assimp/scene.h>
+	<assimp/postprocess.h>
+	"stb_image.h"
+	"cameraworks.h"
+	"globals.h"
+	"mindless.h"
+	"shaders.h"
+	"model.h"
+
+1702329012 c:\garigette\foryourgood\stb_image.h
+	"stb_image.h"
+	<stdio.h>
+	<stdlib.h>
+	<stdarg.h>
+	<stddef.h>
+	<stdlib.h>
+	<string.h>
+	<limits.h>
+	<math.h>
+	<stdio.h>
+	<assert.h>
+	<stdint.h>
+	<emmintrin.h>
+	<intrin.h>
+	<arm_neon.h>
+
+1708250770 c:\garigette\foryourgood\cameraworks.h
+
+1708193765 c:\garigette\foryourgood\globals.h
+
+1708620464 c:\garigette\foryourgood\mindless.h
+	"metaphysical.h"
+	"model.h"
+
+1708770393 c:\garigette\foryourgood\metaphysical.h
+
+1708391014 c:\garigette\foryourgood\shaders.h
+
+1702329409 source:c:\garigette\foryourgood\weird.cpp
+	"stb_image.h"
+
+1696682179 c:\assimp\assimp-master\include\assimp\importer.hpp
+	<assimp/types.h>
+	<exception>
+
+1696682179 c:\assimp\assimp-master\include\assimp\types.h
+	<limits.h>
+	<stddef.h>
+	<stdint.h>
+	<string.h>
+	<sys/types.h>
+	<assimp/defs.h>
+	<assimp/vector2.h>
+	<assimp/vector3.h>
+	<assimp/color4.h>
+	<assimp/matrix3x3.h>
+	<assimp/matrix4x4.h>
+	<assimp/quaternion.h>
+	<cstring>
+	<new>
+	<string>
+	"vector2.inl"
+	"vector3.inl"
+	"color4.inl"
+	"matrix3x3.inl"
+	"matrix4x4.inl"
+	"quaternion.inl"
+
+1708530981 c:\assimp\assimp-master\include\assimp\defs.h
+	<assimp/config.h>
+
+1708525581 c:\assimp\assimp-master\include\assimp\config.h
+
+1696682179 c:\assimp\assimp-master\include\assimp\vector2.h
+	<cmath>
+	<math.h>
+	"defs.h"
+
+1696682179 c:\assimp\assimp-master\include\assimp\vector3.h
+	<cmath>
+	<math.h>
+	<assimp/defs.h>
+
+1696682179 c:\assimp\assimp-master\include\assimp\color4.h
+	<assimp/defs.h>
+
+1696682179 c:\assimp\assimp-master\include\assimp\matrix3x3.h
+	<assimp/defs.h>
+
+1696682179 c:\assimp\assimp-master\include\assimp\matrix4x4.h
+	<assimp/vector3.h>
+	<assimp/defs.h>
+
+1696682179 c:\assimp\assimp-master\include\assimp\quaternion.h
+	<assimp/defs.h>
+
+1696682179 c:\assimp\assimp-master\include\assimp\vector2.inl
+	<assimp/vector2.h>
+	<cmath>
+
+1696682179 c:\assimp\assimp-master\include\assimp\vector3.inl
+	<assimp/vector3.h>
+	<cmath>
+
+1696682179 c:\assimp\assimp-master\include\assimp\color4.inl
+	<assimp/color4.h>
+
+1696682179 c:\assimp\assimp-master\include\assimp\matrix3x3.inl
+	<assimp/matrix3x3.h>
+	<assimp/matrix4x4.h>
+	<algorithm>
+	<cmath>
+	<limits>
+
+1696682179 c:\assimp\assimp-master\include\assimp\matrix4x4.inl
+	"matrix4x4.h"
+	"matrix3x3.h"
+	"quaternion.h"
+	"MathFunctions.h"
+	<algorithm>
+	<limits>
+	<cmath>
+
+1696682179 c:\assimp\assimp-master\include\assimp\mathfunctions.h
+	<limits>
+
+1696682179 c:\assimp\assimp-master\include\assimp\quaternion.inl
+	<assimp/quaternion.h>
+	<cmath>
+
+1696682179 c:\assimp\assimp-master\include\assimp\scene.h
+	<assimp/types.h>
+	<assimp/texture.h>
+	<assimp/mesh.h>
+	<assimp/light.h>
+	<assimp/camera.h>
+	<assimp/material.h>
+	<assimp/anim.h>
+	<assimp/metadata.h>
+	<cstdlib>
+
+1696682179 c:\assimp\assimp-master\include\assimp\texture.h
+	<assimp/types.h>
+	"./Compiler/pushpack1.h"
+	"./Compiler/poppack1.h"
+
+1696682179 c:\assimp\assimp-master\include\assimp\compiler\pushpack1.h
+
+1696682179 c:\assimp\assimp-master\include\assimp\compiler\poppack1.h
+
+1696682179 c:\assimp\assimp-master\include\assimp\mesh.h
+	<assimp/aabb.h>
+	<assimp/types.h>
+
+1696682179 c:\assimp\assimp-master\include\assimp\aabb.h
+	<assimp/vector3.h>
+
+1696682179 c:\assimp\assimp-master\include\assimp\light.h
+	<assimp/types.h>
+
+1696682179 c:\assimp\assimp-master\include\assimp\camera.h
+	"types.h"
+
+1696682179 c:\assimp\assimp-master\include\assimp\material.h
+	<assimp/types.h>
+	"./Compiler/pushpack1.h"
+	"./Compiler/poppack1.h"
+	"material.inl"
+
+1696682179 c:\assimp\assimp-master\include\assimp\material.inl
+
+1696682179 c:\assimp\assimp-master\include\assimp\anim.h
+	<assimp/quaternion.h>
+	<assimp/types.h>
+
+1696682179 c:\assimp\assimp-master\include\assimp\metadata.h
+	"Compiler/pstdint.h"
+	<stdint.h>
+	<assimp/quaternion.h>
+	<string>
+
+1696682179 c:\assimp\assimp-master\include\assimp\compiler\pstdint.h
+	<stddef.h>
+	<limits.h>
+	<signal.h>
+	<stdint.h>
+	<sys/inttypes.h>
+	<wchar.h>
+	<stdlib.h>
+	<stdio.h>
+	<string.h>
+
+1696682179 c:\assimp\assimp-master\include\assimp\postprocess.h
+	<assimp/types.h>
+
+1708620404 c:\garigette\foryourgood\model.h
+	<GL/glew.h>
+	<glm/glm.hpp>
+	<glm/gtc/matrix_transform.hpp>
+	<glm/gtc/type_ptr.hpp>
+	<SDL2/SDL.h>
+	<SDL2/SDL_opengl.h>
+	<assimp/Importer.hpp>
+	<assimp/scene.h>
+	<assimp/postprocess.h>
+	"mesh.h"
+	<string>
+	<fstream>
+	<sstream>
+	<iostream>
+	<map>
+	<vector>
+
+1708608881 c:\garigette\foryourgood\mesh.h
+	<GL/glew.h>
+	<glm/glm.hpp>
+	<glm/gtc/matrix_transform.hpp>
+	<glm/gtc/type_ptr.hpp>
+	<SDL2/SDL.h>
+	<SDL2/SDL_opengl.h>
+	<string>
+	<vector>
+
+1696678579 c:\assimp\assimp-master\bolid\include\assimp\importer.hpp
+	<assimp/types.h>
+	<exception>
+
+1696678579 c:\assimp\assimp-master\bolid\include\assimp\types.h
+	<limits.h>
+	<stddef.h>
+	<stdint.h>
+	<string.h>
+	<sys/types.h>
+	<assimp/defs.h>
+	<assimp/vector2.h>
+	<assimp/vector3.h>
+	<assimp/color4.h>
+	<assimp/matrix3x3.h>
+	<assimp/matrix4x4.h>
+	<assimp/quaternion.h>
+	<cstring>
+	<new>
+	<string>
+	"vector2.inl"
+	"vector3.inl"
+	"color4.inl"
+	"matrix3x3.inl"
+	"matrix4x4.inl"
+	"quaternion.inl"
+
+1696678579 c:\assimp\assimp-master\bolid\include\assimp\defs.h
+	<assimp/config.h>
+
+1709122048 c:\assimp\assimp-master\bolid\include\assimp\config.h
+
+1696678579 c:\assimp\assimp-master\bolid\include\assimp\vector2.h
+	<cmath>
+	<math.h>
+	"defs.h"
+
+1696678579 c:\assimp\assimp-master\bolid\include\assimp\vector3.h
+	<cmath>
+	<math.h>
+	<assimp/defs.h>
+
+1696678579 c:\assimp\assimp-master\bolid\include\assimp\color4.h
+	<assimp/defs.h>
+
+1696678579 c:\assimp\assimp-master\bolid\include\assimp\matrix3x3.h
+	<assimp/defs.h>
+
+1696678579 c:\assimp\assimp-master\bolid\include\assimp\matrix4x4.h
+	<assimp/vector3.h>
+	<assimp/defs.h>
+
+1696678579 c:\assimp\assimp-master\bolid\include\assimp\quaternion.h
+	<assimp/defs.h>
+
+1696678579 c:\assimp\assimp-master\bolid\include\assimp\vector2.inl
+	<assimp/vector2.h>
+	<cmath>
+
+1696678579 c:\assimp\assimp-master\bolid\include\assimp\vector3.inl
+	<assimp/vector3.h>
+	<cmath>
+
+1696678579 c:\assimp\assimp-master\bolid\include\assimp\color4.inl
+	<assimp/color4.h>
+
+1696678579 c:\assimp\assimp-master\bolid\include\assimp\matrix3x3.inl
+	<assimp/matrix3x3.h>
+	<assimp/matrix4x4.h>
+	<algorithm>
+	<cmath>
+	<limits>
+
+1696678579 c:\assimp\assimp-master\bolid\include\assimp\matrix4x4.inl
+	"matrix4x4.h"
+	"matrix3x3.h"
+	"quaternion.h"
+	"MathFunctions.h"
+	<algorithm>
+	<limits>
+	<cmath>
+
+1696678579 c:\assimp\assimp-master\bolid\include\assimp\mathfunctions.h
+	<limits>
+
+1696678579 c:\assimp\assimp-master\bolid\include\assimp\quaternion.inl
+	<assimp/quaternion.h>
+	<cmath>
+
+1696678579 c:\assimp\assimp-master\bolid\include\assimp\scene.h
+	<assimp/types.h>
+	<assimp/texture.h>
+	<assimp/mesh.h>
+	<assimp/light.h>
+	<assimp/camera.h>
+	<assimp/material.h>
+	<assimp/anim.h>
+	<assimp/metadata.h>
+	<cstdlib>
+
+1696678579 c:\assimp\assimp-master\bolid\include\assimp\texture.h
+	<assimp/types.h>
+	"./Compiler/pushpack1.h"
+	"./Compiler/poppack1.h"
+
+1696678579 c:\assimp\assimp-master\bolid\include\assimp\compiler\pushpack1.h
+
+1696678579 c:\assimp\assimp-master\bolid\include\assimp\compiler\poppack1.h
+
+1696678579 c:\assimp\assimp-master\bolid\include\assimp\mesh.h
+	<assimp/aabb.h>
+	<assimp/types.h>
+
+1696678579 c:\assimp\assimp-master\bolid\include\assimp\aabb.h
+	<assimp/vector3.h>
+
+1696678579 c:\assimp\assimp-master\bolid\include\assimp\light.h
+	<assimp/types.h>
+
+1696678579 c:\assimp\assimp-master\bolid\include\assimp\camera.h
+	"types.h"
+
+1696678579 c:\assimp\assimp-master\bolid\include\assimp\material.h
+	<assimp/types.h>
+	"./Compiler/pushpack1.h"
+	"./Compiler/poppack1.h"
+	"material.inl"
+
+1696678579 c:\assimp\assimp-master\bolid\include\assimp\material.inl
+
+1696678579 c:\assimp\assimp-master\bolid\include\assimp\anim.h
+	<assimp/quaternion.h>
+	<assimp/types.h>
+
+1696678579 c:\assimp\assimp-master\bolid\include\assimp\metadata.h
+	"Compiler/pstdint.h"
+	<stdint.h>
+	<assimp/quaternion.h>
+	<string>
+
+1696678579 c:\assimp\assimp-master\bolid\include\assimp\compiler\pstdint.h
+	<stddef.h>
+	<limits.h>
+	<signal.h>
+	<stdint.h>
+	<sys/inttypes.h>
+	<wchar.h>
+	<stdlib.h>
+	<stdio.h>
+	<string.h>
+
+1696678579 c:\assimp\assimp-master\bolid\include\assimp\postprocess.h
+	<assimp/types.h>
+
