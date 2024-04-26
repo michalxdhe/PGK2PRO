@@ -19,7 +19,9 @@
 #include <assimp/postprocess.h>
 
 #include "stb_image.h"
-#include "cameraworks.h"
+
+//#include "cameraworks.h"
+#include "camerarevolting.h"
 #include "globals.h"
 #include "mindless.h"
 #include "shaders.h"
@@ -40,9 +42,11 @@ void Game::init()
 
     unsigned int vertexShader;
     unsigned int fragmentShader;
+
+    kamera = RevoltingCamera(glm::vec3(0.0f, 5.0f, -10.0f));
+
     glEnable(GL_DEPTH_TEST);
-    kamera = PlayerCamera(glm::vec3(0.0f, 0.0f, 3.0f));
-    skull = Model("Model/12140_Skull_v3_L2.obj",false);
+
     // Create framebuffer
     glGenFramebuffers(1, &shadowMapFBO);
 
@@ -57,14 +61,12 @@ void Game::init()
     GLfloat borderColor[] = { 1.0, 1.0, 1.0, 1.0 };
     glTexParameterfv(GL_TEXTURE_2D, GL_TEXTURE_BORDER_COLOR, borderColor);
 
-
-
     glBindFramebuffer(GL_FRAMEBUFFER, shadowMapFBO);
 
     // Attach depth texture to framebuffer
     glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, depthMap, 0);
 
-    // Specify that we're not going to render to any color buffers
+    //Wylaczanie kolorow
     glDrawBuffer(GL_NONE);
     glReadBuffer(GL_NONE);
 
@@ -76,7 +78,6 @@ void Game::init()
 
     // Unbind framebuffer
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
-
 
     createAndCompileShader("shaders/vertexS.c",GL_VERTEX_SHADER,vertexShader);
     createAndCompileShader("shaders/fragmentS.c",GL_FRAGMENT_SHADER,fragmentShader);
@@ -94,15 +95,14 @@ void Game::init()
     glDeleteShader(fragmentShader);
 
     glUseProgram(shaderPrograms[0]);
+
     createAndLoadTexture(teksturaTest,"magus.jpg");
     glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D, teksturaTest);
-
     glUniform1i(glGetUniformLocation(shaderPrograms[0], "texture1"), 0);
 
     glActiveTexture(GL_TEXTURE1);
     glBindTexture(GL_TEXTURE_2D, depthMap);
-
     glUniform1i(glGetUniformLocation(shaderPrograms[0], "shadowMap"), 1);
 
     view = glm::translate(view, glm::vec3(0.0f, 0.0f, -5.0f));
@@ -117,7 +117,6 @@ void Game::init()
     obiekty.insert(make_pair<int,unique_ptr<Object>>(Globals::numberOfEntities++,move(kjub3)));
     lights.insert(make_pair<int,unique_ptr<LightSource>>(Globals::numberOfEntities++,make_unique<LightCube>(0.2f,0.2f,0.2f)));
 
-    //skull = Model("Model/12140_Skull_v3_L2.obj",false);
 }
 
 void Game::input(const double deltaTime)
@@ -152,17 +151,27 @@ void Game::input(const double deltaTime)
             break;
         case SDL_MOUSEBUTTONDOWN:
         {
-
+            if(event.button.button == SDL_BUTTON_MIDDLE){
+                holdRotate = 1;
+                SDL_SetRelativeMouseMode(SDL_TRUE);
+            }
             break;
         }
         case SDL_MOUSEBUTTONUP:
-
+        {
+            if(event.button.button == SDL_BUTTON_MIDDLE){
+                holdRotate = 0;
+                SDL_SetRelativeMouseMode(SDL_FALSE);
+            }
             break;
+        }
         case SDL_MOUSEMOTION:
         {
             SDL_GetRelativeMouseState(&mousePosx, &mousePosy);
+            if(holdRotate){
             kamera.ProcessMouseMovement(mousePosx, mousePosy);
-            SDL_WarpMouseInWindow(window, 350,350);
+            SDL_WarpMouseInWindow(window, windowW/2,windowH/2);
+            }
             break;
         }
     }
@@ -179,6 +188,7 @@ void Game::update(const double deltaTime)
             kamera.ProcessKeyboard(BACKWARD, deltaTime);
         if(kamera.d)
             kamera.ProcessKeyboard(RIGHT, deltaTime);
+
 
     for(const auto& pair : lights)
     {
@@ -199,9 +209,9 @@ void Game::render(double deltaTime)
     unsigned int projectionLoc = glGetUniformLocation(shaderPrograms[0], "projection");
 
     glUseProgram(shaderPrograms[0]);
+
     //tutaj update kamery
     view = kamera.GetViewMatrix();
-
 
     //view jest dla perspektywy
     glUniform3fv(glGetUniformLocation(shaderPrograms[0],"viewPos"),1, glm::value_ptr(kamera.Position));
@@ -217,10 +227,13 @@ void Game::render(double deltaTime)
     glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(view));
     glUniformMatrix4fv(projectionLoc, 1, GL_FALSE, glm::value_ptr(projection));
 
-
     glClear( GL_COLOR_BUFFER_BIT );
 
     //depth map rendering
+
+    glActiveTexture(GL_TEXTURE1);
+    glBindTexture(GL_TEXTURE_2D, depthMap);
+
     glUseProgram(shaderPrograms[2]);
     for(const auto& pair : lights)
     {
@@ -251,7 +264,7 @@ void Game::render(double deltaTime)
     {
             pair.second->render(shaderPrograms[0],shaderPrograms);
     }
-    //skull.Draw(shaderPrograms[0]);
+
 }
 
 void Game::cleanup()
@@ -261,16 +274,16 @@ void Game::cleanup()
 
 int main(int argc, char *argv[])
 {
-    //                                inicjalizacje podstawowych zmiennych
+    //                          inicjalizacje podstawowych zmiennych
     srand(time(NULL));
-    Game *game = new Game(1920,1080,0);
+    Game *game = new Game(1366,768,0);
 
     //                           deltatajm
     uint32_t prevTime = 0;
     uint32_t currTime = 0;
     double deltaTime = (currTime - prevTime)/1000.0f;
 
-    //                                glowna petla gry
+    //                           glowna petla gry
 
     double klatki = 1.0 / 60.0; //dzielnik = FPS
 

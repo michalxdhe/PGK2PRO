@@ -15,7 +15,6 @@ glm::mat4 calculateLightSpaceMatrix(glm::vec3 lightPos, glm::vec3 up)
     return lightSpaceMatrix;
 }
 
-
 class Object
 {
 
@@ -135,8 +134,6 @@ public:
         glUseProgram(shaderPrograms[2]);
         glUniformMatrix4fv(glGetUniformLocation(shaderPrograms[2],"lightSpaceMatrix"),1,GL_FALSE, glm::value_ptr(lightSpaceMatrix));
     }
-
-
 };
 
 class LightCube : public LightSource{
@@ -217,15 +214,13 @@ public:
         glBindVertexArray(0);
     }
 
-
-
     void update(double deltaTime){
         glm::mat3 rotationMatrix = glm::mat3(model);
         lightTarget = rotationMatrix * glm::vec3(0.f,-1.f,0.f); //ten drugi vector w mnozeniu to tam gdzie celuje swiatlo
         lightPos = glm::vec3(model * glm::vec4(glm::vec3(0.f,0.f,0.f), 1.0f));
         lightSpaceMatrix = calculateLightSpaceMatrix(lightPos, glm::vec3(0.f,1.f,0.f));
-        model = glm::translate(model,glm::vec3(0.f, 0.f, 0.1f));
-        model = glm::rotate(model, 0.01f, glm::vec3(1.0f, 0.f, 0.0f));
+        //model = glm::translate(model,glm::vec3(0.f, 0.f, 0.1f));
+        //model = glm::rotate(model, 0.01f, glm::vec3(1.0f, 0.f, 0.0f));
     }
 
     void render(unsigned int shaderProgram, std::vector<unsigned int> shaderPrograms){

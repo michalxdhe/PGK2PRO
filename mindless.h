@@ -29,10 +29,7 @@ public:
 
     int windowH, windowW;
     vector<unsigned int> shaderPrograms;
-    PlayerCamera kamera;
-
-
-    Model skull;
+    RevoltingCamera kamera;
 
     GLuint shadowMapFBO;
     GLuint depthMap;
@@ -48,6 +45,7 @@ public:
 
     ///Flaga stanowiaca czy pora isc spac
     bool shutdown = 0;
+    bool holdRotate = 0;
 
     void cleanup();
 
@@ -55,15 +53,13 @@ public:
     {
         SDL_Init(SDL_INIT_VIDEO);
 
-        SDL_SetRelativeMouseMode(SDL_TRUE);
-
         SDL_GL_SetAttribute( SDL_GL_CONTEXT_MAJOR_VERSION, 3 );
         SDL_GL_SetAttribute( SDL_GL_CONTEXT_MINOR_VERSION, 3 );
 
         window = SDL_CreateWindow("siema",SDL_WINDOWPOS_UNDEFINED,SDL_WINDOWPOS_UNDEFINED,640, 480, SDL_WINDOW_OPENGL | SDL_WINDOW_SHOWN);
-        SDL_SetRelativeMouseMode(SDL_TRUE);
+        SDL_SetRelativeMouseMode(SDL_FALSE);
 
-        SDL_ShowCursor(SDL_DISABLE);
+        //SDL_ShowCursor(SDL_DISABLE);
         gContext = SDL_GL_CreateContext(window);
         glewInit();
         SDL_GL_SetSwapInterval(0);
@@ -83,9 +79,9 @@ public:
         SDL_GL_SetAttribute( SDL_GL_CONTEXT_MINOR_VERSION, 3 );
 
         window = SDL_CreateWindow("siema",SDL_WINDOWPOS_UNDEFINED,SDL_WINDOWPOS_UNDEFINED,w, h, SDL_WINDOW_OPENGL | SDL_WINDOW_SHOWN);
-        SDL_SetRelativeMouseMode(SDL_TRUE);
+        SDL_SetRelativeMouseMode(SDL_FALSE);
 
-        SDL_ShowCursor(SDL_DISABLE);
+        //SDL_ShowCursor(SDL_DISABLE);
         gContext = SDL_GL_CreateContext(window);
         glewInit();
         SDL_GL_SetSwapInterval(sign(vsync));

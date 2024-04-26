@@ -6,6 +6,7 @@ in vec3 FragPos;
 
 uniform sampler2D texture1;
 uniform sampler2D shadowMap;
+
 uniform vec3 lightColor;
 uniform vec3 lightPos;
 uniform vec3 viewPos;
