@@ -26,6 +26,38 @@ public:
     virtual void render(unsigned int shaderProgram, std::vector<unsigned int> shaderPrograms) = 0;
 };
 
+class Hexagon : public Object{
+
+public:
+    Model model;
+    glm::mat4 view;
+    HexCell cell;
+    glm::vec3 scale;
+
+    Hexagon() = default;
+
+    Hexagon(Model model, HexCell komorka){
+    this->model = model;
+    cell = komorka;
+    scale = glm::vec3(1.f);
+    //if(cell.LogicPos.x == 1 && cell.LogicPos.z == -1)
+   //     view = glm::translate(glm::mat4(1.f),glm::vec3(cell.LogicPos.x*0.5f,1.f,cell.LogicPos.z*0.5f));
+    //else
+        view = glm::translate(glm::mat4(1.f),glm::vec3(cell.LogicPos.x*0.45f * scale.x ,0.f,cell.LogicPos.z * 0.52f * scale.z + (-cell.LogicPos.x * -0.26f * scale.z)));
+        view = glm::scale(view,scale);
+    }
+
+    void update(double deltaTime){
+
+    }
+
+    void render(unsigned int shaderProgram, std::vector<unsigned int> shaderPrograms){
+    glUniformMatrix4fv(glGetUniformLocation(shaderProgram, "model"), 1, GL_FALSE, glm::value_ptr(view));
+    this->model.Draw(shaderProgram);
+    }
+};
+
+
 class Cube : public Object{
 
 public:
@@ -35,9 +67,10 @@ public:
 
     Cube() = default;
 
-    Cube(float w, float h, float l)
+    Cube(float w, float h, float l, glm::vec3 pos = glm::vec3(0.f,0.f,0.f))
     {
         model = glm::mat4(1.0f);
+        model = glm::translate(model,pos);
         remodel(w,h,l);
     }
 

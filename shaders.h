@@ -105,7 +105,7 @@ bool createAndCompileShader(const char* filePath, int type, GLuint &destination)
     return 1;
 }
 
-unsigned int createProgram(unsigned int vertexShader, unsigned int fragmentShader){
+GLuint createProgram(unsigned int vertexShader, unsigned int fragmentShader){
     unsigned int shaderProgram;
 
     shaderProgram = glCreateProgram();

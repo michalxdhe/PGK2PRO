@@ -7,4 +7,6 @@ static int64_t numberOfEntities = 0;
 };
 
 
+
+
 #endif // GLOBALS_H_INCLUDED

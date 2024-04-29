@@ -5,6 +5,7 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
+#include <glm/gtx/hash.hpp>
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_opengl.h>
 
@@ -28,8 +29,6 @@ class Model
 {
 public:
     // model data
-    glm::mat4 model = glm::mat4(1.0f);
-    glm::vec3 skala = glm::vec3(0.999f,0.999f,0.999f);
     vector<Texture> textures_loaded;	// stores all the textures loaded so far, optimization to make sure textures aren't loaded more than once.
     vector<Mesh>    meshes;
     string directory;
@@ -46,10 +45,6 @@ public:
     // draws the model, and thus all its meshes
     void Draw(GLuint shader, bool texturesB = true)
     {
-
-        unsigned int modelLoc = glGetUniformLocation(shader, "model");
-        glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
-
         for(unsigned int i = 0; i < meshes.size(); i++)
             meshes[i].Draw(shader, texturesB);
     }

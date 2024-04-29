@@ -23,9 +23,15 @@ public:
     SDL_Event event;
     SDL_Window *window;
 
+    double testCounter = 0;
+
     SDL_GLContext gContext;
 
+    Model testhex;
+
     int mousePosx, mousePosy;
+
+    unordered_map<glm::vec3, HexCell> HexGrid;
 
     int windowH, windowW;
     vector<unsigned int> shaderPrograms;

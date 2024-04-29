@@ -534,7 +534,7 @@
 1702329409 source:c:\users\ja\desktop\pkgpro3d\weird.cpp
 	"stb_image.h"
 
-1714156702 source:c:\garigette\foryourgood\main.cpp
+1714304184 source:c:\garigette\foryourgood\main.cpp
 	<iostream>
 	<fstream>
 	<sstream>
@@ -543,10 +543,12 @@
 	<algorithm>
 	<unordered_map>
 	<vector>
+	<list>
 	<GL/glew.h>
 	<glm/glm.hpp>
 	<glm/gtc/matrix_transform.hpp>
 	<glm/gtc/type_ptr.hpp>
+	<glm/gtx/hash.hpp>
 	<SDL2/SDL.h>
 	<SDL2/SDL_opengl.h>
 	<assimp/Importer.hpp>
@@ -554,6 +556,7 @@
 	<assimp/postprocess.h>
 	"stb_image.h"
 	"camerarevolting.h"
+	"boardlogic.h"
 	"globals.h"
 	"mindless.h"
 	"shaders.h"
@@ -578,15 +581,15 @@
 
 1714121400 c:\garigette\foryourgood\cameraworks.h
 
-1708197365 c:\garigette\foryourgood\globals.h
+1714228414 c:\garigette\foryourgood\globals.h
 
-1714139726 c:\garigette\foryourgood\mindless.h
+1714301864 c:\garigette\foryourgood\mindless.h
 	"metaphysical.h"
 	"model.h"
 
-1714146938 c:\garigette\foryourgood\metaphysical.h
+1714408019 c:\garigette\foryourgood\metaphysical.h
 
-1708394614 c:\garigette\foryourgood\shaders.h
+1714300684 c:\garigette\foryourgood\shaders.h
 
 1702333009 source:c:\garigette\foryourgood\weird.cpp
 	"stb_image.h"
@@ -745,11 +748,12 @@
 1696682179 c:\assimp\assimp-master\include\assimp\postprocess.h
 	<assimp/types.h>
 
-1714065099 c:\garigette\foryourgood\model.h
+1714301321 c:\garigette\foryourgood\model.h
 	<GL/glew.h>
 	<glm/glm.hpp>
 	<glm/gtc/matrix_transform.hpp>
 	<glm/gtc/type_ptr.hpp>
+	<glm/gtx/hash.hpp>
 	<SDL2/SDL.h>
 	<SDL2/SDL_opengl.h>
 	<assimp/Importer.hpp>
@@ -763,7 +767,7 @@
 	<map>
 	<vector>
 
-1714065099 c:\garigette\foryourgood\mesh.h
+1714299788 c:\garigette\foryourgood\mesh.h
 	<GL/glew.h>
 	<glm/glm.hpp>
 	<glm/gtc/matrix_transform.hpp>
@@ -927,5 +931,8 @@
 1696682179 c:\assimp\assimp-master\bolid\include\assimp\postprocess.h
 	<assimp/types.h>
 
-1714170421 c:\garigette\foryourgood\camerarevolting.h
+1714243898 c:\garigette\foryourgood\camerarevolting.h
+
+1714231216 c:\garigette\foryourgood\boardlogic.h
+	"model.h"
 

@@ -57,7 +57,7 @@ public:
     }
 
     // render the mesh
-    void Draw(GLuint shader, bool texturesB = true)
+    void Draw(GLuint shader, bool texturesB)
     {
         // bind appropriate textures
         unsigned int diffuseNr  = 1;

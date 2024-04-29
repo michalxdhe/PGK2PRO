@@ -9,9 +9,9 @@ enum Camera_Movement
     RIGHT
 };
 
-const float YAW         = -0.0f;
-const float PITCH       =  0.0f;
-const float SPEED       =  2.5f;
+const float YAW         = 0.0f;
+const float PITCH       =  60.0f;
+const float SPEED       =  4.5f;
 const float SENSITIVITY =  0.1f;
 
 /** \brief Klasa definiujaca kamere he
@@ -33,6 +33,7 @@ public:
     // opcje kamery
     float MovementSpeed;
     float MouseSensitivity;
+    float ZoomSensitivity;
 
     float zoom = 0;
 
@@ -45,6 +46,7 @@ public:
         Up = glm::vec3(0.0f, 1.0f, 0.0f);
         Yaw = yaw;
         Pitch = pitch;
+        ZoomSensitivity = 0.6f;
         zoom = glm::distance(Position,Target);
         updateCameraPos();
     }
@@ -82,6 +84,15 @@ public:
         }
     }
 
+    void doZoom(float val){
+    zoom -= val * ZoomSensitivity;
+    if(zoom < 1.f)
+        zoom = 1.f;
+    if(zoom > 25.f)
+        zoom = 25.f;
+    updateCameraPos();
+    }
+
 
     /** \brief Logika ruchu kamery
      * przetwarza input na podstawie offsetu x i y od srodka, albo dowolnego innego punktu
@@ -97,7 +108,7 @@ public:
         yoffset *= MouseSensitivity;
 
         Yaw   += xoffset;
-        Pitch -= yoffset;
+        Pitch += yoffset;
 
         if (constrainPitch)
         {

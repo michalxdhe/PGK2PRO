@@ -6,11 +6,13 @@
 #include <algorithm>
 #include <unordered_map>
 #include <vector>
+#include <list>
 
 #include <GL/glew.h>
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
+#include <glm/gtx/hash.hpp>
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_opengl.h>
 
@@ -22,6 +24,7 @@
 
 //#include "cameraworks.h"
 #include "camerarevolting.h"
+#include "boardlogic.h"
 #include "globals.h"
 #include "mindless.h"
 #include "shaders.h"
@@ -37,6 +40,9 @@ void GLAPIENTRY MessageCallback(GLenum source, GLenum type, GLuint id, GLenum se
 
 void Game::init()
 {
+    testhex = Model("Modeldos/Wieza.obj");
+    HexGrid = GenerateHexGrid(5);
+
     glEnable(GL_DEBUG_OUTPUT);
     glDebugMessageCallback(MessageCallback, nullptr);
 
@@ -108,15 +114,17 @@ void Game::init()
     view = glm::translate(view, glm::vec3(0.0f, 0.0f, -5.0f));
     projection = glm::perspective(glm::radians(45.0f),  static_cast<float>(windowW)/static_cast<float>(windowH), 0.1f, 100.0f);
 
-    obiekty.insert(make_pair<int,unique_ptr<Object>>(Globals::numberOfEntities++,make_unique<Cube>(10.f,0.01f,10.f)));
-    unique_ptr<Cube> kjub2 = make_unique<Cube>(1.8f,0.5f,0.8f);
-    kjub2->model = glm::translate(kjub2->model,glm::vec3(-1.f, 1.f, 0.f));
+    /*obiekty.insert(make_pair<int,unique_ptr<Object>>(Globals::numberOfEntities++,make_unique<Cube>(10.f,0.01f,10.f)));
+    unique_ptr<Cube> kjub2 = make_unique<Cube>(1.8f,0.5f,0.8f,glm::vec3(-1.f, 1.f, 0.f));
     obiekty.insert(make_pair<int,unique_ptr<Object>>(Globals::numberOfEntities++,move(kjub2)));
-    unique_ptr<Cube> kjub3 = make_unique<Cube>(1.2f,0.2f,1.f);
-    kjub3->model = glm::translate(kjub3->model,glm::vec3(1.f, 2.f, 0.f));
-    obiekty.insert(make_pair<int,unique_ptr<Object>>(Globals::numberOfEntities++,move(kjub3)));
+    unique_ptr<Cube> kjub3 = make_unique<Cube>(1.2f,0.2f,1.f,glm::vec3(1.f, 2.f, 0.f));
+    obiekty.insert(make_pair<int,unique_ptr<Object>>(Globals::numberOfEntities++,move(kjub3)));*/
     lights.insert(make_pair<int,unique_ptr<LightSource>>(Globals::numberOfEntities++,make_unique<LightCube>(0.2f,0.2f,0.2f)));
 
+    for(const auto& pair : HexGrid)
+    {
+        obiekty[Globals::numberOfEntities++] = make_unique<Hexagon>(testhex, pair.second);
+    }
 }
 
 void Game::input(const double deltaTime)
@@ -174,6 +182,11 @@ void Game::input(const double deltaTime)
             }
             break;
         }
+        case SDL_MOUSEWHEEL:
+        {
+            kamera.doZoom((float)(event.wheel.y));
+            break;
+        }
     }
 }
 
@@ -189,6 +202,9 @@ void Game::update(const double deltaTime)
         if(kamera.d)
             kamera.ProcessKeyboard(RIGHT, deltaTime);
 
+    testCounter += 1*deltaTime;
+    if(testCounter > 2)
+        testCounter = 0;
 
     for(const auto& pair : lights)
     {
@@ -245,7 +261,7 @@ void Game::render(double deltaTime)
 
     for(const auto& pair : obiekty)
     {
-            pair.second->render(shaderPrograms[2],shaderPrograms);
+           pair.second->render(shaderPrograms[2],shaderPrograms);
     }
 
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
@@ -264,7 +280,6 @@ void Game::render(double deltaTime)
     {
             pair.second->render(shaderPrograms[0],shaderPrograms);
     }
-
 }
 
 void Game::cleanup()
