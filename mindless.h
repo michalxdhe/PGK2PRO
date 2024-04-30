@@ -31,6 +31,8 @@ public:
 
     int mousePosx, mousePosy;
 
+    MousePicker mouseTrack;
+
     unordered_map<glm::vec3, HexCell> HexGrid;
 
     int windowH, windowW;

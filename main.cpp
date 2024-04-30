@@ -25,6 +25,7 @@
 //#include "cameraworks.h"
 #include "camerarevolting.h"
 #include "boardlogic.h"
+#include "mousepick.h"
 #include "globals.h"
 #include "mindless.h"
 #include "shaders.h"
@@ -113,6 +114,8 @@ void Game::init()
 
     view = glm::translate(view, glm::vec3(0.0f, 0.0f, -5.0f));
     projection = glm::perspective(glm::radians(45.0f),  static_cast<float>(windowW)/static_cast<float>(windowH), 0.1f, 100.0f);
+
+    mouseTrack = MousePicker(projection,view,window);
 
     /*obiekty.insert(make_pair<int,unique_ptr<Object>>(Globals::numberOfEntities++,make_unique<Cube>(10.f,0.01f,10.f)));
     unique_ptr<Cube> kjub2 = make_unique<Cube>(1.8f,0.5f,0.8f,glm::vec3(-1.f, 1.f, 0.f));
@@ -205,6 +208,8 @@ void Game::update(const double deltaTime)
     testCounter += 1*deltaTime;
     if(testCounter > 2)
         testCounter = 0;
+
+    mouseTrack.update(view);
 
     for(const auto& pair : lights)
     {

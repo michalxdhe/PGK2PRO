@@ -534,7 +534,7 @@
 1702329409 source:c:\users\ja\desktop\pkgpro3d\weird.cpp
 	"stb_image.h"
 
-1714304184 source:c:\garigette\foryourgood\main.cpp
+1714482604 source:c:\garigette\foryourgood\main.cpp
 	<iostream>
 	<fstream>
 	<sstream>
@@ -557,6 +557,7 @@
 	"stb_image.h"
 	"camerarevolting.h"
 	"boardlogic.h"
+	"mousepick.h"
 	"globals.h"
 	"mindless.h"
 	"shaders.h"
@@ -583,11 +584,11 @@
 
 1714228414 c:\garigette\foryourgood\globals.h
 
-1714301864 c:\garigette\foryourgood\mindless.h
+1714477255 c:\garigette\foryourgood\mindless.h
 	"metaphysical.h"
 	"model.h"
 
-1714408019 c:\garigette\foryourgood\metaphysical.h
+1714487347 c:\garigette\foryourgood\metaphysical.h
 
 1714300684 c:\garigette\foryourgood\shaders.h
 
@@ -935,4 +936,6 @@
 
 1714231216 c:\garigette\foryourgood\boardlogic.h
 	"model.h"
+
+1714477284 c:\garigette\foryourgood\mousepick.h
 

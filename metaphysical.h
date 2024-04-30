@@ -26,6 +26,24 @@ public:
     virtual void render(unsigned int shaderProgram, std::vector<unsigned int> shaderPrograms) = 0;
 };
 
+class CollisionTest{
+
+public:
+    glm::vec3 pos;
+    float w,h,l;
+
+
+    CollisionTest() = default;
+
+    CollisionTest(glm::vec3 pos, float w, float h, float l){
+    this->pos = pos;
+    this->w = w;
+    this->h = h;
+    this->l =l;
+    }
+
+};
+
 class Hexagon : public Object{
 
 public:
@@ -274,5 +292,9 @@ public:
         glBindVertexArray(0);
     }
 };
+
+bool collisonCubeRay(glm::vec3 rayorigin, glm::vec3 rayvector, glm::vec3 cubepos, float w, float h, float l){
+
+}
 
 #endif // METAPHYSICAL_H_INCLUDED

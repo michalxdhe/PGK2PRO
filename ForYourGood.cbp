@@ -64,6 +64,7 @@
 		<Unit filename="metaphysical.h" />
 		<Unit filename="mindless.h" />
 		<Unit filename="model.h" />
+		<Unit filename="mousepick.h" />
 		<Unit filename="shaders.h" />
 		<Unit filename="weird.cpp" />
 		<Extensions>
