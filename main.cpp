@@ -5,8 +5,10 @@
 #include <memory>
 #include <algorithm>
 #include <unordered_map>
+#include <queue>
 #include <vector>
 #include <list>
+#include <limits>
 
 #include <GL/glew.h>
 #include <glm/glm.hpp>
@@ -23,9 +25,12 @@
 #include "stb_image.h"
 
 //#include "cameraworks.h"
+#include "dijkstra.h"
+#include "units.h"
 #include "camerarevolting.h"
 #include "boardlogic.h"
 #include "mousepick.h"
+#include "PlayerInterface.h"
 #include "globals.h"
 #include "mindless.h"
 #include "shaders.h"
@@ -117,107 +122,162 @@ void Game::init()
 
     mouseTrack = MousePicker(projection,view,window);
 
-    /*obiekty.insert(make_pair<int,unique_ptr<Object>>(Globals::numberOfEntities++,make_unique<Cube>(10.f,0.01f,10.f)));
-    unique_ptr<Cube> kjub2 = make_unique<Cube>(1.8f,0.5f,0.8f,glm::vec3(-1.f, 1.f, 0.f));
-    obiekty.insert(make_pair<int,unique_ptr<Object>>(Globals::numberOfEntities++,move(kjub2)));
-    unique_ptr<Cube> kjub3 = make_unique<Cube>(1.2f,0.2f,1.f,glm::vec3(1.f, 2.f, 0.f));
-    obiekty.insert(make_pair<int,unique_ptr<Object>>(Globals::numberOfEntities++,move(kjub3)));*/
     lights.insert(make_pair<int,unique_ptr<LightSource>>(Globals::numberOfEntities++,make_unique<LightCube>(0.2f,0.2f,0.2f)));
 
-    for(const auto& pair : HexGrid)
+    HexGrid[glm::vec3(0.f,0.f,0.f)].passable = 0;
+    HexGrid[glm::vec3(0.f,0.f,0.f) + cube_direction_vectors[0]].passable = 0;
+    HexGrid[glm::vec3(0.f,0.f,0.f) + cube_direction_vectors[3]].passable = 0;
+    HexGrid[glm::vec3(0.f,0.f,0.f) + cube_direction_vectors[2]*2.f].passable = 0;
+    HexGrid[glm::vec3(0.f,0.f,0.f) + cube_direction_vectors[0]*3.f].passable = 0;
+
+    for(auto& pair : HexGrid)
     {
         obiekty[Globals::numberOfEntities++] = make_unique<Hexagon>(testhex, pair.second);
     }
+
+    obiekty[Globals::numberOfEntities++] = make_unique<Unit>(glm::vec3(2.f,0.f,-2.f), testhex, HexGrid);
+
+    testCube = Cube(0.15f,0.01f,0.15f,glm::vec3(0.f,2.5f,0.f));
 }
 
 void Game::input(const double deltaTime)
 {
     switch(event.type)
     {
-        case SDL_QUIT:
-            this->shutdown = 1;
-            break;
-        case SDL_KEYDOWN:
-            if(event.key.keysym.sym == SDLK_w)
-                kamera.w=1;
-            if(event.key.keysym.sym == SDLK_a)
-                kamera.a=1;
-            if(event.key.keysym.sym == SDLK_s)
-                kamera.s=1;
-            if(event.key.keysym.sym == SDLK_d)
-                kamera.d=1;
-            if(event.key.keysym.sym == SDLK_ESCAPE)
-                shutdown = 1;
+    case SDL_QUIT:
+        this->shutdown = 1;
+        break;
+    case SDL_KEYDOWN:
+        if(event.key.keysym.sym == SDLK_w)
+            kamera.w=1;
+        if(event.key.keysym.sym == SDLK_a)
+            kamera.a=1;
+        if(event.key.keysym.sym == SDLK_s)
+            kamera.s=1;
+        if(event.key.keysym.sym == SDLK_d)
+            kamera.d=1;
+        if(event.key.keysym.sym == SDLK_ESCAPE)
+            shutdown = 1;
 
-            break;
-        case SDL_KEYUP:
-            if(event.key.keysym.sym == SDLK_w)
-                kamera.w=0;
-            if(event.key.keysym.sym == SDLK_a)
-                kamera.a=0;
-            if(event.key.keysym.sym == SDLK_s)
-                kamera.s=0;
-            if(event.key.keysym.sym == SDLK_d)
-                kamera.d=0;
-            break;
-        case SDL_MOUSEBUTTONDOWN:
+        break;
+    case SDL_KEYUP:
+        if(event.key.keysym.sym == SDLK_w)
+            kamera.w=0;
+        if(event.key.keysym.sym == SDLK_a)
+            kamera.a=0;
+        if(event.key.keysym.sym == SDLK_s)
+            kamera.s=0;
+        if(event.key.keysym.sym == SDLK_d)
+            kamera.d=0;
+        break;
+    case SDL_MOUSEBUTTONDOWN:
+    {
+        if(event.button.button == SDL_BUTTON_LEFT)
         {
-            if(event.button.button == SDL_BUTTON_MIDDLE){
-                holdRotate = 1;
-                SDL_SetRelativeMouseMode(SDL_TRUE);
+            if(playerInte.selectedID != -1)
+            {
+                Selectable* selectedBefore = dynamic_cast<Selectable*>(obiekty[playerInte.selectedID].get());
+                selectedBefore->isSelected = false;
+                playerInte.selectedID = -1;
             }
-            break;
-        }
-        case SDL_MOUSEBUTTONUP:
-        {
-            if(event.button.button == SDL_BUTTON_MIDDLE){
-                holdRotate = 0;
-                SDL_SetRelativeMouseMode(SDL_FALSE);
+            if(!holdRotate && ray.closestID != -1)
+            {
+                Selectable* hovered = dynamic_cast<Selectable*>(obiekty[ray.closestID].get());
+                hovered->onSelect();
+                playerInte.selectedID = ray.closestID;
             }
-            break;
         }
-        case SDL_MOUSEMOTION:
+
+        if(event.button.button == SDL_BUTTON_RIGHT)
         {
-            SDL_GetRelativeMouseState(&mousePosx, &mousePosy);
-            if(holdRotate){
+            if(!holdRotate && ray.closestID != -1 && playerInte.selectedID != -1)
+            {
+                Selectable* selectedBefore = dynamic_cast<Selectable*>(obiekty[playerInte.selectedID].get());
+                Selectable* target = dynamic_cast<Selectable*>(obiekty[ray.closestID].get());
+                if(selectedBefore != nullptr && target != nullptr)
+                {
+                    selectedBefore->commandRC(target);
+                }
+            }
+        }
+
+        if(event.button.button == SDL_BUTTON_MIDDLE)
+        {
+            holdRotate = 1;
+            SDL_SetRelativeMouseMode(SDL_TRUE);
+        }
+        break;
+    }
+    case SDL_MOUSEBUTTONUP:
+    {
+        if(event.button.button == SDL_BUTTON_MIDDLE)
+        {
+            holdRotate = 0;
+            SDL_SetRelativeMouseMode(SDL_FALSE);
+        }
+        break;
+    }
+    case SDL_MOUSEMOTION:
+    {
+        SDL_GetRelativeMouseState(&mousePosx, &mousePosy);
+        if(holdRotate)
+        {
             kamera.ProcessMouseMovement(mousePosx, mousePosy);
             SDL_WarpMouseInWindow(window, windowW/2,windowH/2);
-            }
-            break;
         }
-        case SDL_MOUSEWHEEL:
-        {
-            kamera.doZoom((float)(event.wheel.y));
-            break;
-        }
+        break;
+    }
+    case SDL_MOUSEWHEEL:
+    {
+        kamera.doZoom((float)(event.wheel.y));
+        break;
+    }
     }
 }
 
 void Game::update(const double deltaTime)
 {
     //wtf?
-        if(kamera.w)
-            kamera.ProcessKeyboard(FORWARD, deltaTime);
-        if(kamera.a)
-            kamera.ProcessKeyboard(LEFT, deltaTime);
-        if(kamera.s)
-            kamera.ProcessKeyboard(BACKWARD, deltaTime);
-        if(kamera.d)
-            kamera.ProcessKeyboard(RIGHT, deltaTime);
+    if(kamera.w)
+        kamera.ProcessKeyboard(FORWARD, deltaTime);
+    if(kamera.a)
+        kamera.ProcessKeyboard(LEFT, deltaTime);
+    if(kamera.s)
+        kamera.ProcessKeyboard(BACKWARD, deltaTime);
+    if(kamera.d)
+        kamera.ProcessKeyboard(RIGHT, deltaTime);
 
     testCounter += 1*deltaTime;
     if(testCounter > 2)
         testCounter = 0;
 
     mouseTrack.update(view);
+    ray = optimizedRay(kamera.Position,mouseTrack.getCurrentRay());
 
     for(const auto& pair : lights)
     {
-            pair.second->update(deltaTime);
+        pair.second->update(deltaTime);
     }
+
     for(const auto& pair : obiekty)
     {
-            pair.second->update(deltaTime);
+        Selectable* d = dynamic_cast<Selectable*>(pair.second.get());
+        if (d != nullptr)
+        {
+            collisonCubeRay(ray,d->boundingBox,pair.first);
+            d->refresh();
+        }
+
+        pair.second->update(deltaTime);
+    }
+
+    if(ray.closestID != -1)
+    {
+        Selectable* closest = dynamic_cast<Selectable*>(obiekty[ray.closestID].get());
+        if (closest != nullptr)
+        {
+            closest->onHover();
+        }
     }
 }
 
@@ -258,7 +318,7 @@ void Game::render(double deltaTime)
     glUseProgram(shaderPrograms[2]);
     for(const auto& pair : lights)
     {
-            pair.second->bindDepthShader(shaderPrograms);
+        pair.second->bindDepthShader(shaderPrograms);
     }
     glViewport(0, 0, 1024, 1024);
     glBindFramebuffer(GL_FRAMEBUFFER, shadowMapFBO);
@@ -266,7 +326,7 @@ void Game::render(double deltaTime)
 
     for(const auto& pair : obiekty)
     {
-           pair.second->render(shaderPrograms[2],shaderPrograms);
+        pair.second->render(shaderPrograms[2],shaderPrograms);
     }
 
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
@@ -277,13 +337,27 @@ void Game::render(double deltaTime)
     //Glowny rendering
     for(const auto& pair : lights)
     {
-            pair.second->render(shaderPrograms[0],shaderPrograms);
+        pair.second->render(shaderPrograms[0],shaderPrograms);
     }
 
     glUseProgram(shaderPrograms[0]);
     for(const auto& pair : obiekty)
     {
-            pair.second->render(shaderPrograms[0],shaderPrograms);
+        pair.second->render(shaderPrograms[0],shaderPrograms);
+    }
+
+    //test czy unit dobrze widzi swoj moverange
+    if(playerInte.selectedID != -1)
+    {
+        Unit* selectedUnit = dynamic_cast<Unit*>(obiekty[playerInte.selectedID].get());
+        if (selectedUnit != nullptr)
+        {
+            for(auto& pair : selectedUnit->reachableHexes)
+            {
+                testCube.model = glm::translate(glm::mat4(1.f),getWorldPosFromHex(pair.first) + glm::vec3(0.f,1.6f,0.f));
+                testCube.Draw(shaderPrograms[0],true);
+            }
+        }
     }
 }
 
@@ -318,11 +392,12 @@ int main(int argc, char *argv[])
         currTime = SDL_GetTicks();
         deltaTime = (currTime - prevTime)/1000.0f;
         prevTime = currTime;
-        if (deltaTime < klatki) {
-        SDL_Delay((klatki-deltaTime)*1000.0);
-        currTime = SDL_GetTicks();
-        deltaTime = (currTime - prevTime)/1000.0f;
-        prevTime = currTime;
+        if (deltaTime < klatki)
+        {
+            SDL_Delay((klatki-deltaTime)*1000.0);
+            currTime = SDL_GetTicks();
+            deltaTime = (currTime - prevTime)/1000.0f;
+            prevTime = currTime;
         }
     }
 

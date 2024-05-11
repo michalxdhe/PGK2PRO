@@ -15,68 +15,24 @@ glm::mat4 calculateLightSpaceMatrix(glm::vec3 lightPos, glm::vec3 up)
     return lightSpaceMatrix;
 }
 
-class Object
+class HexCell
 {
 
 public:
+    glm::vec3 LogicPos;
+    int distanceFrom;
+    bool passable = 1;
 
-    virtual ~Object() = default;
+    HexCell() = default;
 
-    virtual void update(double deltaTime) = 0;
-    virtual void render(unsigned int shaderProgram, std::vector<unsigned int> shaderPrograms) = 0;
-};
-
-class CollisionTest{
-
-public:
-    glm::vec3 pos;
-    float w,h,l;
-
-
-    CollisionTest() = default;
-
-    CollisionTest(glm::vec3 pos, float w, float h, float l){
-    this->pos = pos;
-    this->w = w;
-    this->h = h;
-    this->l =l;
-    }
-
-};
-
-class Hexagon : public Object{
-
-public:
-    Model model;
-    glm::mat4 view;
-    HexCell cell;
-    glm::vec3 scale;
-
-    Hexagon() = default;
-
-    Hexagon(Model model, HexCell komorka){
-    this->model = model;
-    cell = komorka;
-    scale = glm::vec3(1.f);
-    //if(cell.LogicPos.x == 1 && cell.LogicPos.z == -1)
-   //     view = glm::translate(glm::mat4(1.f),glm::vec3(cell.LogicPos.x*0.5f,1.f,cell.LogicPos.z*0.5f));
-    //else
-        view = glm::translate(glm::mat4(1.f),glm::vec3(cell.LogicPos.x*0.45f * scale.x ,0.f,cell.LogicPos.z * 0.52f * scale.z + (-cell.LogicPos.x * -0.26f * scale.z)));
-        view = glm::scale(view,scale);
-    }
-
-    void update(double deltaTime){
-
-    }
-
-    void render(unsigned int shaderProgram, std::vector<unsigned int> shaderPrograms){
-    glUniformMatrix4fv(glGetUniformLocation(shaderProgram, "model"), 1, GL_FALSE, glm::value_ptr(view));
-    this->model.Draw(shaderProgram);
+    HexCell(glm::vec3 pos)
+    {
+        LogicPos = pos;
     }
 };
 
-
-class Cube : public Object{
+class Cube
+{
 
 public:
     glm::mat4 model;
@@ -89,96 +45,139 @@ public:
     {
         model = glm::mat4(1.0f);
         model = glm::translate(model,pos);
+
+        glGenVertexArrays(1, &VAO);
+        glGenBuffers(1, &VBO);
+
         remodel(w,h,l);
     }
 
     void remodel(float w, float h, float l)
     {
         vertices =
-    {
-        -w, -h, -l,  0.0f,  0.0f, -1.0f,  0.0f,  0.0f,
-        w, -h, -l,   0.0f,  0.0f, -1.0f,  1.0f,  0.0f,
-        w,  h, -l,   0.0f,  0.0f, -1.0f,  1.0f,  1.0f,
-        w,  h, -l,   0.0f,  0.0f, -1.0f,  1.0f,  1.0f,
-        -w,  h, -l,  0.0f,  0.0f, -1.0f,  0.0f,  1.0f,
-        -w, -h, -l,  0.0f,  0.0f, -1.0f,  0.0f,  0.0f,
+        {
+            -w, -h, -l,  0.0f,  0.0f, -1.0f,
+                w, -h, -l,   0.0f,  0.0f, -1.0f,
+                w,  h, -l,   0.0f,  0.0f, -1.0f,
+                w,  h, -l,   0.0f,  0.0f, -1.0f,
+                -w,  h, -l,  0.0f,  0.0f, -1.0f,
+                -w, -h, -l,  0.0f,  0.0f, -1.0f,
 
-        -w, -h,  l,  0.0f,  0.0f,  1.0f,  0.0f,  0.0f,
-        w, -h,  l,   0.0f,  0.0f,  1.0f,  1.0f,  0.0f,
-        w,  h,  l,   0.0f,  0.0f,  1.0f,  1.0f,  1.0f,
-        w,  h,  l,   0.0f,  0.0f,  1.0f,  1.0f,  1.0f,
-        -w,  h,  l,  0.0f,  0.0f,  1.0f,  0.0f,  1.0f,
-        -w, -h,  l,  0.0f,  0.0f,  1.0f,  0.0f,  0.0f,
+                -w, -h,  l,  0.0f,  0.0f,  1.0f,
+                w, -h,  l,   0.0f,  0.0f,  1.0f,
+                w,  h,  l,   0.0f,  0.0f,  1.0f,
+                w,  h,  l,   0.0f,  0.0f,  1.0f,
+                -w,  h,  l,  0.0f,  0.0f,  1.0f,
+                -w, -h,  l,  0.0f,  0.0f,  1.0f,
 
-        -w,  h,  l, -1.0f,  0.0f,  0.0f,  1.0f,  0.0f,
-        -w,  h, -l, -1.0f,  0.0f,  0.0f,  1.0f,  1.0f,
-        -w, -h, -l, -1.0f,  0.0f,  0.0f,  0.0f,  1.0f,
-        -w, -h, -l, -1.0f,  0.0f,  0.0f,  0.0f,  1.0f,
-        -w, -h,  l, -1.0f,  0.0f,  0.0f,  0.0f,  0.0f,
-        -w,  h,  l, -1.0f,  0.0f,  0.0f,  1.0f,  0.0f,
+                -w,  h,  l, -1.0f,  0.0f,  0.0f,
+                -w,  h, -l, -1.0f,  0.0f,  0.0f,
+                -w, -h, -l, -1.0f,  0.0f,  0.0f,
+                -w, -h, -l, -1.0f,  0.0f,  0.0f,
+                -w, -h,  l, -1.0f,  0.0f,  0.0f,
+                -w,  h,  l, -1.0f,  0.0f,  0.0f,
 
-        w,  h,  l,   1.0f,  0.0f,  0.0f,  1.0f,  0.0f,
-        w,  h, -l,   1.0f,  0.0f,  0.0f,  1.0f,  1.0f,
-        w, -h, -l,   1.0f,  0.0f,  0.0f,  0.0f,  1.0f,
-        w, -h, -l,   1.0f,  0.0f,  0.0f,  0.0f,  1.0f,
-        w, -h,  l,   1.0f,  0.0f,  0.0f,  0.0f,  0.0f,
-        w,  h,  l,   1.0f,  0.0f,  0.0f,  1.0f,  0.0f,
+                w,  h,  l,   1.0f,  0.0f,  0.0f,
+                w,  h, -l,   1.0f,  0.0f,  0.0f,
+                w, -h, -l,   1.0f,  0.0f,  0.0f,
+                w, -h, -l,   1.0f,  0.0f,  0.0f,
+                w, -h,  l,   1.0f,  0.0f,  0.0f,
+                w,  h,  l,   1.0f,  0.0f,  0.0f,
 
-        -w, -h, -l,  0.0f, -1.0f,  0.0f,  0.0f,  1.0f,
-        w, -h, -l,   0.0f, -1.0f,  0.0f,  1.0f,  1.0f,
-        w, -h,  l,   0.0f, -1.0f,  0.0f,  1.0f,  0.0f,
-        w, -h,  l,   0.0f, -1.0f,  0.0f,  1.0f,  0.0f,
-        -w, -h,  l,  0.0f, -1.0f,  0.0f,  0.0f,  0.0f,
-        -w, -h, -l,  0.0f, -1.0f,  0.0f,  0.0f,  1.0f,
+                -w,  h, -l,  0.0f,  1.0f,  0.0f,
+                w,  h, -l,   0.0f,  1.0f,  0.0f,
+                w,  h,  l,   0.0f,  1.0f,  0.0f,
+                w,  h,  l,   0.0f,  1.0f,  0.0f,
+                -w,  h,  l,  0.0f,  1.0f,  0.0f,
+                -w,  h, -l,  0.0f,  1.0f,  0.0f,
 
-        -w,  h, -l,  0.0f,  1.0f,  0.0f,  0.0f,  1.0f,
-        w,  h, -l,   0.0f,  1.0f,  0.0f,  1.0f,  1.0f,
-        w,  h,  l,   0.0f,  1.0f,  0.0f,  1.0f,  0.0f,
-        w,  h,  l,   0.0f,  1.0f,  0.0f,  1.0f,  0.0f,
-        -w,  h,  l,  0.0f,  1.0f,  0.0f,  0.0f,  0.0f,
-        -w,  h, -l,  0.0f,  1.0f,  0.0f,  0.0f,  1.0f
-        };
-
-        glGenVertexArrays(1, &VAO);
-        glGenBuffers(1, &VBO);
+                -w, -h, -l,  0.0f, -1.0f,  0.0f,
+                w, -h, -l,   0.0f, -1.0f,  0.0f,
+                w, -h,  l,   0.0f, -1.0f,  0.0f,
+                w, -h,  l,   0.0f, -1.0f,  0.0f,
+                -w, -h,  l,  0.0f, -1.0f,  0.0f,
+                -w, -h, -l,  0.0f, -1.0f,  0.0f
+            };
 
         glBindVertexArray(VAO);
         glBindBuffer(GL_ARRAY_BUFFER, VBO);
         glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(float), vertices.data(), GL_STREAM_DRAW);
 
         glEnableVertexAttribArray(0);
-        glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)0);
-        glEnableVertexAttribArray(1);
-        glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(3 * sizeof(float)));
-        glEnableVertexAttribArray(2);
-        glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(6 * sizeof(float)));
+        glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)0);
 
+        glEnableVertexAttribArray(1);
+        glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)(3 * sizeof(float)));
 
         glBindBuffer(GL_ARRAY_BUFFER, 0);
         glBindVertexArray(0);
     }
 
-    void update(double deltaTime){
-            //model = glm::rotate(model, 0.001f, glm::vec3(0.0f, 1.0f, 1.0f));
-    }
-
-    void render(unsigned int shaderProgram, std::vector<unsigned int> shaderPrograms){
+    void Draw(unsigned int shaderProgram, bool filled)
+    {
         glUniformMatrix4fv(glGetUniformLocation(shaderProgram, "model"), 1, GL_FALSE, glm::value_ptr(model));
 
         glBindVertexArray(VAO);
-
+        if(!filled)
+            glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
         glDrawArrays(GL_TRIANGLES, 0, 36);
+        if(!filled)
+            glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
         glBindVertexArray(0);
     }
 
 };
 
-class LightSource : public Object{
+class Object
+{
+
+public:
+
+    virtual ~Object() = default;
+
+    virtual void update(double deltaTime) = 0;
+    virtual void render(unsigned int shaderProgram, std::vector<unsigned int> shaderPrograms) = 0;
+};
+
+class BoundingColider
+{
+
+public:
+    Cube boundingBox;
+
+    virtual ~BoundingColider() = default;
+
+};
+
+class Selectable : public BoundingColider
+{
+
+public:
+
+    bool hovering = 0;
+    bool isSelected = 0;
+
+    virtual ~Selectable() = default;
+
+    void refresh()
+    {
+        hovering = 0;
+    }
+
+    virtual void onSelect() = 0;
+    virtual void onHover() = 0;
+
+    virtual void commandRC(Selectable *target) = 0;
+    virtual void commandLC(Selectable *target) = 0;
+};
+
+class LightSource : public Object
+{
 
 public:
     glm::mat4 lightSpaceMatrix;
     glm::vec3 lightTarget;
-    glm::vec3 lightPos = glm::vec3(0.f,3.f,0.00000001f);
+    glm::vec3 lightPos = glm::vec3(0.00000001f,3.f,0.00000001f);
 
     void bindDepthShader(std::vector<unsigned int>shaderPrograms)
     {
@@ -187,7 +186,8 @@ public:
     }
 };
 
-class LightCube : public LightSource{
+class LightCube : public LightSource
+{
 
 public:
     glm::mat4 model = glm::mat4(1.0f);
@@ -199,56 +199,56 @@ public:
 
     LightCube(float w, float h, float l)
     {
-      remodel(w,h,l);
-      model = glm::translate(model,lightPos);
+        remodel(w,h,l);
+        model = glm::translate(model,lightPos);
     }
 
     void remodel(float w, float h, float l)
     {
         vertices =
-    {
-        -w, -h, -l,  0.0f,  0.0f, -1.0f,
-        w, -h, -l,   0.0f,  0.0f, -1.0f,
-        w,  h, -l,   0.0f,  0.0f, -1.0f,
-        w,  h, -l,   0.0f,  0.0f, -1.0f,
-        -w,  h, -l,  0.0f,  0.0f, -1.0f,
-        -w, -h, -l,  0.0f,  0.0f, -1.0f,
+        {
+            -w, -h, -l,  0.0f,  0.0f, -1.0f,
+                w, -h, -l,   0.0f,  0.0f, -1.0f,
+                w,  h, -l,   0.0f,  0.0f, -1.0f,
+                w,  h, -l,   0.0f,  0.0f, -1.0f,
+                -w,  h, -l,  0.0f,  0.0f, -1.0f,
+                -w, -h, -l,  0.0f,  0.0f, -1.0f,
 
-        -w, -h,  l,  0.0f,  0.0f,  1.0f,
-        w, -h,  l,   0.0f,  0.0f,  1.0f,
-        w,  h,  l,   0.0f,  0.0f,  1.0f,
-        w,  h,  l,   0.0f,  0.0f,  1.0f,
-        -w,  h,  l,  0.0f,  0.0f,  1.0f,
-        -w, -h,  l,  0.0f,  0.0f,  1.0f,
+                -w, -h,  l,  0.0f,  0.0f,  1.0f,
+                w, -h,  l,   0.0f,  0.0f,  1.0f,
+                w,  h,  l,   0.0f,  0.0f,  1.0f,
+                w,  h,  l,   0.0f,  0.0f,  1.0f,
+                -w,  h,  l,  0.0f,  0.0f,  1.0f,
+                -w, -h,  l,  0.0f,  0.0f,  1.0f,
 
-        -w,  h,  l, -1.0f,  0.0f,  0.0f,
-        -w,  h, -l, -1.0f,  0.0f,  0.0f,
-        -w, -h, -l, -1.0f,  0.0f,  0.0f,
-        -w, -h, -l, -1.0f,  0.0f,  0.0f,
-        -w, -h,  l, -1.0f,  0.0f,  0.0f,
-        -w,  h,  l, -1.0f,  0.0f,  0.0f,
+                -w,  h,  l, -1.0f,  0.0f,  0.0f,
+                -w,  h, -l, -1.0f,  0.0f,  0.0f,
+                -w, -h, -l, -1.0f,  0.0f,  0.0f,
+                -w, -h, -l, -1.0f,  0.0f,  0.0f,
+                -w, -h,  l, -1.0f,  0.0f,  0.0f,
+                -w,  h,  l, -1.0f,  0.0f,  0.0f,
 
-        w,  h,  l,   1.0f,  0.0f,  0.0f,
-        w,  h, -l,   1.0f,  0.0f,  0.0f,
-        w, -h, -l,   1.0f,  0.0f,  0.0f,
-        w, -h, -l,   1.0f,  0.0f,  0.0f,
-        w, -h,  l,   1.0f,  0.0f,  0.0f,
-        w,  h,  l,   1.0f,  0.0f,  0.0f,
+                w,  h,  l,   1.0f,  0.0f,  0.0f,
+                w,  h, -l,   1.0f,  0.0f,  0.0f,
+                w, -h, -l,   1.0f,  0.0f,  0.0f,
+                w, -h, -l,   1.0f,  0.0f,  0.0f,
+                w, -h,  l,   1.0f,  0.0f,  0.0f,
+                w,  h,  l,   1.0f,  0.0f,  0.0f,
 
-        -w, -h, -l,  0.0f, -1.0f,  0.0f,
-        w, -h, -l,   0.0f, -1.0f,  0.0f,
-        w, -h,  l,   0.0f, -1.0f,  0.0f,
-        w, -h,  l,   0.0f, -1.0f,  0.0f,
-        -w, -h,  l,  0.0f, -1.0f,  0.0f,
-        -w, -h, -l,  0.0f, -1.0f,  0.0f,
+                -w, -h, -l,  0.0f, -1.0f,  0.0f,
+                w, -h, -l,   0.0f, -1.0f,  0.0f,
+                w, -h,  l,   0.0f, -1.0f,  0.0f,
+                w, -h,  l,   0.0f, -1.0f,  0.0f,
+                -w, -h,  l,  0.0f, -1.0f,  0.0f,
+                -w, -h, -l,  0.0f, -1.0f,  0.0f,
 
-        -w,  h, -l,  0.0f,  1.0f,  0.0f,
-        w,  h, -l,   0.0f,  1.0f,  0.0f,
-        w,  h,  l,   0.0f,  1.0f,  0.0f,
-        w,  h,  l,   0.0f,  1.0f,  0.0f,
-        -w,  h,  l,  0.0f,  1.0f,  0.0f,
-        -w,  h, -l,  0.0f,  1.0f,  0.0f
-        };
+                -w,  h, -l,  0.0f,  1.0f,  0.0f,
+                w,  h, -l,   0.0f,  1.0f,  0.0f,
+                w,  h,  l,   0.0f,  1.0f,  0.0f,
+                w,  h,  l,   0.0f,  1.0f,  0.0f,
+                -w,  h,  l,  0.0f,  1.0f,  0.0f,
+                -w,  h, -l,  0.0f,  1.0f,  0.0f
+            };
 
         glGenVertexArrays(1, &VAO);
         glGenBuffers(1, &VBO);
@@ -265,7 +265,8 @@ public:
         glBindVertexArray(0);
     }
 
-    void update(double deltaTime){
+    void update(double deltaTime)
+    {
         glm::mat3 rotationMatrix = glm::mat3(model);
         lightTarget = rotationMatrix * glm::vec3(0.f,-1.f,0.f); //ten drugi vector w mnozeniu to tam gdzie celuje swiatlo
         lightPos = glm::vec3(model * glm::vec4(glm::vec3(0.f,0.f,0.f), 1.0f));
@@ -274,7 +275,8 @@ public:
         //model = glm::rotate(model, 0.01f, glm::vec3(1.0f, 0.f, 0.0f));
     }
 
-    void render(unsigned int shaderProgram, std::vector<unsigned int> shaderPrograms){
+    void render(unsigned int shaderProgram, std::vector<unsigned int> shaderPrograms)
+    {
         glUseProgram(shaderProgram);
 
         glUniform3f(glGetUniformLocation(shaderProgram,"lightColor"), 1.0f, 1.0f, 1.0f);
@@ -293,8 +295,78 @@ public:
     }
 };
 
-bool collisonCubeRay(glm::vec3 rayorigin, glm::vec3 rayvector, glm::vec3 cubepos, float w, float h, float l){
+class optimizedRay
+{
 
+public:
+    glm::vec3 origin;
+    glm::vec3 direction;
+    glm::vec3 directionInv;
+
+    bool first = true;
+    double tmin;
+    int64_t closestID;
+
+    optimizedRay() = default;
+
+    optimizedRay(glm::vec3 org, glm::vec3 dir)
+    {
+        origin = org;
+        direction = dir;
+        directionInv = glm::vec3(1.f/dir.x,1.f/dir.y,1.f/dir.z);
+        closestID = -1;
+        tmin = 1000;
+    }
+
+};
+
+bool collisonCubeRay(optimizedRay &optray, Cube box, int64_t objID)
+{
+    glm::vec3 cubePos = glm::vec3(box.model * glm::vec4(glm::vec3(0.f,0.f,0.f), 1.0f));
+    double h,w,l;
+    w = -box.vertices[0];
+    h = -box.vertices[1];
+    l = -box.vertices[2];
+
+    double tx1 = (cubePos.x - w - optray.origin.x)*optray.directionInv.x;
+    double tx2 = (cubePos.x + w - optray.origin.x)*optray.directionInv.x;
+
+    double tmin = std::min(tx1, tx2);
+    double tmax = std::max(tx1, tx2);
+
+    double ty1 = (cubePos.y - h - optray.origin.y)*optray.directionInv.y;
+    double ty2 = (cubePos.y + h - optray.origin.y)*optray.directionInv.y;
+
+    tmin = std::max(tmin, std::min(ty1, ty2));
+    tmax = std::min(tmax, std::max(ty1, ty2));
+
+    double tz1 = (cubePos.z - l - optray.origin.z)*optray.directionInv.z;
+    double tz2 = (cubePos.z + l - optray.origin.z)*optray.directionInv.z;
+
+    tmin = std::max(tmin, std::min(tz1, tz2));
+    tmax = std::min(tmax, std::max(tz1, tz2));
+
+    bool collision = tmax >= tmin;
+
+    if(collision)
+    {
+        if(optray.first)
+        {
+            optray.first = false;
+            optray.closestID = objID;
+            optray.tmin = tmin;
+        }
+        else
+        {
+            if(optray.tmin > tmin)
+            {
+                optray.tmin = tmin;
+                optray.closestID = objID;
+            }
+        }
+    }
+
+    return collision;
 }
 
 #endif // METAPHYSICAL_H_INCLUDED

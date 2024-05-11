@@ -55,9 +55,11 @@
 		<ExtraCommands>
 			<Add after="XCOPY $(#sdl2)\bin\*.dll $(TARGET_OUTPUT_DIR) /D /Y" />
 		</ExtraCommands>
+		<Unit filename="PlayerInterface.h" />
 		<Unit filename="boardlogic.h" />
 		<Unit filename="camerarevolting.h" />
 		<Unit filename="cameraworks.h" />
+		<Unit filename="dijkstra.h" />
 		<Unit filename="globals.h" />
 		<Unit filename="main.cpp" />
 		<Unit filename="mesh.h" />
@@ -66,6 +68,7 @@
 		<Unit filename="model.h" />
 		<Unit filename="mousepick.h" />
 		<Unit filename="shaders.h" />
+		<Unit filename="units.h" />
 		<Unit filename="weird.cpp" />
 		<Extensions>
 			<lib_finder disable_auto="1" />

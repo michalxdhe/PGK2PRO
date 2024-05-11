@@ -534,7 +534,7 @@
 1702329409 source:c:\users\ja\desktop\pkgpro3d\weird.cpp
 	"stb_image.h"
 
-1714482604 source:c:\garigette\foryourgood\main.cpp
+1715442506 source:c:\garigette\foryourgood\main.cpp
 	<iostream>
 	<fstream>
 	<sstream>
@@ -542,8 +542,10 @@
 	<memory>
 	<algorithm>
 	<unordered_map>
+	<queue>
 	<vector>
 	<list>
+	<limits>
 	<GL/glew.h>
 	<glm/glm.hpp>
 	<glm/gtc/matrix_transform.hpp>
@@ -555,15 +557,18 @@
 	<assimp/scene.h>
 	<assimp/postprocess.h>
 	"stb_image.h"
+	"dijkstra.h"
+	"units.h"
 	"camerarevolting.h"
 	"boardlogic.h"
 	"mousepick.h"
+	"PlayerInterface.h"
 	"globals.h"
 	"mindless.h"
 	"shaders.h"
 	"model.h"
 
-1702332612 c:\garigette\foryourgood\stb_image.h
+1714487419 c:\garigette\foryourgood\stb_image.h
 	"stb_image.h"
 	<stdio.h>
 	<stdlib.h>
@@ -582,17 +587,17 @@
 
 1714121400 c:\garigette\foryourgood\cameraworks.h
 
-1714228414 c:\garigette\foryourgood\globals.h
+1715196336 c:\garigette\foryourgood\globals.h
 
-1714477255 c:\garigette\foryourgood\mindless.h
+1715439330 c:\garigette\foryourgood\mindless.h
 	"metaphysical.h"
 	"model.h"
 
-1714487347 c:\garigette\foryourgood\metaphysical.h
+1715269796 c:\garigette\foryourgood\metaphysical.h
 
-1714300684 c:\garigette\foryourgood\shaders.h
+1715196336 c:\garigette\foryourgood\shaders.h
 
-1702333009 source:c:\garigette\foryourgood\weird.cpp
+1715196336 source:c:\garigette\foryourgood\weird.cpp
 	"stb_image.h"
 
 1696682179 c:\assimp\assimp-master\include\assimp\importer.hpp
@@ -749,7 +754,7 @@
 1696682179 c:\assimp\assimp-master\include\assimp\postprocess.h
 	<assimp/types.h>
 
-1714301321 c:\garigette\foryourgood\model.h
+1715196336 c:\garigette\foryourgood\model.h
 	<GL/glew.h>
 	<glm/glm.hpp>
 	<glm/gtc/matrix_transform.hpp>
@@ -768,7 +773,7 @@
 	<map>
 	<vector>
 
-1714299788 c:\garigette\foryourgood\mesh.h
+1715196336 c:\garigette\foryourgood\mesh.h
 	<GL/glew.h>
 	<glm/glm.hpp>
 	<glm/gtc/matrix_transform.hpp>
@@ -932,10 +937,132 @@
 1696682179 c:\assimp\assimp-master\bolid\include\assimp\postprocess.h
 	<assimp/types.h>
 
-1714243898 c:\garigette\foryourgood\camerarevolting.h
+1715196336 c:\garigette\foryourgood\camerarevolting.h
 
-1714231216 c:\garigette\foryourgood\boardlogic.h
+1715441277 c:\garigette\foryourgood\boardlogic.h
+	"metaphysical.h"
 	"model.h"
 
-1714477284 c:\garigette\foryourgood\mousepick.h
+1714991992 c:\garigette\foryourgood\mousepick.h
+
+1715442506 source:c:\garigette\pgk2pro-master\pgk2pro-master\main.cpp
+	<iostream>
+	<fstream>
+	<sstream>
+	<time.h>
+	<memory>
+	<algorithm>
+	<unordered_map>
+	<queue>
+	<vector>
+	<list>
+	<limits>
+	<GL/glew.h>
+	<glm/glm.hpp>
+	<glm/gtc/matrix_transform.hpp>
+	<glm/gtc/type_ptr.hpp>
+	<glm/gtx/hash.hpp>
+	<SDL2/SDL.h>
+	<SDL2/SDL_opengl.h>
+	<assimp/Importer.hpp>
+	<assimp/scene.h>
+	<assimp/postprocess.h>
+	"stb_image.h"
+	"dijkstra.h"
+	"units.h"
+	"camerarevolting.h"
+	"boardlogic.h"
+	"mousepick.h"
+	"PlayerInterface.h"
+	"globals.h"
+	"mindless.h"
+	"shaders.h"
+	"model.h"
+
+1714487419 c:\garigette\pgk2pro-master\pgk2pro-master\stb_image.h
+	"stb_image.h"
+	<stdio.h>
+	<stdlib.h>
+	<stdarg.h>
+	<stddef.h>
+	<stdlib.h>
+	<string.h>
+	<limits.h>
+	<math.h>
+	<stdio.h>
+	<assert.h>
+	<stdint.h>
+	<emmintrin.h>
+	<intrin.h>
+	<arm_neon.h>
+
+1715196336 c:\garigette\pgk2pro-master\pgk2pro-master\camerarevolting.h
+
+1715441277 c:\garigette\pgk2pro-master\pgk2pro-master\boardlogic.h
+	"metaphysical.h"
+	"model.h"
+
+1715196336 c:\garigette\pgk2pro-master\pgk2pro-master\model.h
+	<GL/glew.h>
+	<glm/glm.hpp>
+	<glm/gtc/matrix_transform.hpp>
+	<glm/gtc/type_ptr.hpp>
+	<glm/gtx/hash.hpp>
+	<SDL2/SDL.h>
+	<SDL2/SDL_opengl.h>
+	<assimp/Importer.hpp>
+	<assimp/scene.h>
+	<assimp/postprocess.h>
+	"mesh.h"
+	<string>
+	<fstream>
+	<sstream>
+	<iostream>
+	<map>
+	<vector>
+
+1715196336 c:\garigette\pgk2pro-master\pgk2pro-master\mesh.h
+	<GL/glew.h>
+	<glm/glm.hpp>
+	<glm/gtc/matrix_transform.hpp>
+	<glm/gtc/type_ptr.hpp>
+	<SDL2/SDL.h>
+	<SDL2/SDL_opengl.h>
+	<string>
+	<vector>
+
+1714991992 c:\garigette\pgk2pro-master\pgk2pro-master\mousepick.h
+
+1715196336 c:\garigette\pgk2pro-master\pgk2pro-master\globals.h
+
+1715439330 c:\garigette\pgk2pro-master\pgk2pro-master\mindless.h
+	"metaphysical.h"
+	"model.h"
+
+1715269796 c:\garigette\pgk2pro-master\pgk2pro-master\metaphysical.h
+
+1715196336 c:\garigette\pgk2pro-master\pgk2pro-master\shaders.h
+
+1715196336 source:c:\garigette\pgk2pro-master\pgk2pro-master\weird.cpp
+	"stb_image.h"
+
+1714991992 c:\garigette\pgk2pro-master\pgk2pro-master\playerinterface.h
+
+1715442401 c:\garigette\pgk2pro-master\pgk2pro-master\units.h
+	"metaphysical.h"
+	"model.h"
+	"boardlogic.h"
+
+1715439718 c:\garigette\pgk2pro-master\pgk2pro-master\dijkstra.h
+	"boardlogic.h"
+
+1715439718 c:\garigette\foryourgood\dijkstra.h
+	"boardlogic.h"
+
+1715443578 c:\garigette\foryourgood\units.h
+	"metaphysical.h"
+	"model.h"
+	"boardlogic.h"
+
+1714991992 c:\garigette\foryourgood\playerinterface.h
 

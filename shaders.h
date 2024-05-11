@@ -37,18 +37,22 @@ bool createAndLoadTexture(unsigned int &destination, const char* path)
     return true;
 }
 
-bool readShaderFile(const char* filePath, std::string& shaderCode) {
+bool readShaderFile(const char* filePath, std::string& shaderCode)
+{
     std::ifstream shaderFile;
     shaderFile.exceptions(std::ifstream::failbit | std::ifstream::badbit);
 
-    try {
+    try
+    {
         shaderFile.open(filePath);
         std::stringstream shaderStream;
         shaderStream << shaderFile.rdbuf();
         shaderFile.close();
         shaderCode = shaderStream.str();
         return true;
-    } catch (std::ifstream::failure& e) {
+    }
+    catch (std::ifstream::failure& e)
+    {
         std::cout << "ERROR::SHADER::FILE_NOT_SUCCESFULLY_READ" << std::endl;
         return false;
     }
@@ -56,8 +60,9 @@ bool readShaderFile(const char* filePath, std::string& shaderCode) {
 
 bool createAndCompileShader(const char* filePath, int type, GLuint &destination)
 {
-       std::string shaderCode;
-    if (!readShaderFile(filePath, shaderCode)) {
+    std::string shaderCode;
+    if (!readShaderFile(filePath, shaderCode))
+    {
         return false;
     }
 
@@ -105,7 +110,8 @@ bool createAndCompileShader(const char* filePath, int type, GLuint &destination)
     return 1;
 }
 
-GLuint createProgram(unsigned int vertexShader, unsigned int fragmentShader){
+GLuint createProgram(unsigned int vertexShader, unsigned int fragmentShader)
+{
     unsigned int shaderProgram;
 
     shaderProgram = glCreateProgram();

@@ -34,7 +34,7 @@ public:
     string directory;
     bool gammaCorrection;
 
-    Model(){};
+    Model() {};
 
     // constructor, expects a filepath to a 3D model.
     Model(string const &path, bool gamma = false) : gammaCorrection(gamma)
@@ -193,7 +193,8 @@ private:
                 }
             }
             if(!skip)
-            {   // if texture hasn't been loaded already, load it
+            {
+                // if texture hasn't been loaded already, load it
                 Texture texture;
                 texture.id = TextureFromFile(str.C_Str(), this->directory);
                 texture.type = typeName;

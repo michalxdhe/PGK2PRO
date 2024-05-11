@@ -22,16 +22,20 @@ class Game
 public:
     SDL_Event event;
     SDL_Window *window;
-
+    Cube testCube;
     double testCounter = 0;
 
     SDL_GLContext gContext;
 
     Model testhex;
 
+    optimizedRay ray;
+
     int mousePosx, mousePosy;
 
     MousePicker mouseTrack;
+
+    PlayerInterface playerInte;
 
     unordered_map<glm::vec3, HexCell> HexGrid;
 
@@ -53,6 +57,7 @@ public:
 
     ///Flaga stanowiaca czy pora isc spac
     bool shutdown = 0;
+
     bool holdRotate = 0;
 
     void cleanup();
