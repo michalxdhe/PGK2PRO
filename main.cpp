@@ -108,14 +108,9 @@ void Game::init()
 
     glUseProgram(shaderPrograms[0]);
 
-    createAndLoadTexture(teksturaTest,"magus.jpg");
     glActiveTexture(GL_TEXTURE0);
-    glBindTexture(GL_TEXTURE_2D, teksturaTest);
-    glUniform1i(glGetUniformLocation(shaderPrograms[0], "texture1"), 0);
-
-    glActiveTexture(GL_TEXTURE1);
     glBindTexture(GL_TEXTURE_2D, depthMap);
-    glUniform1i(glGetUniformLocation(shaderPrograms[0], "shadowMap"), 1);
+    glUniform1i(glGetUniformLocation(shaderPrograms[0], "shadowMap"), 0);
 
     view = glm::translate(view, glm::vec3(0.0f, 0.0f, -5.0f));
     projection = glm::perspective(glm::radians(45.0f),  static_cast<float>(windowW)/static_cast<float>(windowH), 0.1f, 100.0f);
@@ -174,6 +169,10 @@ void Game::input(const double deltaTime)
     {
         if(event.button.button == SDL_BUTTON_LEFT)
         {
+            LightCube* testlightcube = dynamic_cast<LightCube*>(lights[0].get());
+            testlightcube->model = glm::translate(testlightcube->model,glm::vec3(0.f, 0.f, 0.5f));
+            testlightcube->model = glm::rotate(testlightcube->model, 0.05f, glm::vec3(1.0f, 0.f, 0.0f));
+
             if(playerInte.selectedID != -1)
             {
                 Selectable* selectedBefore = dynamic_cast<Selectable*>(obiekty[playerInte.selectedID].get());
@@ -190,6 +189,10 @@ void Game::input(const double deltaTime)
 
         if(event.button.button == SDL_BUTTON_RIGHT)
         {
+            LightCube* testlightcube = dynamic_cast<LightCube*>(lights[0].get());
+            testlightcube->model = glm::translate(testlightcube->model,glm::vec3(0.f, 0.f, -0.5f));
+            testlightcube->model = glm::rotate(testlightcube->model, -0.05f, glm::vec3(1.0f, 0.f, 0.0f));
+
             if(!holdRotate && ray.closestID != -1 && playerInte.selectedID != -1)
             {
                 Selectable* selectedBefore = dynamic_cast<Selectable*>(obiekty[playerInte.selectedID].get());
@@ -312,7 +315,7 @@ void Game::render(double deltaTime)
 
     //depth map rendering
 
-    glActiveTexture(GL_TEXTURE1);
+    glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D, depthMap);
 
     glUseProgram(shaderPrograms[2]);
@@ -326,8 +329,16 @@ void Game::render(double deltaTime)
 
     for(const auto& pair : obiekty)
     {
-        pair.second->render(shaderPrograms[2],shaderPrograms);
+       // pair.second->render(shaderPrograms[2],shaderPrograms);
     }
+
+    testCube.remodel(1.5f,0.2f,1.5f);
+    testCube.model = glm::translate(glm::mat4(1.f),glm::vec3(0.f,1.9f,3.f));
+    testCube.Draw(shaderPrograms[2],true);
+
+    testCube.remodel(3.f,0.2f,3.f);
+    testCube.model = glm::translate(glm::mat4(1.f),glm::vec3(0.f,1.3f,3.f));
+    testCube.Draw(shaderPrograms[2],true);
 
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
     // reset viewport
@@ -343,8 +354,17 @@ void Game::render(double deltaTime)
     glUseProgram(shaderPrograms[0]);
     for(const auto& pair : obiekty)
     {
-        pair.second->render(shaderPrograms[0],shaderPrograms);
+       // pair.second->render(shaderPrograms[0],shaderPrograms);
     }
+
+    testCube.remodel(1.5f,0.2f,1.5f);
+    testCube.model = glm::translate(glm::mat4(1.f),glm::vec3(0.f,1.9f,3.f));
+    testCube.Draw(shaderPrograms[0],true);
+
+    testCube.remodel(3.f,0.2f,3.f);
+    testCube.model = glm::translate(glm::mat4(1.f),glm::vec3(0.f,1.3f,3.f));
+    testCube.Draw(shaderPrograms[0],true);
+
 
     //test czy unit dobrze widzi swoj moverange
     if(playerInte.selectedID != -1)

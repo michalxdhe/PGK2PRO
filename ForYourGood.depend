@@ -1066,3 +1066,116 @@
 
 1714991992 c:\garigette\foryourgood\playerinterface.h
 
+1715625119 source:c:\garigette\pgk2pro\main.cpp
+	<iostream>
+	<fstream>
+	<sstream>
+	<time.h>
+	<memory>
+	<algorithm>
+	<unordered_map>
+	<queue>
+	<vector>
+	<list>
+	<limits>
+	<GL/glew.h>
+	<glm/glm.hpp>
+	<glm/gtc/matrix_transform.hpp>
+	<glm/gtc/type_ptr.hpp>
+	<glm/gtx/hash.hpp>
+	<SDL2/SDL.h>
+	<SDL2/SDL_opengl.h>
+	<assimp/Importer.hpp>
+	<assimp/scene.h>
+	<assimp/postprocess.h>
+	"stb_image.h"
+	"dijkstra.h"
+	"units.h"
+	"camerarevolting.h"
+	"boardlogic.h"
+	"mousepick.h"
+	"PlayerInterface.h"
+	"globals.h"
+	"mindless.h"
+	"shaders.h"
+	"model.h"
+
+1715449405 c:\garigette\pgk2pro\stb_image.h
+	"stb_image.h"
+	<stdio.h>
+	<stdlib.h>
+	<stdarg.h>
+	<stddef.h>
+	<stdlib.h>
+	<string.h>
+	<limits.h>
+	<math.h>
+	<stdio.h>
+	<assert.h>
+	<stdint.h>
+	<emmintrin.h>
+	<intrin.h>
+	<arm_neon.h>
+
+1715449405 c:\garigette\pgk2pro\camerarevolting.h
+
+1715619032 c:\garigette\pgk2pro\boardlogic.h
+	"metaphysical.h"
+	"model.h"
+
+1715623792 c:\garigette\pgk2pro\metaphysical.h
+
+1715449405 c:\garigette\pgk2pro\model.h
+	<GL/glew.h>
+	<glm/glm.hpp>
+	<glm/gtc/matrix_transform.hpp>
+	<glm/gtc/type_ptr.hpp>
+	<glm/gtx/hash.hpp>
+	<SDL2/SDL.h>
+	<SDL2/SDL_opengl.h>
+	<assimp/Importer.hpp>
+	<assimp/scene.h>
+	<assimp/postprocess.h>
+	"mesh.h"
+	<string>
+	<fstream>
+	<sstream>
+	<iostream>
+	<map>
+	<vector>
+
+1715449405 c:\garigette\pgk2pro\mesh.h
+	<GL/glew.h>
+	<glm/glm.hpp>
+	<glm/gtc/matrix_transform.hpp>
+	<glm/gtc/type_ptr.hpp>
+	<SDL2/SDL.h>
+	<SDL2/SDL_opengl.h>
+	<string>
+	<vector>
+
+1715449405 c:\garigette\pgk2pro\mousepick.h
+
+1715449405 c:\garigette\pgk2pro\globals.h
+
+1715618490 c:\garigette\pgk2pro\mindless.h
+	"metaphysical.h"
+	"model.h"
+
+1715449405 c:\garigette\pgk2pro\shaders.h
+
+1715449405 source:c:\garigette\pgk2pro\weird.cpp
+	"stb_image.h"
+
+1715614274 c:\garigette\pgk2pro\dijkstra.h
+	"boardlogic.h"
+
+1715443578 c:\garigette\pgk2pro\units.h
+	"metaphysical.h"
+	"model.h"
+	"boardlogic.h"
+
+1714991992 c:\garigette\pgk2pro\playerinterface.h
+
+1715449405 c:\garigette\pgk2pro\cameraworks.h
+

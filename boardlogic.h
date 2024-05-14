@@ -88,7 +88,7 @@ public:
 
     void update(double deltaTime)
     {
-
+   // view = translate(view, glm::vec3(0.f,0.002f,0.f));
     }
 
     void render(unsigned int shaderProgram, std::vector<unsigned int> shaderPrograms)
@@ -96,8 +96,22 @@ public:
         glUniformMatrix4fv(glGetUniformLocation(shaderProgram, "model"), 1, GL_FALSE, glm::value_ptr(view));
         if(cell.passable){
         this->model.Draw(shaderProgram);
+        if(shaderProgram != shaderPrograms[2])
         boundingBox.Draw(shaderProgram, hovering || isSelected);
         }
+
+        glm::mat4 temp = view;
+
+        view = translate(view, glm::vec3(0.f,2.f,0.f));
+
+        glUniformMatrix4fv(glGetUniformLocation(shaderProgram, "model"), 1, GL_FALSE, glm::value_ptr(view));
+        if(cell.passable){
+        this->model.Draw(shaderProgram);
+        if(shaderProgram != shaderPrograms[2])
+        boundingBox.Draw(shaderProgram, hovering || isSelected);
+        }
+
+        view = temp;
     }
 
     void onSelect()

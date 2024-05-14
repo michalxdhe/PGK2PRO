@@ -94,7 +94,6 @@ public:
         window = SDL_CreateWindow("siema",SDL_WINDOWPOS_UNDEFINED,SDL_WINDOWPOS_UNDEFINED,w, h, SDL_WINDOW_OPENGL | SDL_WINDOW_SHOWN);
         SDL_SetRelativeMouseMode(SDL_FALSE);
 
-        //SDL_ShowCursor(SDL_DISABLE);
         gContext = SDL_GL_CreateContext(window);
         glewInit();
         SDL_GL_SetSwapInterval(sign(vsync));

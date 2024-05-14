@@ -177,7 +177,7 @@ class LightSource : public Object
 public:
     glm::mat4 lightSpaceMatrix;
     glm::vec3 lightTarget;
-    glm::vec3 lightPos = glm::vec3(0.00000001f,3.f,0.00000001f);
+    glm::vec3 lightPos = glm::vec3(0.f,3.f,3.f);
 
     void bindDepthShader(std::vector<unsigned int>shaderPrograms)
     {
@@ -271,8 +271,8 @@ public:
         lightTarget = rotationMatrix * glm::vec3(0.f,-1.f,0.f); //ten drugi vector w mnozeniu to tam gdzie celuje swiatlo
         lightPos = glm::vec3(model * glm::vec4(glm::vec3(0.f,0.f,0.f), 1.0f));
         lightSpaceMatrix = calculateLightSpaceMatrix(lightPos, glm::vec3(0.f,1.f,0.f));
-        //model = glm::translate(model,glm::vec3(0.f, 0.f, 0.1f));
-        //model = glm::rotate(model, 0.01f, glm::vec3(1.0f, 0.f, 0.0f));
+        //model = glm::translate(model,glm::vec3(0.f, 0.f, 0.5f));
+        //model = glm::rotate(model, 0.05f, glm::vec3(1.0f, 0.f, 0.0f));
     }
 
     void render(unsigned int shaderProgram, std::vector<unsigned int> shaderPrograms)
