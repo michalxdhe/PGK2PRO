@@ -1,12 +1,12 @@
 #ifndef METAPHYSICAL_H_INCLUDED
 #define METAPHYSICAL_H_INCLUDED
 
-glm::mat4 calculateLightSpaceMatrix(glm::vec3 lightPos, glm::vec3 up)
+glm::mat4 calculateLightSpaceMatrix(glm::vec3 lightPos, glm::vec3 target, glm::vec3 up)
 {
-    glm::mat4 viewMatrix = glm::lookAt(lightPos, glm::vec3(0.0f), up);
+    glm::mat4 viewMatrix = glm::lookAt(lightPos, target, up);
 
-    float near_plane = 0.5f;
-    float far_plane = 5.0f;
+    float near_plane = 1.0f;
+    float far_plane = 7.5f;
 
     glm::mat4 projectionMatrix = glm::ortho(-10.0f, 10.0f, -10.0f, 10.0f, near_plane, far_plane);
 
@@ -177,7 +177,7 @@ class LightSource : public Object
 public:
     glm::mat4 lightSpaceMatrix;
     glm::vec3 lightTarget;
-    glm::vec3 lightPos = glm::vec3(0.f,3.f,3.f);
+    glm::vec3 lightPos = glm::vec3(0.0001f,3.f,0.0001f);
 
     void bindDepthShader(std::vector<unsigned int>shaderPrograms)
     {
@@ -268,9 +268,9 @@ public:
     void update(double deltaTime)
     {
         glm::mat3 rotationMatrix = glm::mat3(model);
-        lightTarget = rotationMatrix * glm::vec3(0.f,-1.f,0.f); //ten drugi vector w mnozeniu to tam gdzie celuje swiatlo
         lightPos = glm::vec3(model * glm::vec4(glm::vec3(0.f,0.f,0.f), 1.0f));
-        lightSpaceMatrix = calculateLightSpaceMatrix(lightPos, glm::vec3(0.f,1.f,0.f));
+        lightTarget = rotationMatrix * glm::vec3(0.f,-1.f,0.f); //ten drugi vector w mnozeniu to tam gdzie celuje swiatlo
+        lightSpaceMatrix = calculateLightSpaceMatrix(lightPos, lightTarget, rotationMatrix * glm::vec3(0.f,1.f,0.f));
         //model = glm::translate(model,glm::vec3(0.f, 0.f, 0.5f));
         //model = glm::rotate(model, 0.05f, glm::vec3(1.0f, 0.f, 0.0f));
     }

@@ -1066,7 +1066,7 @@
 
 1714991992 c:\garigette\foryourgood\playerinterface.h
 
-1715625119 source:c:\garigette\pgk2pro\main.cpp
+1716498389 source:c:\garigette\pgk2pro\main.cpp
 	<iostream>
 	<fstream>
 	<sstream>
@@ -1119,11 +1119,11 @@
 
 1715449405 c:\garigette\pgk2pro\camerarevolting.h
 
-1715619032 c:\garigette\pgk2pro\boardlogic.h
+1716477385 c:\garigette\pgk2pro\boardlogic.h
 	"metaphysical.h"
 	"model.h"
 
-1715623792 c:\garigette\pgk2pro\metaphysical.h
+1716494293 c:\garigette\pgk2pro\metaphysical.h
 
 1715449405 c:\garigette\pgk2pro\model.h
 	<GL/glew.h>
@@ -1158,7 +1158,7 @@
 
 1715449405 c:\garigette\pgk2pro\globals.h
 
-1715618490 c:\garigette\pgk2pro\mindless.h
+1716498389 c:\garigette\pgk2pro\mindless.h
 	"metaphysical.h"
 	"model.h"
 
@@ -1178,4 +1178,22 @@
 1714991992 c:\garigette\pgk2pro\playerinterface.h
 
 1715449405 c:\garigette\pgk2pro\cameraworks.h
+
+1715175513 c:\garigette\pgk2pro\imgui\imgui.h
+	"imconfig.h"
+	<float.h>
+	<stdarg.h>
+	<stddef.h>
+	<string.h>
+	<assert.h>
+	"imgui_user.h"
+
+1715175513 c:\garigette\pgk2pro\imgui\imconfig.h
+
+1715175513 c:\garigette\pgk2pro\imgui\imgui_impl_sdl2.h
+	"imgui.h"
+
+1715175513 c:\garigette\pgk2pro\imgui\imgui_impl_opengl3.h
+	"imgui.h"
+	<TargetConditionals.h>
 

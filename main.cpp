@@ -169,9 +169,9 @@ void Game::input(const double deltaTime)
     {
         if(event.button.button == SDL_BUTTON_LEFT)
         {
-            LightCube* testlightcube = dynamic_cast<LightCube*>(lights[0].get());
-            testlightcube->model = glm::translate(testlightcube->model,glm::vec3(0.f, 0.f, 0.5f));
-            testlightcube->model = glm::rotate(testlightcube->model, 0.05f, glm::vec3(1.0f, 0.f, 0.0f));
+            //LightCube* testlightcube = dynamic_cast<LightCube*>(lights[0].get());
+            //testlightcube->model = glm::translate(testlightcube->model,glm::vec3(0.f, 0.f, 0.5f));
+            //testlightcube->model = glm::rotate(testlightcube->model, 0.05f, glm::vec3(1.0f, 0.f, 0.0f));
 
             if(playerInte.selectedID != -1)
             {
@@ -189,9 +189,9 @@ void Game::input(const double deltaTime)
 
         if(event.button.button == SDL_BUTTON_RIGHT)
         {
-            LightCube* testlightcube = dynamic_cast<LightCube*>(lights[0].get());
-            testlightcube->model = glm::translate(testlightcube->model,glm::vec3(0.f, 0.f, -0.5f));
-            testlightcube->model = glm::rotate(testlightcube->model, -0.05f, glm::vec3(1.0f, 0.f, 0.0f));
+            //LightCube* testlightcube = dynamic_cast<LightCube*>(lights[0].get());
+            //testlightcube->model = glm::translate(testlightcube->model,glm::vec3(0.f, 0.f, -0.5f));
+            //testlightcube->model = glm::rotate(testlightcube->model, -0.05f, glm::vec3(1.0f, 0.f, 0.0f));
 
             if(!holdRotate && ray.closestID != -1 && playerInte.selectedID != -1)
             {
@@ -329,16 +329,8 @@ void Game::render(double deltaTime)
 
     for(const auto& pair : obiekty)
     {
-       // pair.second->render(shaderPrograms[2],shaderPrograms);
+       pair.second->render(shaderPrograms[2],shaderPrograms);
     }
-
-    testCube.remodel(1.5f,0.2f,1.5f);
-    testCube.model = glm::translate(glm::mat4(1.f),glm::vec3(0.f,1.9f,3.f));
-    testCube.Draw(shaderPrograms[2],true);
-
-    testCube.remodel(3.f,0.2f,3.f);
-    testCube.model = glm::translate(glm::mat4(1.f),glm::vec3(0.f,1.3f,3.f));
-    testCube.Draw(shaderPrograms[2],true);
 
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
     // reset viewport
@@ -354,18 +346,9 @@ void Game::render(double deltaTime)
     glUseProgram(shaderPrograms[0]);
     for(const auto& pair : obiekty)
     {
-       // pair.second->render(shaderPrograms[0],shaderPrograms);
+        pair.second->render(shaderPrograms[0],shaderPrograms);
     }
-
-    testCube.remodel(1.5f,0.2f,1.5f);
-    testCube.model = glm::translate(glm::mat4(1.f),glm::vec3(0.f,1.9f,3.f));
-    testCube.Draw(shaderPrograms[0],true);
-
-    testCube.remodel(3.f,0.2f,3.f);
-    testCube.model = glm::translate(glm::mat4(1.f),glm::vec3(0.f,1.3f,3.f));
-    testCube.Draw(shaderPrograms[0],true);
-
-
+    //testhex.Draw(shaderPrograms[0]);
     //test czy unit dobrze widzi swoj moverange
     if(playerInte.selectedID != -1)
     {
