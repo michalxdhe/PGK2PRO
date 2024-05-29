@@ -1,15 +1,6 @@
 #ifndef MESH_H_INCLUDED
 #define MESH_H_INCLUDED
 
-#include <GL/glew.h>
-#include <glm/glm.hpp>
-#include <glm/gtc/matrix_transform.hpp>
-#include <glm/gtc/type_ptr.hpp>
-#include <SDL2/SDL.h>
-#include <SDL2/SDL_opengl.h>
-
-#include <string>
-#include <vector>
 using namespace std;
 
 #define MAX_BONE_INFLUENCE 4

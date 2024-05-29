@@ -1,9 +1,6 @@
 #ifndef BOARDLOGIC_H_INCLUDED
 #define BOARDLOGIC_H_INCLUDED
 
-#include "metaphysical.h"
-#include "model.h"
-
 using namespace std;
 
 static glm::vec3 cube_direction_vectors[] =

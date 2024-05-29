@@ -61,8 +61,30 @@
 		<Unit filename="boardlogic.h" />
 		<Unit filename="camerarevolting.h" />
 		<Unit filename="cameraworks.h" />
+		<Unit filename="common.h" />
+		<Unit filename="customgui.cpp">
+			<Option compile="0" />
+			<Option link="0" />
+		</Unit>
+		<Unit filename="customgui.h" />
 		<Unit filename="dijkstra.h" />
 		<Unit filename="globals.h" />
+		<Unit filename="imgui/imconfig.h" />
+		<Unit filename="imgui/imgui.cpp" />
+		<Unit filename="imgui/imgui.h" />
+		<Unit filename="imgui/imgui_demo.cpp" />
+		<Unit filename="imgui/imgui_draw.cpp" />
+		<Unit filename="imgui/imgui_impl_opengl3.cpp" />
+		<Unit filename="imgui/imgui_impl_opengl3.h" />
+		<Unit filename="imgui/imgui_impl_opengl3_loader.h" />
+		<Unit filename="imgui/imgui_impl_sdl2.cpp" />
+		<Unit filename="imgui/imgui_impl_sdl2.h" />
+		<Unit filename="imgui/imgui_internal.h" />
+		<Unit filename="imgui/imgui_tables.cpp" />
+		<Unit filename="imgui/imgui_widgets.cpp" />
+		<Unit filename="imgui/imstb_rectpack.h" />
+		<Unit filename="imgui/imstb_textedit.h" />
+		<Unit filename="imgui/imstb_truetype.h" />
 		<Unit filename="main.cpp" />
 		<Unit filename="mesh.h" />
 		<Unit filename="metaphysical.h" />
@@ -70,6 +92,10 @@
 		<Unit filename="model.h" />
 		<Unit filename="mousepick.h" />
 		<Unit filename="shaders.h" />
+		<Unit filename="units.cpp">
+			<Option compile="0" />
+			<Option link="0" />
+		</Unit>
 		<Unit filename="units.h" />
 		<Unit filename="weird.cpp" />
 		<Extensions>

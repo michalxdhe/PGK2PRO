@@ -4,6 +4,9 @@
 namespace Globals
 {
 static int64_t numberOfEntities = 0;
+static int64_t windowH;
+static int64_t windowW;
+
 };
 
 

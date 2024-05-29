@@ -1,51 +1,22 @@
-#include <iostream>
-#include <fstream>
-#include <sstream>
-#include <time.h>
-#include <memory>
-#include <algorithm>
-#include <unordered_map>
-#include <queue>
-#include <vector>
-#include <list>
-#include <limits>
-
-#include <GL/glew.h>
-#include <glm/glm.hpp>
-#include <glm/gtc/matrix_transform.hpp>
-#include <glm/gtc/type_ptr.hpp>
-#include <glm/gtx/hash.hpp>
-#include <SDL2/SDL.h>
-#include <SDL2/SDL_opengl.h>
-
-#include <assimp/Importer.hpp>
-#include <assimp/scene.h>
-#include <assimp/postprocess.h>
-
-#include "stb_image.h"
-
-//#include "cameraworks.h"
-#include "dijkstra.h"
-#include "units.h"
-#include "camerarevolting.h"
-#include "boardlogic.h"
-#include "mousepick.h"
-#include "PlayerInterface.h"
-#include "globals.h"
+#include "common.h"
 #include "mindless.h"
-#include "shaders.h"
-#include "model.h"
+
 
 using namespace std;
 
 void GLAPIENTRY MessageCallback(GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, const GLchar* message, const void* userParam)
 {
-    std::cerr << "OpenGL Error: " << message << std::endl;
-    //abort();
+    if (severity == GL_DEBUG_SEVERITY_HIGH || severity == GL_DEBUG_SEVERITY_MEDIUM)
+    {
+        std::cerr << "OpenGL Warning: " << message << std::endl;
+    }
 }
 
 void Game::init()
 {
+    playerInte = make_unique<PlayerInterface>(1);
+    initiativeGui = make_unique<InitiativeTrackerGui>(ImVec2(Globals::windowW, Globals::windowH),&initiativeQueue);
+
     testhex = Model("Modeldos/Wieza.obj");
     HexGrid = GenerateHexGrid(5);
 
@@ -115,6 +86,10 @@ void Game::init()
     view = glm::translate(view, glm::vec3(0.0f, 0.0f, -5.0f));
     projection = glm::perspective(glm::radians(45.0f),  static_cast<float>(windowW)/static_cast<float>(windowH), 0.1f, 100.0f);
 
+    ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0, 0));
+    ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(0, 0));
+    ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(0, 0));
+
     mouseTrack = MousePicker(projection,view,window);
 
     lights.insert(make_pair<int,unique_ptr<LightSource>>(Globals::numberOfEntities++,make_unique<LightCube>(0.2f,0.2f,0.2f)));
@@ -130,13 +105,17 @@ void Game::init()
         obiekty[Globals::numberOfEntities++] = make_unique<Hexagon>(testhex, pair.second);
     }
 
-    obiekty[Globals::numberOfEntities++] = make_unique<Unit>(glm::vec3(2.f,0.f,-2.f), testhex, HexGrid);
+    obiekty[Globals::numberOfEntities++] = make_unique<Unit>(glm::vec3(2.f,0.f,-2.f), testhex, &HexGrid);
+    obiekty[Globals::numberOfEntities++] = make_unique<Unit>(glm::vec3(3.f,0.f,-3.f), testhex, &HexGrid);
+    obiekty[Globals::numberOfEntities++] = make_unique<Unit>(glm::vec3(0.f,0.f,0.f), testhex, &HexGrid);
 
     testCube = Cube(0.15f,0.01f,0.15f,glm::vec3(0.f,2.5f,0.f));
 }
 
 void Game::input(const double deltaTime)
 {
+    ImGui_ImplSDL2_ProcessEvent(&event);
+    ImguiIOflag = ImGui::GetIO().WantCaptureMouse;
     switch(event.type)
     {
     case SDL_QUIT:
@@ -154,6 +133,9 @@ void Game::input(const double deltaTime)
         if(event.key.keysym.sym == SDLK_ESCAPE)
             shutdown = 1;
 
+        if(event.key.keysym.sym == SDLK_SPACE)
+            initiativeQueue.pop_front();
+
         break;
     case SDL_KEYUP:
         if(event.key.keysym.sym == SDLK_w)
@@ -167,23 +149,23 @@ void Game::input(const double deltaTime)
         break;
     case SDL_MOUSEBUTTONDOWN:
     {
-        if(event.button.button == SDL_BUTTON_LEFT)
+        if(event.button.button == SDL_BUTTON_LEFT && !ImguiIOflag)
         {
             //LightCube* testlightcube = dynamic_cast<LightCube*>(lights[0].get());
             //testlightcube->model = glm::translate(testlightcube->model,glm::vec3(0.f, 0.f, 0.5f));
             //testlightcube->model = glm::rotate(testlightcube->model, 0.05f, glm::vec3(1.0f, 0.f, 0.0f));
-
-            if(playerInte.selectedID != -1)
+            //playerInte->ore++; debug shit
+            if(playerInte->selectedID != -1)
             {
-                Selectable* selectedBefore = dynamic_cast<Selectable*>(obiekty[playerInte.selectedID].get());
+                Selectable* selectedBefore = dynamic_cast<Selectable*>(obiekty[playerInte->selectedID].get());
                 selectedBefore->isSelected = false;
-                playerInte.selectedID = -1;
+                playerInte->selectedID = -1;
             }
             if(!holdRotate && ray.closestID != -1)
             {
                 Selectable* hovered = dynamic_cast<Selectable*>(obiekty[ray.closestID].get());
                 hovered->onSelect();
-                playerInte.selectedID = ray.closestID;
+                playerInte->selectedID = ray.closestID;
             }
         }
 
@@ -193,9 +175,9 @@ void Game::input(const double deltaTime)
             //testlightcube->model = glm::translate(testlightcube->model,glm::vec3(0.f, 0.f, -0.5f));
             //testlightcube->model = glm::rotate(testlightcube->model, -0.05f, glm::vec3(1.0f, 0.f, 0.0f));
 
-            if(!holdRotate && ray.closestID != -1 && playerInte.selectedID != -1)
+            if(!holdRotate && ray.closestID != -1 && playerInte->selectedID != -1)
             {
-                Selectable* selectedBefore = dynamic_cast<Selectable*>(obiekty[playerInte.selectedID].get());
+                Selectable* selectedBefore = dynamic_cast<Selectable*>(obiekty[playerInte->selectedID].get());
                 Selectable* target = dynamic_cast<Selectable*>(obiekty[ray.closestID].get());
                 if(selectedBefore != nullptr && target != nullptr)
                 {
@@ -240,6 +222,14 @@ void Game::input(const double deltaTime)
 
 void Game::update(const double deltaTime)
 {
+    ImGui_ImplOpenGL3_NewFrame();
+    ImGui_ImplSDL2_NewFrame();
+    ImGui::NewFrame();
+
+    if(initiativeQueue.empty()){
+            initiativeQueueTemp.clear();
+    }
+
     //wtf?
     if(kamera.w)
         kamera.ProcessKeyboard(FORWARD, deltaTime);
@@ -264,14 +254,29 @@ void Game::update(const double deltaTime)
 
     for(const auto& pair : obiekty)
     {
-        Selectable* d = dynamic_cast<Selectable*>(pair.second.get());
-        if (d != nullptr)
-        {
-            collisonCubeRay(ray,d->boundingBox,pair.first);
-            d->refresh();
+        if(!holdRotate){
+            Selectable* d = dynamic_cast<Selectable*>(pair.second.get());
+            if (d != nullptr)
+            {
+                collisonCubeRay(ray,d->boundingBox,pair.first);
+                d->refresh();
+            }
+        }
+
+        Unit* d = dynamic_cast<Unit*>(pair.second.get());
+
+        if(d != nullptr && initiativeQueue.empty()){
+            initiativeQueueTemp.push_back(*d);
         }
 
         pair.second->update(deltaTime);
+    }
+
+    if(initiativeQueue.empty() && !initiativeQueueTemp.empty()){
+            sort(initiativeQueueTemp.begin(),initiativeQueueTemp.end(),[](const Unit& a, const Unit& b){
+                 return a.speed > b.speed;
+                 });
+            initiativeQueue = initiativeQueueTemp;
     }
 
     if(ray.closestID != -1)
@@ -348,11 +353,11 @@ void Game::render(double deltaTime)
     {
         pair.second->render(shaderPrograms[0],shaderPrograms);
     }
-    //testhex.Draw(shaderPrograms[0]);
+
     //test czy unit dobrze widzi swoj moverange
-    if(playerInte.selectedID != -1)
+    if(playerInte->selectedID != -1)
     {
-        Unit* selectedUnit = dynamic_cast<Unit*>(obiekty[playerInte.selectedID].get());
+        Unit* selectedUnit = dynamic_cast<Unit*>(obiekty[playerInte->selectedID].get());
         if (selectedUnit != nullptr)
         {
             for(auto& pair : selectedUnit->reachableHexes)
@@ -362,6 +367,12 @@ void Game::render(double deltaTime)
             }
         }
     }
+
+    playerInte->renderGui(shaderPrograms[0],shaderPrograms);
+    initiativeGui->render(shaderPrograms[0],shaderPrograms);
+
+    ImGui::Render();
+    ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 }
 
 void Game::cleanup()

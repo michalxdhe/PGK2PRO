@@ -1066,39 +1066,9 @@
 
 1714991992 c:\garigette\foryourgood\playerinterface.h
 
-1716498389 source:c:\garigette\pgk2pro\main.cpp
-	<iostream>
-	<fstream>
-	<sstream>
-	<time.h>
-	<memory>
-	<algorithm>
-	<unordered_map>
-	<queue>
-	<vector>
-	<list>
-	<limits>
-	<GL/glew.h>
-	<glm/glm.hpp>
-	<glm/gtc/matrix_transform.hpp>
-	<glm/gtc/type_ptr.hpp>
-	<glm/gtx/hash.hpp>
-	<SDL2/SDL.h>
-	<SDL2/SDL_opengl.h>
-	<assimp/Importer.hpp>
-	<assimp/scene.h>
-	<assimp/postprocess.h>
-	"stb_image.h"
-	"dijkstra.h"
-	"units.h"
-	"camerarevolting.h"
-	"boardlogic.h"
-	"mousepick.h"
-	"PlayerInterface.h"
-	"globals.h"
+1717018771 source:c:\garigette\pgk2pro\main.cpp
+	"common.h"
 	"mindless.h"
-	"shaders.h"
-	"model.h"
 
 1715449405 c:\garigette\pgk2pro\stb_image.h
 	"stb_image.h"
@@ -1117,65 +1087,53 @@
 	<intrin.h>
 	<arm_neon.h>
 
-1715449405 c:\garigette\pgk2pro\camerarevolting.h
+1717009471 c:\garigette\pgk2pro\camerarevolting.h
 
-1716477385 c:\garigette\pgk2pro\boardlogic.h
-	"metaphysical.h"
-	"model.h"
+1717009471 c:\garigette\pgk2pro\boardlogic.h
 
-1716494293 c:\garigette\pgk2pro\metaphysical.h
+1717009471 c:\garigette\pgk2pro\metaphysical.h
+	"common.h"
 
-1715449405 c:\garigette\pgk2pro\model.h
-	<GL/glew.h>
-	<glm/glm.hpp>
-	<glm/gtc/matrix_transform.hpp>
-	<glm/gtc/type_ptr.hpp>
-	<glm/gtx/hash.hpp>
-	<SDL2/SDL.h>
-	<SDL2/SDL_opengl.h>
-	<assimp/Importer.hpp>
-	<assimp/scene.h>
-	<assimp/postprocess.h>
+1717009472 c:\garigette\pgk2pro\model.h
 	"mesh.h"
-	<string>
-	<fstream>
-	<sstream>
-	<iostream>
-	<map>
-	<vector>
+	"stb_image.h"
 
-1715449405 c:\garigette\pgk2pro\mesh.h
-	<GL/glew.h>
-	<glm/glm.hpp>
-	<glm/gtc/matrix_transform.hpp>
-	<glm/gtc/type_ptr.hpp>
-	<SDL2/SDL.h>
-	<SDL2/SDL_opengl.h>
-	<string>
-	<vector>
+1717009472 c:\garigette\pgk2pro\mesh.h
 
-1715449405 c:\garigette\pgk2pro\mousepick.h
+1717009471 c:\garigette\pgk2pro\mousepick.h
 
-1715449405 c:\garigette\pgk2pro\globals.h
+1717009471 c:\garigette\pgk2pro\globals.h
 
-1716498389 c:\garigette\pgk2pro\mindless.h
+1717017513 c:\garigette\pgk2pro\mindless.h
 	"metaphysical.h"
 	"model.h"
+	"PlayerInterface.h"
+	"mousepick.h"
+	"camerarevolting.h"
+	"globals.h"
+	"units.h"
+	"customgui.h"
+	"boardlogic.h"
+	"units.cpp"
+	"customgui.cpp"
 
-1715449405 c:\garigette\pgk2pro\shaders.h
+1717009471 c:\garigette\pgk2pro\shaders.h
+	"common.h"
+	"stb_image.h"
 
 1715449405 source:c:\garigette\pgk2pro\weird.cpp
 	"stb_image.h"
 
-1715614274 c:\garigette\pgk2pro\dijkstra.h
+1717012978 c:\garigette\pgk2pro\dijkstra.h
 	"boardlogic.h"
 
-1715443578 c:\garigette\pgk2pro\units.h
-	"metaphysical.h"
-	"model.h"
-	"boardlogic.h"
+1717018829 c:\garigette\pgk2pro\units.h
+	"globals.h"
+	"dijkstra.h"
 
-1714991992 c:\garigette\pgk2pro\playerinterface.h
+1717013806 c:\garigette\pgk2pro\playerinterface.h
+	"globals.h"
+	"customgui.h"
 
 1715449405 c:\garigette\pgk2pro\cameraworks.h
 
@@ -1196,4 +1154,185 @@
 1715175513 c:\garigette\pgk2pro\imgui\imgui_impl_opengl3.h
 	"imgui.h"
 	<TargetConditionals.h>
+
+1716751675 source:c:\garigette\pgk2pro\imgui\imgui_impl_opengl3.cpp
+	"imgui.h"
+	"imgui_impl_opengl3.h"
+	<stdio.h>
+	<stdint.h>
+	<TargetConditionals.h>
+	<OpenGLES/ES2/gl.h>
+	<GLES2/gl2.h>
+	<GLES2/gl2ext.h>
+	<OpenGLES/ES3/gl.h>
+	<GLES3/gl3.h>
+	"imgui_impl_opengl3_loader.h"
+	<stdio.h>
+
+1715175513 c:\garigette\pgk2pro\imgui\imgui_impl_opengl3_loader.h
+	<stdint.h>
+	<windows.h>
+	<stdlib.h>
+	<windows.h>
+	<dlfcn.h>
+	<dlfcn.h>
+
+1716750140 source:c:\garigette\pgk2pro\imgui\imgui_impl_sdl2.cpp
+	"imgui.h"
+	"imgui_impl_sdl2.h"
+	<SDL2/SDL.h>
+	<SDL2/SDL_syswm.h>
+	<TargetConditionals.h>
+
+1680720347 c:\sdl2\include\sdl2\sdl_syswm.h
+	"SDL_stdinc.h"
+	"SDL_error.h"
+	"SDL_video.h"
+	"SDL_version.h"
+	<windows.h>
+	<Inspectable.h>
+	<X11/Xlib.h>
+	<X11/Xatom.h>
+	<directfb.h>
+	<UIKit/UIKit.h>
+	"SDL_egl.h"
+	<os2.h>
+	"begin_code.h"
+	"close_code.h"
+
+1680720347 c:\sdl2\include\sdl2\sdl_egl.h
+	<psp2/types.h>
+	<EGL/egl.h>
+	<EGL/eglext.h>
+	<stdint.h>
+	<inttypes.h>
+	<stdint.h>
+	<windows.h>
+	<X11/Xlib.h>
+	<X11/Xutil.h>
+	<kernel/image.h>
+
+1715175513 source:c:\garigette\pgk2pro\imgui\imgui.cpp
+	"imgui.h"
+	"imgui_internal.h"
+	<stdio.h>
+	<stdint.h>
+	<Windows.h>
+	<windows.h>
+	<TargetConditionals.h>
+	"stb_sprintf.h"
+	<Carbon/Carbon.h>
+	<imm.h>
+	"imgui_user.inl"
+
+1715175513 c:\garigette\pgk2pro\imgui\imgui_internal.h
+	"imgui.h"
+	<stdio.h>
+	<stdlib.h>
+	<math.h>
+	<limits.h>
+	<immintrin.h>
+	"imstb_textedit.h"
+
+1715175513 c:\garigette\pgk2pro\imgui\imstb_textedit.h
+	<string.h>
+
+1715175513 source:c:\garigette\pgk2pro\imgui\imgui_demo.cpp
+	"imgui.h"
+	<ctype.h>
+	<limits.h>
+	<math.h>
+	<stdio.h>
+	<stdlib.h>
+	<stdint.h>
+	<inttypes.h>
+
+1715175513 source:c:\garigette\pgk2pro\imgui\imgui_draw.cpp
+	"imgui.h"
+	"imgui_internal.h"
+	"misc/freetype/imgui_freetype.h"
+	<stdio.h>
+	"imstb_rectpack.h"
+	"imstb_truetype.h"
+
+1715175513 c:\garigette\pgk2pro\imgui\misc\freetype\imgui_freetype.h
+	"imgui.h"
+
+1715175513 c:\garigette\pgk2pro\imgui\imstb_rectpack.h
+	<stdlib.h>
+	<assert.h>
+
+1715175513 c:\garigette\pgk2pro\imgui\imstb_truetype.h
+	"stb_truetype.h"
+	<stdio.h>
+	"stb_truetype.h"
+	<math.h>
+	<math.h>
+	<math.h>
+	<math.h>
+	<math.h>
+	<stdlib.h>
+	<assert.h>
+	<string.h>
+	<string.h>
+
+1715175513 source:c:\garigette\pgk2pro\imgui\imgui_tables.cpp
+	"imgui.h"
+	"imgui_internal.h"
+	<stdint.h>
+
+1715175513 source:c:\garigette\pgk2pro\imgui\imgui_widgets.cpp
+	"imgui.h"
+	"imgui_internal.h"
+	<stdint.h>
+	"imstb_textedit.h"
+
+1717017513 c:\garigette\pgk2pro\customgui.h
+	"shaders.h"
+
+1716476903 c:\garigette\pgk2pro\shaders
+
+1716998773 c:\garigette\pgk2pro\guixunitspatch.h
+
+1717005990 source:c:\garigette\pgk2pro\customgui.cpp
+	"customgui.h"
+	"units.h"
+
+1717009471 c:\garigette\pgk2pro\common.h
+	<iostream>
+	<fstream>
+	<sstream>
+	<time.h>
+	<memory>
+	<algorithm>
+	<unordered_map>
+	<queue>
+	<vector>
+	<list>
+	<limits>
+	<GL/glew.h>
+	<glm/glm.hpp>
+	<glm/gtc/matrix_transform.hpp>
+	<glm/gtc/type_ptr.hpp>
+	<glm/gtx/hash.hpp>
+	"imgui.h"
+	"imgui_impl_sdl2.h"
+	"imgui_impl_opengl3.h"
+	<SDL2/SDL.h>
+	<SDL2/SDL_opengl.h>
+	<assimp/Importer.hpp>
+	<assimp/scene.h>
+	<assimp/postprocess.h>
+
+1717006602 source:c:\garigette\pgk2pro\units.cpp
+	"customgui.h"
+	"units.h"
+
+1717018829 c:\garigette\pgk2pro\units.cpp
+	"customgui.h"
+	"units.h"
+
+1717018434 c:\garigette\pgk2pro\customgui.cpp
+	"customgui.h"
+	"units.h"
 

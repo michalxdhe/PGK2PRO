@@ -1,17 +1,28 @@
 #ifndef MINDLESS_H_INCLUDED
 #define MINDLESS_H_INCLUDED
+
 #include "metaphysical.h"
 #include "model.h"
+#include "PlayerInterface.h"
+#include "mousepick.h"
+#include "camerarevolting.h"
+#include "globals.h"
+#include "units.h"
+#include "customgui.h"
+#include "boardlogic.h"
+#include "units.cpp"
+#include "customgui.cpp"
+
 
 using namespace std;
 
 
-double sign(double x)
+inline double sign(double x)
 {
     return x<0.0?-1.0:(x > 0.0 ? 1.0 : 0.0);
 }
 
-int sign(int x)
+inline int sign(int x)
 {
     return x<0.0?-1.0:(x > 0.0 ? 1.0 : 0.0);
 }
@@ -25,6 +36,8 @@ public:
     Cube testCube;
     double testCounter = 0;
 
+    bool ImguiIOflag = false;
+
     SDL_GLContext gContext;
 
     Model testhex;
@@ -35,7 +48,8 @@ public:
 
     MousePicker mouseTrack;
 
-    PlayerInterface playerInte;
+    unique_ptr<PlayerInterface> playerInte;
+    unique_ptr<InitiativeTrackerGui> initiativeGui;
 
     unordered_map<glm::vec3, HexCell> HexGrid;
 
@@ -51,6 +65,9 @@ public:
     glm::mat4 view = glm::mat4(1.0f);
     ///FoV oraz AspectRatio dla kamery
     glm::mat4 projection = glm::mat4(1.0f);;
+
+    deque<Unit> initiativeQueue;
+    deque<Unit> initiativeQueueTemp;
 
     unordered_map<int, unique_ptr<LightSource>> lights;
     unordered_map<int, unique_ptr<Object>> obiekty;
@@ -77,11 +94,23 @@ public:
         glewInit();
         SDL_GL_SetSwapInterval(0);
 
+        // Setup Dear ImGui context
+        IMGUI_CHECKVERSION();
+        ImGui::CreateContext();
+        ImGuiIO& io = ImGui::GetIO(); (void)io;
+        io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;
+
+        ImGui::StyleColorsDark();
+
+        ImGui_ImplSDL2_InitForOpenGL(window, gContext);
+        ImGui_ImplOpenGL3_Init("#version 330");
+
         glClearColor( 0.f, 0.f, 0.f, 1.f );
 
         windowH = 480;
         windowW = 640;
-
+        Globals::windowH = windowH;
+        Globals::windowW = windowW;
     }
 
     Game(int w, int h, int vsync)
@@ -98,13 +127,25 @@ public:
         glewInit();
         SDL_GL_SetSwapInterval(sign(vsync));
 
+        // Setup Dear ImGui context
+        IMGUI_CHECKVERSION();
+        ImGui::CreateContext();
+        ImGuiIO& io = ImGui::GetIO(); (void)io;
+        io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;
+
+        ImGui::StyleColorsDark();
+
+        ImGui_ImplSDL2_InitForOpenGL(window, gContext);
+        ImGui_ImplOpenGL3_Init("#version 330");
+
         glClearColor( 0.1f, 0.1f, 0.2f, 1.f );
 
 
 
         windowH = h;
         windowW = w;
-
+        Globals::windowH = windowH;
+        Globals::windowW = windowW;
     }
 
     ~Game()

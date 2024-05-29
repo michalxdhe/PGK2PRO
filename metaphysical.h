@@ -1,6 +1,8 @@
 #ifndef METAPHYSICAL_H_INCLUDED
 #define METAPHYSICAL_H_INCLUDED
 
+#include "common.h"
+
 glm::mat4 calculateLightSpaceMatrix(glm::vec3 lightPos, glm::vec3 target, glm::vec3 up)
 {
     glm::mat4 viewMatrix = glm::lookAt(lightPos, target, up);
