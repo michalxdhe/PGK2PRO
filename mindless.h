@@ -12,10 +12,9 @@
 #include "boardlogic.h"
 #include "units.cpp"
 #include "customgui.cpp"
-
+#include "abilities.h"
 
 using namespace std;
-
 
 inline double sign(double x)
 {
@@ -33,8 +32,6 @@ class Game
 public:
     SDL_Event event;
     SDL_Window *window;
-    Cube testCube;
-    double testCounter = 0;
 
     bool ImguiIOflag = false;
 
@@ -46,9 +43,15 @@ public:
 
     int mousePosx, mousePosy;
 
-    MousePicker mouseTrack;
+    int boardSize;
 
-    unique_ptr<PlayerInterface> playerInte;
+    MousePicker mouseTrack;
+    int currentPlayersTurn;
+    int numOfPlayers;
+    int64_t initiativeHighlightID = -1;
+    bool initiativeHighlightFlag = false;
+
+    unordered_map<int, unique_ptr<PlayerInterface>> playerIntes;
     unique_ptr<InitiativeTrackerGui> initiativeGui;
 
     unordered_map<glm::vec3, HexCell> HexGrid;
@@ -57,9 +60,7 @@ public:
     vector<unsigned int> shaderPrograms;
     RevoltingCamera kamera;
 
-    GLuint shadowMapFBO;
-    GLuint depthMap;
-    unsigned int teksturaTest;
+    Cube skyBox;
 
     ///Widok Kamery
     glm::mat4 view = glm::mat4(1.0f);
@@ -83,6 +84,7 @@ public:
     {
         SDL_Init(SDL_INIT_VIDEO);
 
+        SDL_GL_SetAttribute(SDL_GL_STENCIL_SIZE, 8);
         SDL_GL_SetAttribute( SDL_GL_CONTEXT_MAJOR_VERSION, 3 );
         SDL_GL_SetAttribute( SDL_GL_CONTEXT_MINOR_VERSION, 3 );
 
@@ -97,7 +99,8 @@ public:
         // Setup Dear ImGui context
         IMGUI_CHECKVERSION();
         ImGui::CreateContext();
-        ImGuiIO& io = ImGui::GetIO(); (void)io;
+        ImGuiIO& io = ImGui::GetIO();
+        (void)io;
         io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;
 
         ImGui::StyleColorsDark();
@@ -111,12 +114,18 @@ public:
         windowW = 640;
         Globals::windowH = windowH;
         Globals::windowW = windowW;
+
+        numOfPlayers = 2;
+        currentPlayersTurn = (rand()%2) + 1;
+
+        boardSize = 5;
     }
 
     Game(int w, int h, int vsync)
     {
         SDL_Init(SDL_INIT_VIDEO);
 
+        SDL_GL_SetAttribute(SDL_GL_STENCIL_SIZE, 8);
         SDL_GL_SetAttribute( SDL_GL_CONTEXT_MAJOR_VERSION, 3 );
         SDL_GL_SetAttribute( SDL_GL_CONTEXT_MINOR_VERSION, 3 );
 
@@ -130,7 +139,8 @@ public:
         // Setup Dear ImGui context
         IMGUI_CHECKVERSION();
         ImGui::CreateContext();
-        ImGuiIO& io = ImGui::GetIO(); (void)io;
+        ImGuiIO& io = ImGui::GetIO();
+        (void)io;
         io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;
 
         ImGui::StyleColorsDark();
@@ -140,12 +150,15 @@ public:
 
         glClearColor( 0.1f, 0.1f, 0.2f, 1.f );
 
-
-
         windowH = h;
         windowW = w;
         Globals::windowH = windowH;
         Globals::windowW = windowW;
+
+        numOfPlayers = 2;
+        currentPlayersTurn = (rand()%2) + 1;
+
+        boardSize = 5;
     }
 
     ~Game()
@@ -166,6 +179,69 @@ public:
     void input(double deltaTime);
     void update(double deltaTime);
     void render(double deltaTime);
+
+private:
+
+    void endTurn()
+    {
+        if(!initiativeQueue.empty())
+        {
+            Unit* eotUnit = dynamic_cast<Unit*>(obiekty[(initiativeQueue.front().ID)].get());
+            eotUnit->stats.yourTurn = false;
+            initiativeQueue.pop_front();
+            if(playerIntes[currentPlayersTurn]->selectedID != -1)
+            {
+                Selectable* selectedBefore = dynamic_cast<Selectable*>(obiekty[playerIntes[currentPlayersTurn]->selectedID].get());
+                if(selectedBefore != nullptr)
+                {
+                    selectedBefore->isSelected = 0;
+                }
+            }
+
+            playerIntes[currentPlayersTurn]->selectedID = -1;
+            if(!initiativeQueue.empty()){
+                Unit* eotUnit = dynamic_cast<Unit*>(obiekty[(initiativeQueue.front().ID)].get());
+                eotUnit->stats.yourTurn = true;
+                eotUnit->resolveStartOfTurn();
+                int resourceOnHex = (*eotUnit->hexGrid)[eotUnit->hexPos].presentResource;
+                if(resourceOnHex != -1)
+                    playerIntes[eotUnit->owner]->resources[resourceOnHex] += eotUnit->stats.miningCapability;
+                currentPlayersTurn = initiativeQueue.front().owner;
+            }
+        }
+
+        if(initiativeQueue.empty())
+        {
+            initiativeQueueTemp.clear();
+            for(const auto& pair : obiekty)
+            {
+                Unit* isUnit = dynamic_cast<Unit*>(pair.second.get());
+                if(isUnit != nullptr)
+                {
+                    initiativeQueueTemp.push_back(*isUnit);
+                    isUnit->stats.movRange = isUnit->stats.maxMovRange;
+                    isUnit->stats.actionTokens = min(isUnit->stats.maxActionTokens,isUnit->stats.actionTokens+1);
+                    endTurnEffects effects; ///placeholder, to powinno byc w kazdym interface gracza, lub w Game
+                    isUnit->resolveEndOfTurn(effects);
+                }
+            }
+
+            if(!initiativeQueueTemp.empty()){
+                sort(initiativeQueueTemp.begin(),initiativeQueueTemp.end(),[](const Unit& a, const Unit& b)
+                {
+                    return a.stats.speed > b.stats.speed;
+                });
+                initiativeQueue = initiativeQueueTemp;
+                Unit* eotUnit = dynamic_cast<Unit*>(obiekty[(initiativeQueue.front().ID)].get());
+                eotUnit->resolveStartOfTurn();
+                int resourceOnHex = (*eotUnit->hexGrid)[eotUnit->hexPos].presentResource;
+                if(resourceOnHex != -1)
+                    playerIntes[eotUnit->owner]->resources[resourceOnHex] += eotUnit->stats.miningCapability;
+                eotUnit->stats.yourTurn = true;
+                currentPlayersTurn = initiativeQueue.front().owner;
+            }
+        }
+    }
 };
 
 bool Game::inputCore(double deltaTime)
@@ -190,6 +266,52 @@ bool Game::renderCore(double deltaTime)
 
     SDL_GL_SwapWindow(window);
     return 1;
+}
+
+void doAttack(abilityCall info, Game *gameRef)
+{
+    int damage = info.culprit->stats.att;
+    for(auto it : info.target)
+    {
+        if(it->groundID != -1)
+        {
+            Unit* inZone = dynamic_cast<Unit*>(gameRef->obiekty[it->groundID].get());
+            if(inZone != nullptr)
+            {
+                inZone->stats.health = std::max(0, inZone->stats.health - damage);
+            }
+            if(inZone->stats.health <= 0)
+            {
+                it->groundID = -1;
+                it->occupiedGround = false;
+            }
+        }
+    }
+    //info.culprit->updateMovRange();
+}
+
+bool handleAbility(abilityCall info, Game *gameRef)
+{
+    switch(info.abilityID)
+    {
+    case ATTACK:
+        if(info.culprit->stats.actionTokens >= 1){
+            doAttack(info,gameRef);
+            info.culprit->stats.actionTokens -= 1;
+            return true;
+        }else
+        return false;
+        break;
+    case CREATE:
+
+        return false;
+        break;
+    case MISSILE:
+
+        return false;
+        break;
+    }
+    return false;
 }
 
 #endif // MINDLESS_H_INCLUDED

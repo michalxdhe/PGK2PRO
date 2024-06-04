@@ -17,6 +17,7 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 #include <glm/gtx/hash.hpp>
+#include <glm/gtx/string_cast.hpp>
 
 #define IMGUI_IMPL_OPENGL_LOADER_GLEW
 #define IMGUI_DEFINE_MATH_OPERATORS

@@ -12,4 +12,5 @@ static int64_t windowW;
 
 
 
+
 #endif // GLOBALS_H_INCLUDED

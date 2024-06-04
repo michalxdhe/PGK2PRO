@@ -14,11 +14,14 @@ void GLAPIENTRY MessageCallback(GLenum source, GLenum type, GLuint id, GLenum se
 
 void Game::init()
 {
-    playerInte = make_unique<PlayerInterface>(1);
-    initiativeGui = make_unique<InitiativeTrackerGui>(ImVec2(Globals::windowW, Globals::windowH),&initiativeQueue);
+    for(int i = 1; i <= numOfPlayers; i++)
+    {
+        playerIntes[i] = make_unique<PlayerInterface>();
+    }
+    initiativeGui = make_unique<InitiativeTrackerGui>(ImVec2(Globals::windowW, Globals::windowH),&initiativeQueue,&initiativeHighlightID,&initiativeHighlightFlag);
 
     testhex = Model("Modeldos/Wieza.obj");
-    HexGrid = GenerateHexGrid(5);
+    HexGrid = GenerateHexGrid(boardSize);
 
     glEnable(GL_DEBUG_OUTPUT);
     glDebugMessageCallback(MessageCallback, nullptr);
@@ -26,41 +29,13 @@ void Game::init()
     unsigned int vertexShader;
     unsigned int fragmentShader;
 
-    kamera = RevoltingCamera(glm::vec3(0.0f, 5.0f, -10.0f));
+    kamera = RevoltingCamera(glm::vec3(0.0f, 5.0f, -10.0f), glm::vec3(0.0f, 0.5f, 0.f));
 
     glEnable(GL_DEPTH_TEST);
-
-    // Create framebuffer
-    glGenFramebuffers(1, &shadowMapFBO);
-
-    // Create depth texture
-    glGenTextures(1, &depthMap);
-    glBindTexture(GL_TEXTURE_2D, depthMap);
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT, 1024, 1024, 0, GL_DEPTH_COMPONENT, GL_FLOAT, NULL);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
-    GLfloat borderColor[] = { 1.0, 1.0, 1.0, 1.0 };
-    glTexParameterfv(GL_TEXTURE_2D, GL_TEXTURE_BORDER_COLOR, borderColor);
-
-    glBindFramebuffer(GL_FRAMEBUFFER, shadowMapFBO);
-
-    // Attach depth texture to framebuffer
-    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, depthMap, 0);
-
-    //Wylaczanie kolorow
-    glDrawBuffer(GL_NONE);
-    glReadBuffer(GL_NONE);
-
-    // Check if framebuffer is complete
-    if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
-    {
-        std::cout << "Framebuffer not complete!" << std::endl;
-    }
-
-    // Unbind framebuffer
-    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+    glDepthFunc(GL_LESS);
+    glEnable(GL_STENCIL_TEST);
+    glStencilFunc(GL_NOTEQUAL, 1, 0xFF);
+    glStencilOp(GL_KEEP, GL_KEEP, GL_REPLACE);
 
     createAndCompileShader("shaders/vertexS.c",GL_VERTEX_SHADER,vertexShader);
     createAndCompileShader("shaders/fragmentS.c",GL_FRAGMENT_SHADER,fragmentShader);
@@ -74,21 +49,41 @@ void Game::init()
     createAndCompileShader("shaders/depthfragS.c",GL_FRAGMENT_SHADER,fragmentShader);
     shaderPrograms.push_back(createProgram(vertexShader,fragmentShader));
 
+    createAndCompileShader("shaders/skyBoxVertS.c",GL_VERTEX_SHADER,vertexShader);
+    createAndCompileShader("shaders/skyBoxFragS.c",GL_FRAGMENT_SHADER,fragmentShader);
+    shaderPrograms.push_back(createProgram(vertexShader,fragmentShader));
+
     glDeleteShader(vertexShader);
     glDeleteShader(fragmentShader);
-
-    glUseProgram(shaderPrograms[0]);
-
-    glActiveTexture(GL_TEXTURE0);
-    glBindTexture(GL_TEXTURE_2D, depthMap);
-    glUniform1i(glGetUniformLocation(shaderPrograms[0], "shadowMap"), 0);
 
     view = glm::translate(view, glm::vec3(0.0f, 0.0f, -5.0f));
     projection = glm::perspective(glm::radians(45.0f),  static_cast<float>(windowW)/static_cast<float>(windowH), 0.1f, 100.0f);
 
+    Object::viewRef = &view;
+    Object::projectionRef = &projection;
+
     ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0, 0));
     ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(0, 0));
     ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(0, 0));
+
+    glm::vec3 factionColors[10] = {
+        glm::vec3(1.0f, 0.0f, 0.0f),
+        glm::vec3(0.0f, 1.0f, 0.0f),
+        glm::vec3(0.0f, 0.0f, 1.0f),
+        glm::vec3(1.0f, 1.0f, 0.0f),
+        glm::vec3(0.0f, 1.0f, 1.0f),
+        glm::vec3(1.0f, 0.0f, 1.0f),
+        glm::vec3(0.5f, 0.5f, 0.5f),
+        glm::vec3(0.9f, 0.4f, 0.1f),
+        glm::vec3(0.5f, 0.0f, 0.5f),
+        glm::vec3(0.2f, 0.8f, 0.2f)
+    };
+
+    resModels[ORE] = Model("Model/Ore/Ore.obj");
+
+
+    glUseProgram(shaderPrograms[0]);
+    glUniform3fv(glGetUniformLocation(shaderPrograms[0], "factionColors"), 10, glm::value_ptr(factionColors[0]));
 
     mouseTrack = MousePicker(projection,view,window);
 
@@ -97,19 +92,32 @@ void Game::init()
     HexGrid[glm::vec3(0.f,0.f,0.f)].passable = 0;
     HexGrid[glm::vec3(0.f,0.f,0.f) + cube_direction_vectors[0]].passable = 0;
     HexGrid[glm::vec3(0.f,0.f,0.f) + cube_direction_vectors[3]].passable = 0;
-    HexGrid[glm::vec3(0.f,0.f,0.f) + cube_direction_vectors[2]*2.f].passable = 0;
-    HexGrid[glm::vec3(0.f,0.f,0.f) + cube_direction_vectors[0]*3.f].passable = 0;
+
+    for(int i = 0; i < 5; i++){//zmien to potem na ile surowcuw ma byc wygenerowany
+        glm::vec3 randomHex = getRandomHex(boardSize);
+        if(HexGrid[randomHex].passable)
+            HexGrid[randomHex].presentResource = 0; //zmien to potem na losowy surowiec
+        else{
+            i--;
+        }
+    }
+
+    skyBox = Cube(50.f,50.f,50.f);
 
     for(auto& pair : HexGrid)
     {
         obiekty[Globals::numberOfEntities++] = make_unique<Hexagon>(testhex, pair.second);
     }
 
-    obiekty[Globals::numberOfEntities++] = make_unique<Unit>(glm::vec3(2.f,0.f,-2.f), testhex, &HexGrid);
-    obiekty[Globals::numberOfEntities++] = make_unique<Unit>(glm::vec3(3.f,0.f,-3.f), testhex, &HexGrid);
-    obiekty[Globals::numberOfEntities++] = make_unique<Unit>(glm::vec3(0.f,0.f,0.f), testhex, &HexGrid);
+    obiekty[Globals::numberOfEntities++] = make_unique<GenericUnit>(glm::vec3(2.f,0.f,-2.f), &HexGrid, 1, Globals::numberOfEntities);
+    obiekty[Globals::numberOfEntities++] = make_unique<GenericUnit>(glm::vec3(3.f,0.f,-3.f), &HexGrid, 2,Globals::numberOfEntities);
+    obiekty[Globals::numberOfEntities++] = make_unique<GenericUnit>(glm::vec3(0.f,0.f,0.f), &HexGrid, 2,Globals::numberOfEntities);
+    obiekty[Globals::numberOfEntities++] = make_unique<GenericUnit>(glm::vec3(4.f,0.f,-4.f), &HexGrid, 1,Globals::numberOfEntities);
 
-    testCube = Cube(0.15f,0.01f,0.15f,glm::vec3(0.f,2.5f,0.f));
+    glStencilFunc(GL_ALWAYS, 1, 0xFF);
+    glStencilMask(0xFF);
+
+    endTurn();
 }
 
 void Game::input(const double deltaTime)
@@ -132,9 +140,8 @@ void Game::input(const double deltaTime)
             kamera.d=1;
         if(event.key.keysym.sym == SDLK_ESCAPE)
             shutdown = 1;
-
         if(event.key.keysym.sym == SDLK_SPACE)
-            initiativeQueue.pop_front();
+            endTurn();
 
         break;
     case SDL_KEYUP:
@@ -154,40 +161,85 @@ void Game::input(const double deltaTime)
             //LightCube* testlightcube = dynamic_cast<LightCube*>(lights[0].get());
             //testlightcube->model = glm::translate(testlightcube->model,glm::vec3(0.f, 0.f, 0.5f));
             //testlightcube->model = glm::rotate(testlightcube->model, 0.05f, glm::vec3(1.0f, 0.f, 0.0f));
-            //playerInte->ore++; debug shit
-            if(playerInte->selectedID != -1)
+            //playerIntes[currentPlayersTurn]->ore++; //debug shit
+
+            ///resolving abilities if any selected
+            abilityCall tryCalling{.abilityID = -1};
+            if(!holdRotate && ray.closestID != -1 && playerIntes[currentPlayersTurn]->selectedID != -1)
             {
-                Selectable* selectedBefore = dynamic_cast<Selectable*>(obiekty[playerInte->selectedID].get());
-                selectedBefore->isSelected = false;
-                playerInte->selectedID = -1;
+                Unit* selectedBefore = dynamic_cast<Unit*>(obiekty[playerIntes[currentPlayersTurn]->selectedID].get());
+                Selectable* target = dynamic_cast<Selectable*>(obiekty[ray.closestID].get());
+                if(selectedBefore != nullptr && target != nullptr)
+                {
+                    if(selectedBefore->selectedAbil != -1 && selectedBefore->ID == initiativeQueue.front().ID)
+                    {
+                        selectedBefore->commandLC(target, &tryCalling);
+                        handleAbility(tryCalling,this);
+                    }
+                }
             }
-            if(!holdRotate && ray.closestID != -1)
+
+            ///selecting and deselecting
+            if(tryCalling.abilityID == -1)
             {
-                Selectable* hovered = dynamic_cast<Selectable*>(obiekty[ray.closestID].get());
-                hovered->onSelect();
-                playerInte->selectedID = ray.closestID;
+                if(playerIntes[currentPlayersTurn]->selectedID != -1)
+                {
+                    Selectable* selectedBefore = dynamic_cast<Selectable*>(obiekty[playerIntes[currentPlayersTurn]->selectedID].get());
+                    selectedBefore->isSelected = false;
+                    playerIntes[currentPlayersTurn]->selectedID = -1;
+                }
+
+                if(!holdRotate && ray.closestID != -1)
+                {
+                    Selectable* hovered = dynamic_cast<Selectable*>(obiekty[ray.closestID].get());
+                    Unit* hasOwnership = dynamic_cast<Unit*>(obiekty[ray.closestID].get());
+                    if(hasOwnership == nullptr)
+                    {
+                        playerIntes[currentPlayersTurn]->selectedID = ray.closestID;
+                        hovered->onSelect();
+                    }
+                    else
+                    {
+                        if(hasOwnership->owner == currentPlayersTurn)
+                        {
+                            playerIntes[currentPlayersTurn]->selectedID = ray.closestID;
+                            hovered->onSelect();
+                        }
+                    }
+                }
             }
+
         }
 
-        if(event.button.button == SDL_BUTTON_RIGHT)
+        if(event.button.button == SDL_BUTTON_RIGHT && !ImguiIOflag)
         {
             //LightCube* testlightcube = dynamic_cast<LightCube*>(lights[0].get());
             //testlightcube->model = glm::translate(testlightcube->model,glm::vec3(0.f, 0.f, -0.5f));
             //testlightcube->model = glm::rotate(testlightcube->model, -0.05f, glm::vec3(1.0f, 0.f, 0.0f));
 
-            if(!holdRotate && ray.closestID != -1 && playerInte->selectedID != -1)
+            if(!holdRotate && ray.closestID != -1 && playerIntes[currentPlayersTurn]->selectedID != -1)
             {
-                Selectable* selectedBefore = dynamic_cast<Selectable*>(obiekty[playerInte->selectedID].get());
+                Unit* selectedBefore = dynamic_cast<Unit*>(obiekty[playerIntes[currentPlayersTurn]->selectedID].get());
                 Selectable* target = dynamic_cast<Selectable*>(obiekty[ray.closestID].get());
-                if(selectedBefore != nullptr && target != nullptr)
+                if(selectedBefore != nullptr && target != nullptr && selectedBefore->ID == initiativeQueue.front().ID)
                 {
-                    selectedBefore->commandRC(target);
+                    abilityCall tryCalling;
+                    selectedBefore->commandRC(target, &tryCalling);
                 }
             }
         }
 
         if(event.button.button == SDL_BUTTON_MIDDLE)
         {
+            if(ray.closestID != -1)
+            {
+                Selectable* target = dynamic_cast<Selectable*>(obiekty[ray.closestID].get());
+                if(target != nullptr)
+                {
+                    target->refresh();
+                }
+            }
+            ray.closestID = -1;
             holdRotate = 1;
             SDL_SetRelativeMouseMode(SDL_TRUE);
         }
@@ -226,10 +278,6 @@ void Game::update(const double deltaTime)
     ImGui_ImplSDL2_NewFrame();
     ImGui::NewFrame();
 
-    if(initiativeQueue.empty()){
-            initiativeQueueTemp.clear();
-    }
-
     //wtf?
     if(kamera.w)
         kamera.ProcessKeyboard(FORWARD, deltaTime);
@@ -239,10 +287,6 @@ void Game::update(const double deltaTime)
         kamera.ProcessKeyboard(BACKWARD, deltaTime);
     if(kamera.d)
         kamera.ProcessKeyboard(RIGHT, deltaTime);
-
-    testCounter += 1*deltaTime;
-    if(testCounter > 2)
-        testCounter = 0;
 
     mouseTrack.update(view);
     ray = optimizedRay(kamera.Position,mouseTrack.getCurrentRay());
@@ -254,7 +298,31 @@ void Game::update(const double deltaTime)
 
     for(const auto& pair : obiekty)
     {
-        if(!holdRotate){
+        Unit* isUnit = dynamic_cast<Unit*>(pair.second.get());
+
+        if(isUnit != nullptr)
+        {
+            if(isUnit->stats.health <= 0)
+            {
+                for(auto it = initiativeQueue.begin(); it != initiativeQueue.end(); ++it) {
+                    if(it->ID == isUnit->ID) {
+                        if(isUnit->ID == initiativeQueue.front().ID){
+                            endTurn();
+                        }
+                        else
+                            initiativeQueue.erase(it);
+                        break;
+                    }
+                }
+                if(playerIntes[currentPlayersTurn]->selectedID == isUnit->ID)
+                    playerIntes[currentPlayersTurn]->selectedID  = -1;
+                obiekty.erase(pair.first);
+                continue;
+            }
+        }
+
+        if(!holdRotate)
+        {
             Selectable* d = dynamic_cast<Selectable*>(pair.second.get());
             if (d != nullptr)
             {
@@ -263,21 +331,9 @@ void Game::update(const double deltaTime)
             }
         }
 
-        Unit* d = dynamic_cast<Unit*>(pair.second.get());
-
-        if(d != nullptr && initiativeQueue.empty()){
-            initiativeQueueTemp.push_back(*d);
-        }
-
         pair.second->update(deltaTime);
     }
 
-    if(initiativeQueue.empty() && !initiativeQueueTemp.empty()){
-            sort(initiativeQueueTemp.begin(),initiativeQueueTemp.end(),[](const Unit& a, const Unit& b){
-                 return a.speed > b.speed;
-                 });
-            initiativeQueue = initiativeQueueTemp;
-    }
 
     if(ray.closestID != -1)
     {
@@ -287,20 +343,30 @@ void Game::update(const double deltaTime)
             closest->onHover();
         }
     }
+    if(initiativeHighlightFlag && initiativeHighlightID != -1){
+        Unit* isUnit = dynamic_cast<Unit*>(obiekty[initiativeHighlightID].get());
+        if(isUnit != nullptr)
+        {
+            isUnit->hovering = 1;
+        }
+    }
+    initiativeHighlightID = -1;
+    initiativeHighlightFlag = false;
 }
 
 
 void Game::render(double deltaTime)
 {
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-    unsigned int viewLoc = glGetUniformLocation(shaderPrograms[0], "view");
-    unsigned int projectionLoc = glGetUniformLocation(shaderPrograms[0], "projection");
-
-    glUseProgram(shaderPrograms[0]);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 
     //tutaj update kamery
     view = kamera.GetViewMatrix();
+
+    glUseProgram(shaderPrograms[0]);
+
+    unsigned int viewLoc = glGetUniformLocation(shaderPrograms[0], "view");
+    unsigned int projectionLoc = glGetUniformLocation(shaderPrograms[0], "projection");
 
     //view jest dla perspektywy
     glUniform3fv(glGetUniformLocation(shaderPrograms[0],"viewPos"),1, glm::value_ptr(kamera.Position));
@@ -316,33 +382,38 @@ void Game::render(double deltaTime)
     glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(view));
     glUniformMatrix4fv(projectionLoc, 1, GL_FALSE, glm::value_ptr(projection));
 
-    glClear( GL_COLOR_BUFFER_BIT );
+    glUseProgram(shaderPrograms[3]);
 
-    //depth map rendering
+    viewLoc = glGetUniformLocation(shaderPrograms[3], "view");
+    projectionLoc = glGetUniformLocation(shaderPrograms[3], "projection");
 
-    glActiveTexture(GL_TEXTURE0);
-    glBindTexture(GL_TEXTURE_2D, depthMap);
+    glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(view));
+    glUniformMatrix4fv(projectionLoc, 1, GL_FALSE, glm::value_ptr(projection));
 
-    glUseProgram(shaderPrograms[2]);
-    for(const auto& pair : lights)
-    {
-        pair.second->bindDepthShader(shaderPrograms);
-    }
-    glViewport(0, 0, 1024, 1024);
-    glBindFramebuffer(GL_FRAMEBUFFER, shadowMapFBO);
-    glClear(GL_DEPTH_BUFFER_BIT);
+    ///skybox Render
+    glUseProgram(shaderPrograms[3]);
+    GLint OldDepthFuncMode;
+    GLint OldCullFaceMode;
+    glGetIntegerv(GL_CULL_FACE_MODE, &OldCullFaceMode);
+    glGetIntegerv(GL_DEPTH_FUNC, &OldDepthFuncMode);
 
-    for(const auto& pair : obiekty)
-    {
-       pair.second->render(shaderPrograms[2],shaderPrograms);
-    }
+    glUniform1f(glGetUniformLocation(shaderPrograms[3],"u_time"), (float)SDL_GetTicks()/1500.f);
 
-    glBindFramebuffer(GL_FRAMEBUFFER, 0);
-    // reset viewport
-    glViewport(0, 0, windowW, windowH);
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    glDepthFunc(GL_LEQUAL);
+    glCullFace(GL_FRONT);
 
-    //Glowny rendering
+    skyBox.Draw(shaderPrograms[3],true);
+
+    glCullFace(OldCullFaceMode);
+    glDepthFunc(OldDepthFuncMode);
+
+    ///Glowny rendering
+
+    initiativeGui->render(shaderPrograms[0],shaderPrograms);
+
+    glStencilMask(0x00);
+
+    glUseProgram(shaderPrograms[0]);
     for(const auto& pair : lights)
     {
         pair.second->render(shaderPrograms[0],shaderPrograms);
@@ -354,22 +425,7 @@ void Game::render(double deltaTime)
         pair.second->render(shaderPrograms[0],shaderPrograms);
     }
 
-    //test czy unit dobrze widzi swoj moverange
-    if(playerInte->selectedID != -1)
-    {
-        Unit* selectedUnit = dynamic_cast<Unit*>(obiekty[playerInte->selectedID].get());
-        if (selectedUnit != nullptr)
-        {
-            for(auto& pair : selectedUnit->reachableHexes)
-            {
-                testCube.model = glm::translate(glm::mat4(1.f),getWorldPosFromHex(pair.first) + glm::vec3(0.f,1.6f,0.f));
-                testCube.Draw(shaderPrograms[0],true);
-            }
-        }
-    }
-
-    playerInte->renderGui(shaderPrograms[0],shaderPrograms);
-    initiativeGui->render(shaderPrograms[0],shaderPrograms);
+    playerIntes[currentPlayersTurn]->renderGui(shaderPrograms[0],shaderPrograms);
 
     ImGui::Render();
     ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
@@ -384,7 +440,7 @@ int main(int argc, char *argv[])
 {
     //                          inicjalizacje podstawowych zmiennych
     srand(time(NULL));
-    Game *game = new Game(1366,768,0);
+    Game *game = new Game(1366,768,1);
 
     //                           deltatajm
     uint32_t prevTime = 0;
@@ -402,7 +458,6 @@ int main(int argc, char *argv[])
         game->inputCore(deltaTime);
         game->updateCore(deltaTime);
         game->renderCore(deltaTime);
-
         currTime = SDL_GetTicks();
         deltaTime = (currTime - prevTime)/1000.0f;
         prevTime = currTime;

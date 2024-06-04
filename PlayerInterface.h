@@ -8,24 +8,22 @@ class PlayerInterface
 {
 
 public:
-    uint16_t ID;
 
-    int ore, gems, gas, oil, water, fire, earth, air;
+    std::array<int, RESOURCE_COUNT> resources;
 
     int selectedID = -1;
 
     PlayerGui resourceOverlay;
 
-    PlayerInterface() = delete;
-
-     PlayerInterface(uint16_t ID)
-        : ID(ID), ore(0), gems(0), gas(0), oil(0), water(0), fire(0), earth(0), air(0),
-          resourceOverlay(ImVec2(Globals::windowW, Globals::windowH), &ore, &gems, &gas, &oil, &water, &fire, &earth, &air)
+    PlayerInterface()
+        : resources{0, 0, 0, 0, 0, 0, 0, 0},
+          resourceOverlay(ImVec2(Globals::windowW, Globals::windowH), &resources)
     {
     }
 
-    void renderGui(unsigned int shaderProgram, std::vector<unsigned int> shaderPrograms){
-    resourceOverlay.render(shaderProgram, shaderPrograms);
+    void renderGui(unsigned int shaderProgram, std::vector<unsigned int> shaderPrograms)
+    {
+        resourceOverlay.render(shaderProgram, shaderPrograms);
     }
 };
 

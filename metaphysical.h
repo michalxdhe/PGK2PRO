@@ -3,12 +3,12 @@
 
 #include "common.h"
 
-glm::mat4 calculateLightSpaceMatrix(glm::vec3 lightPos, glm::vec3 target, glm::vec3 up)
+glm::mat4 calculateLightSpaceMatrix(glm::vec3 lightPos, glm::vec3 up)
 {
-    glm::mat4 viewMatrix = glm::lookAt(lightPos, target, up);
+    glm::mat4 viewMatrix = glm::lookAt(lightPos, glm::vec3(0.0f), up);
 
-    float near_plane = 1.0f;
-    float far_plane = 7.5f;
+    float near_plane = 0.5f;
+    float far_plane = 5.0f;
 
     glm::mat4 projectionMatrix = glm::ortho(-10.0f, 10.0f, -10.0f, 10.0f, near_plane, far_plane);
 
@@ -24,6 +24,14 @@ public:
     glm::vec3 LogicPos;
     int distanceFrom;
     bool passable = 1;
+    bool moveRangeView = false;
+    bool abilityRangeView = false;
+    int64_t groundID = -1;
+    int64_t airID = -1;
+    int presentResource = -1;
+
+    bool occupiedGround = false;
+    bool occupiedAir = false;
 
     HexCell() = default;
 
@@ -117,6 +125,8 @@ public:
 
     void Draw(unsigned int shaderProgram, bool filled)
     {
+        glUseProgram(shaderProgram);
+
         glUniformMatrix4fv(glGetUniformLocation(shaderProgram, "model"), 1, GL_FALSE, glm::value_ptr(model));
 
         glBindVertexArray(VAO);
@@ -130,16 +140,42 @@ public:
 
 };
 
+
+glm::vec2 calculateScreenPosition(const glm::vec3& pos, const glm::mat4& viewMatrix, const glm::mat4& projectionMatrix, int screenWidth, int screenHeight) {
+    glm::vec4 clipSpacePos = projectionMatrix * viewMatrix * glm::vec4(pos, 1.0);
+
+    if (clipSpacePos.w <= 0.0f) {
+        return glm::vec2(-1.0f, -1.0f);
+    }
+
+    glm::vec3 ndcSpacePos = glm::vec3(clipSpacePos) / clipSpacePos.w;
+
+    if (ndcSpacePos.x < -1.0f || ndcSpacePos.x > 1.0f || ndcSpacePos.y < -1.0f || ndcSpacePos.y > 1.0f || ndcSpacePos.z < -1.0f || ndcSpacePos.z > 1.0f) {
+        return glm::vec2(-1.0f, -1.0f);
+    }
+
+    glm::vec2 screenSpacePos;
+    screenSpacePos.x = (ndcSpacePos.x + 1.0f) * 0.5f * screenWidth;
+    screenSpacePos.y = (1.0f - ndcSpacePos.y) * 0.5f * screenHeight;
+
+    return screenSpacePos;
+}
+
 class Object
 {
 
 public:
-
+    static glm::mat4 *viewRef;
+    static glm::mat4 *projectionRef;
+    int64_t ID;
     virtual ~Object() = default;
 
     virtual void update(double deltaTime) = 0;
     virtual void render(unsigned int shaderProgram, std::vector<unsigned int> shaderPrograms) = 0;
 };
+
+glm::mat4* Object::viewRef = nullptr;
+glm::mat4* Object::projectionRef = nullptr;
 
 class BoundingColider
 {
@@ -150,6 +186,8 @@ public:
     virtual ~BoundingColider() = default;
 
 };
+
+struct abilityCall;
 
 class Selectable : public BoundingColider
 {
@@ -169,8 +207,8 @@ public:
     virtual void onSelect() = 0;
     virtual void onHover() = 0;
 
-    virtual void commandRC(Selectable *target) = 0;
-    virtual void commandLC(Selectable *target) = 0;
+    virtual void commandRC(Selectable *target, abilityCall *orderInfo) = 0;
+    virtual void commandLC(Selectable *target, abilityCall *orderInfo) = 0;
 };
 
 class LightSource : public Object
@@ -179,13 +217,7 @@ class LightSource : public Object
 public:
     glm::mat4 lightSpaceMatrix;
     glm::vec3 lightTarget;
-    glm::vec3 lightPos = glm::vec3(0.0001f,3.f,0.0001f);
-
-    void bindDepthShader(std::vector<unsigned int>shaderPrograms)
-    {
-        glUseProgram(shaderPrograms[2]);
-        glUniformMatrix4fv(glGetUniformLocation(shaderPrograms[2],"lightSpaceMatrix"),1,GL_FALSE, glm::value_ptr(lightSpaceMatrix));
-    }
+    glm::vec3 lightPos = glm::vec3(0.001f,3.f,0.001f);
 };
 
 class LightCube : public LightSource
@@ -272,7 +304,6 @@ public:
         glm::mat3 rotationMatrix = glm::mat3(model);
         lightPos = glm::vec3(model * glm::vec4(glm::vec3(0.f,0.f,0.f), 1.0f));
         lightTarget = rotationMatrix * glm::vec3(0.f,-1.f,0.f); //ten drugi vector w mnozeniu to tam gdzie celuje swiatlo
-        lightSpaceMatrix = calculateLightSpaceMatrix(lightPos, lightTarget, rotationMatrix * glm::vec3(0.f,1.f,0.f));
         //model = glm::translate(model,glm::vec3(0.f, 0.f, 0.5f));
         //model = glm::rotate(model, 0.05f, glm::vec3(1.0f, 0.f, 0.0f));
     }
@@ -283,17 +314,14 @@ public:
 
         glUniform3f(glGetUniformLocation(shaderProgram,"lightColor"), 1.0f, 1.0f, 1.0f);
         glUniform3fv(glGetUniformLocation(shaderProgram,"lightPos"),1, glm::value_ptr(lightPos));
-        glUniformMatrix4fv(glGetUniformLocation(shaderProgram,"lightSpaceMatrix"),1,GL_FALSE, glm::value_ptr(lightSpaceMatrix));
 
         glUseProgram(shaderPrograms[1]);
-
         unsigned int modelLoc = glGetUniformLocation(shaderPrograms[1], "model");
         glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
-
         glBindVertexArray(VAO);
-
         glDrawArrays(GL_TRIANGLES, 0, 36);
         glBindVertexArray(0);
+
     }
 };
 

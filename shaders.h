@@ -11,7 +11,7 @@
  * \return bool czy sie udalo
  *
  */
-bool createAndLoadTexture(unsigned int &destination, const char* path)
+bool createAndLoadTexture(unsigned int &destination, const char* path, bool flipped = true)
 {
     glGenTextures(1, &destination);
     glBindTexture(GL_TEXTURE_2D, destination);
@@ -23,7 +23,7 @@ bool createAndLoadTexture(unsigned int &destination, const char* path)
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
     int width, height, nrChannels;
-    stbi_set_flip_vertically_on_load(true);
+    stbi_set_flip_vertically_on_load(flipped);
     unsigned char *data = stbi_load(path, &width, &height, &nrChannels, 0);
     if (data)
     {
