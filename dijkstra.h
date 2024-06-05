@@ -59,7 +59,7 @@ unordered_map<glm::vec3, int> getPathableCellsAir(unordered_map<glm::vec3, HexCe
 
         for (auto& neighbor : getNeighbors(current))
         {
-            if (HexGrid.find(neighbor) != HexGrid.end() && HexGrid[neighbor].passable && !HexGrid[neighbor].occupiedAir)
+            if (HexGrid.find(neighbor) != HexGrid.end() && !HexGrid[neighbor].occupiedAir)
             {
                 if (distances[current] + 1 < distances[neighbor])
                 {

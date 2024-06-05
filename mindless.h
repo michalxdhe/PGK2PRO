@@ -16,6 +16,39 @@
 
 using namespace std;
 
+struct UnitFactory{
+        inline static deque<unique_ptr<Unit>> toBeCreated;
+        inline static unordered_map<glm::vec3, HexCell> *HexGridRef;
+        inline static unordered_map<UnitType, function<unique_ptr<Unit>(glm::vec3, unordered_map<glm::vec3, HexCell>*, int)>> unitCreationMap;
+
+        static void initialize(unordered_map<glm::vec3, HexCell> *HexGrid) {
+            HexGridRef = HexGrid;
+
+            unitCreationMap[GENERIC_UNIT] = [](glm::vec3 hexCellCords, unordered_map<glm::vec3, HexCell>* HexGrid, int factionID) {
+                return std::make_unique<GenericUnit>(hexCellCords, HexGrid, factionID, 0);
+            };
+
+        }
+
+        static void createUnit(UnitType unitType, glm::vec3 hexCellCords, int factionID){
+            auto it = unitCreationMap.find(unitType);
+            if (it != unitCreationMap.end()) {
+                toBeCreated.push_back(it->second(hexCellCords, HexGridRef, factionID));
+            } else {
+                std::cerr << "Error: Unknown unit type." << std::endl;
+            }
+        }
+
+        static void resolveCreation(unordered_map<int, unique_ptr<Object>> *obiekty){
+            while(!toBeCreated.empty()){
+                int ID = Globals::numberOfEntities++;
+                toBeCreated.front().get()->ID = ID;
+                (*obiekty)[ID] = move(toBeCreated.front());
+                toBeCreated.pop_front();
+            }
+        }
+};
+
 inline double sign(double x)
 {
     return x<0.0?-1.0:(x > 0.0 ? 1.0 : 0.0);
@@ -58,6 +91,7 @@ public:
 
     int windowH, windowW;
     vector<unsigned int> shaderPrograms;
+    vector<int> autoGraveyard;
     RevoltingCamera kamera;
 
     Cube skyBox;
@@ -181,13 +215,17 @@ public:
     void render(double deltaTime);
 
 private:
+    void endGame(){
 
-    void endTurn()
+    }
+
+    void endTurn(int deadID = -1)
     {
         if(!initiativeQueue.empty())
         {
             Unit* eotUnit = dynamic_cast<Unit*>(obiekty[(initiativeQueue.front().ID)].get());
-            eotUnit->stats.yourTurn = false;
+            if(eotUnit != nullptr)
+                eotUnit->stats.yourTurn = false;
             initiativeQueue.pop_front();
             if(playerIntes[currentPlayersTurn]->selectedID != -1)
             {
@@ -201,12 +239,15 @@ private:
             playerIntes[currentPlayersTurn]->selectedID = -1;
             if(!initiativeQueue.empty()){
                 Unit* eotUnit = dynamic_cast<Unit*>(obiekty[(initiativeQueue.front().ID)].get());
-                eotUnit->stats.yourTurn = true;
-                eotUnit->resolveStartOfTurn();
-                int resourceOnHex = (*eotUnit->hexGrid)[eotUnit->hexPos].presentResource;
-                if(resourceOnHex != -1)
-                    playerIntes[eotUnit->owner]->resources[resourceOnHex] += eotUnit->stats.miningCapability;
-                currentPlayersTurn = initiativeQueue.front().owner;
+                if(eotUnit != nullptr){
+                    eotUnit->stats.yourTurn = true;
+                    eotUnit->resolveStartOfTurn();
+                    int resourceOnHex = (*eotUnit->hexGrid)[eotUnit->hexPos].presentResource;
+                    if(resourceOnHex != -1){
+                        playerIntes[eotUnit->owner]->resources[resourceOnHex] += eotUnit->stats.miningCapability;
+                    }
+                    currentPlayersTurn = initiativeQueue.front().owner;
+                }
             }
         }
 
@@ -215,6 +256,13 @@ private:
             initiativeQueueTemp.clear();
             for(const auto& pair : obiekty)
             {
+                bool foundDead = false;
+                for(auto it: autoGraveyard){
+                    if(it == pair.first)
+                        foundDead = true;
+                }
+                if(foundDead)
+                    continue;
                 Unit* isUnit = dynamic_cast<Unit*>(pair.second.get());
                 if(isUnit != nullptr)
                 {
@@ -229,19 +277,22 @@ private:
             if(!initiativeQueueTemp.empty()){
                 sort(initiativeQueueTemp.begin(),initiativeQueueTemp.end(),[](const Unit& a, const Unit& b)
                 {
-                    return a.stats.speed > b.stats.speed;
+                    return a.stats.speed - a.stats.effects[SLOW].intensity > b.stats.speed - a.stats.effects[SLOW].intensity;
                 });
                 initiativeQueue = initiativeQueueTemp;
                 Unit* eotUnit = dynamic_cast<Unit*>(obiekty[(initiativeQueue.front().ID)].get());
-                eotUnit->resolveStartOfTurn();
-                int resourceOnHex = (*eotUnit->hexGrid)[eotUnit->hexPos].presentResource;
-                if(resourceOnHex != -1)
-                    playerIntes[eotUnit->owner]->resources[resourceOnHex] += eotUnit->stats.miningCapability;
-                eotUnit->stats.yourTurn = true;
-                currentPlayersTurn = initiativeQueue.front().owner;
+                if(eotUnit != nullptr){
+                    eotUnit->resolveStartOfTurn();
+                    int resourceOnHex = (*eotUnit->hexGrid)[eotUnit->hexPos].presentResource;
+                    if(resourceOnHex != -1)
+                        playerIntes[eotUnit->owner]->resources[resourceOnHex] += eotUnit->stats.miningCapability;
+                    eotUnit->stats.yourTurn = true;
+                    currentPlayersTurn = initiativeQueue.front().owner;
+                }
             }
         }
     }
+
 };
 
 bool Game::inputCore(double deltaTime)
@@ -278,14 +329,37 @@ void doAttack(abilityCall info, Game *gameRef)
             Unit* inZone = dynamic_cast<Unit*>(gameRef->obiekty[it->groundID].get());
             if(inZone != nullptr)
             {
-                inZone->stats.health = std::max(0, inZone->stats.health - damage);
-            }
-            if(inZone->stats.health <= 0)
-            {
-                it->groundID = -1;
-                it->occupiedGround = false;
+                inZone->takeDamage(damage);
+                for(int i = 0; i < EFFECTS_COUNT; i++)
+                {
+                    inZone->stats.effects[i].duration += info.effects[i].duration;
+                    inZone->stats.effects[i].intensity += info.effects[i].intensity;
+                }
             }
         }
+    }
+    //info.culprit->updateMovRange();
+}
+
+void doMissile(abilityCall info, Game *gameRef)
+{
+    int damage = info.culprit->stats.att;
+    for(auto it : info.target)
+    {
+        if(it->groundID != -1)
+        {
+            Unit* inZone = dynamic_cast<Unit*>(gameRef->obiekty[it->groundID].get());
+            if(inZone != nullptr)
+            {
+                inZone->takeDamage(damage);
+                for(int i = 0; i < EFFECTS_COUNT; i++)
+                {
+                    inZone->stats.effects[i].duration += info.effects[i].duration;
+                    inZone->stats.effects[i].intensity += info.effects[i].intensity;
+                }
+            }
+        }
+        it->presentResource = ORE;
     }
     //info.culprit->updateMovRange();
 }
@@ -307,7 +381,11 @@ bool handleAbility(abilityCall info, Game *gameRef)
         return false;
         break;
     case MISSILE:
-
+        if(info.culprit->stats.actionTokens >= 2){
+            doMissile(info,gameRef);
+            info.culprit->stats.actionTokens -= 2;
+            return true;
+        }else
         return false;
         break;
     }

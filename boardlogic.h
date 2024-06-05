@@ -9,7 +9,7 @@ struct abilityCall
 {
     Unit *culprit;
     int abilityID;
-    vector<int> effect;
+    effect effects[EFFECTS_COUNT];
     vector<HexCell*> target;
     Unit *offSpring;
 };
@@ -135,6 +135,7 @@ public:
         if(isSelected || hovering){
             glUniform1i(glGetUniformLocation(shaderProgram, "hoveredHex"), false);
         }
+
         if(cell.moveRangeView){
             glUniform1i(glGetUniformLocation(shaderProgram, "moveRange"), false);
             cell.moveRangeView = false;

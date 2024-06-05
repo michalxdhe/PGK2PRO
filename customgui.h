@@ -9,8 +9,8 @@ extern ImGuiWindowFlags invisPreset;
 enum ResourceType
 {
     ORE,
-    GEMS,
     GAS,
+    GEMS,
     OIL,
     WATER,
     FIRE,
@@ -18,6 +18,8 @@ enum ResourceType
     AIR,
     RESOURCE_COUNT
 };
+
+extern const std::string abilityNames[ABILITIES_COUNT];
 
 struct UnitStats;
 
@@ -27,6 +29,20 @@ class GuiElement : public Object
 {
 public:
     ImVec2 windowSpan;
+};
+
+class TextParticle : public GuiElement
+{
+public:
+    glm::vec3 worldPos;
+    double lifeTimer;
+    std::string message;
+    ImVec4 color;
+
+    TextParticle();
+    TextParticle(ImVec2 windowSize, int damage, EFFECTS type, glm::vec3 worldPos, int objID);
+    void update(double deltaTime);
+    void render(unsigned int shaderProgram, std::vector<unsigned int> shaderPrograms);
 };
 
 class UnitGui : public GuiElement
@@ -39,6 +55,13 @@ public:
     UnitStats *stats;
     std::array<int, ABILITIES_COUNT> *abilityList;
     int* selectedAbil;
+
+    GLuint activeTokenTexture;
+    GLuint inactiveTokenTexture;
+
+    GLuint godForgiveMe[5];
+
+    GLuint effectText[EFFECTS_COUNT];
 
     UnitGui();
     UnitGui(ImVec2 windowSize, UnitStats *stats,  std::array<int, ABILITIES_COUNT> *abilityList, int* selectedAbil);
@@ -85,6 +108,8 @@ public:
 
     int64_t unitID;
     glm::vec3 *unitPos;
+
+    GLuint effectText[EFFECTS_COUNT];
 
     UnitBar();
     UnitBar(ImVec2 windowSize, UnitStats *stats, glm::vec3 *unitPos, int64_t ID);

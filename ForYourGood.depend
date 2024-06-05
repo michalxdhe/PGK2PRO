@@ -1066,7 +1066,7 @@
 
 1714991992 c:\garigette\foryourgood\playerinterface.h
 
-1717493065 source:c:\garigette\pgk2pro\main.cpp
+1717587030 source:c:\garigette\pgk2pro\main.cpp
 	"common.h"
 	"mindless.h"
 
@@ -1089,9 +1089,9 @@
 
 1717099255 c:\garigette\pgk2pro\camerarevolting.h
 
-1717493127 c:\garigette\pgk2pro\boardlogic.h
+1717565102 c:\garigette\pgk2pro\boardlogic.h
 
-1717433678 c:\garigette\pgk2pro\metaphysical.h
+1717572223 c:\garigette\pgk2pro\metaphysical.h
 	"common.h"
 
 1717099255 c:\garigette\pgk2pro\model.h
@@ -1104,7 +1104,7 @@
 
 1717099255 c:\garigette\pgk2pro\globals.h
 
-1717492872 c:\garigette\pgk2pro\mindless.h
+1717585963 c:\garigette\pgk2pro\mindless.h
 	"metaphysical.h"
 	"model.h"
 	"PlayerInterface.h"
@@ -1125,14 +1125,14 @@
 1717099255 source:c:\garigette\pgk2pro\weird.cpp
 	"stb_image.h"
 
-1717251234 c:\garigette\pgk2pro\dijkstra.h
+1717512557 c:\garigette\pgk2pro\dijkstra.h
 	"boardlogic.h"
 
-1717409831 c:\garigette\pgk2pro\units.h
+1717586905 c:\garigette\pgk2pro\units.h
 	"globals.h"
 	"dijkstra.h"
 
-1717410019 c:\garigette\pgk2pro\playerinterface.h
+1717581447 c:\garigette\pgk2pro\playerinterface.h
 	"globals.h"
 	"customgui.h"
 
@@ -1288,7 +1288,7 @@
 	<stdint.h>
 	"imstb_textedit.h"
 
-1717409831 c:\garigette\pgk2pro\customgui.h
+1717585646 c:\garigette\pgk2pro\customgui.h
 	"abilities.h"
 	"shaders.h"
 
@@ -1300,7 +1300,7 @@
 	"customgui.h"
 	"units.h"
 
-1717165724 c:\garigette\pgk2pro\common.h
+1717570731 c:\garigette\pgk2pro\common.h
 	<iostream>
 	<fstream>
 	<sstream>
@@ -1318,6 +1318,7 @@
 	<glm/gtc/type_ptr.hpp>
 	<glm/gtx/hash.hpp>
 	<glm/gtx/string_cast.hpp>
+	<glm/gtx/matrix_decompose.hpp>
 	"imgui.h"
 	"imgui_impl_sdl2.h"
 	"imgui_impl_opengl3.h"
@@ -1331,11 +1332,11 @@
 	"customgui.h"
 	"units.h"
 
-1717434205 c:\garigette\pgk2pro\units.cpp
+1717587312 c:\garigette\pgk2pro\units.cpp
 	"customgui.h"
 	"units.h"
 
-1717411000 c:\garigette\pgk2pro\customgui.cpp
+1717586059 c:\garigette\pgk2pro\customgui.cpp
 	"customgui.h"
 	"units.h"
 
@@ -1572,5 +1573,5 @@
 1717099255 source:c:\garigette\pgk2proold\weird.cpp
 	"stb_image.h"
 
-1717342437 c:\garigette\pgk2pro\abilities.h
+1717512557 c:\garigette\pgk2pro\abilities.h
 

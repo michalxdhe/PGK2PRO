@@ -12,6 +12,7 @@ public:
     std::array<int, RESOURCE_COUNT> resources;
 
     int selectedID = -1;
+    int commanderID = -1;
 
     PlayerGui resourceOverlay;
 

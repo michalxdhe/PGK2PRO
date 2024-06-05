@@ -58,6 +58,7 @@
 			<Add after="XCOPY $(#sdl2)\bin\*.dll $(TARGET_OUTPUT_DIR) /D /Y" />
 		</ExtraCommands>
 		<Unit filename="PlayerInterface.h" />
+		<Unit filename="abilities.h" />
 		<Unit filename="boardlogic.h" />
 		<Unit filename="camerarevolting.h" />
 		<Unit filename="cameraworks.h" />

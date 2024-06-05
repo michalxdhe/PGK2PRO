@@ -167,6 +167,7 @@ class Object
 public:
     static glm::mat4 *viewRef;
     static glm::mat4 *projectionRef;
+    static std::unordered_map<int, std::unique_ptr<Object>> *obiektyRef;
     int64_t ID;
     virtual ~Object() = default;
 
@@ -176,6 +177,7 @@ public:
 
 glm::mat4* Object::viewRef = nullptr;
 glm::mat4* Object::projectionRef = nullptr;
+std::unordered_map<int, std::unique_ptr<Object>>* Object::obiektyRef = nullptr;
 
 class BoundingColider
 {
@@ -235,6 +237,7 @@ public:
     {
         remodel(w,h,l);
         model = glm::translate(model,lightPos);
+        model = glm::scale(model,glm::vec3(0.1f));
     }
 
     void remodel(float w, float h, float l)

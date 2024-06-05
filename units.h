@@ -5,11 +5,18 @@
 
 using namespace std;
 
+enum UnitType{
+    GENERIC_UNIT,
+    UNIT_TYPE_COUNT
+};
+
 struct UnitStats
 {
     int health, maxHealth, speed, att, def, movRange, maxMovRange, actionTokens, maxActionTokens, miningCapability;
+    bool flying = false;
     bool isCommander = false;
-    vector<int> effects;
+    bool isBuilding = false;
+    effect effects[EFFECTS_COUNT];
     int targetFaction;
     array<int,RESOURCE_COUNT> cost;
     bool yourTurn = false;
@@ -35,6 +42,7 @@ public:
     int selectedAbil = -1;
     array<int, ABILITIES_COUNT> abilitiesList;
     array<int, ABILITIES_COUNT> abilitiesRanges;
+    array<unordered_map<int,effect>, ABILITIES_COUNT> abilityEffects;
 
     UnitStats stats;
     UnitGui guiHotBar;
@@ -55,10 +63,15 @@ public:
     void updateAbilRange(int malus = 0);
     void resolveStartOfTurn();
     void resolveEndOfTurn(endTurnEffects effects);
+    void takeDamage(int damage, bool ignoreArmor = false, EFFECTS effect = DAMAGE);
+    void rotateTowardsHex(glm::vec3 theHex);
 private:
+    void startOfTurnCore();
+    void endOfTurnCore(endTurnEffects effects);
     void useAbilOnUnit(Selectable *target, abilityCall *orderInfo);
     void useAbilOnHex(Selectable *target, abilityCall *orderInfo);
     void tryMoving(Selectable *target, abilityCall *orderInfo);
+    void resolveEffects();
 };
 
 #endif // UNITS_H_INCLUDED

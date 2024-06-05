@@ -1,7 +1,7 @@
 #ifndef ABILITIES_H_INCLUDED
 #define ABILITIES_H_INCLUDED
 
-enum Ability
+enum ABILITIES
 {
     ATTACK,
     CREATE,
@@ -18,8 +18,8 @@ enum EFFECTS{
 };
 
 struct effect{
-    int effectID;
-    int intensity;
+    int intensity = 0;
+    int duration = 0;
 };
 
 #endif // ABILITIES_H_INCLUDED

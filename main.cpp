@@ -22,6 +22,7 @@ void Game::init()
 
     testhex = Model("Modeldos/Wieza.obj");
     HexGrid = GenerateHexGrid(boardSize);
+    UnitFactory::initialize(&HexGrid);
 
     glEnable(GL_DEBUG_OUTPUT);
     glDebugMessageCallback(MessageCallback, nullptr);
@@ -61,6 +62,7 @@ void Game::init()
 
     Object::viewRef = &view;
     Object::projectionRef = &projection;
+    Object::obiektyRef = &obiekty;
 
     ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0, 0));
     ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(0, 0));
@@ -79,8 +81,8 @@ void Game::init()
         glm::vec3(0.2f, 0.8f, 0.2f)
     };
 
-    resModels[ORE] = Model("Model/Ore/Ore.obj");
-
+    resModels[ORE] = Model("Model/Res/Ore.obj");
+    resModels[GAS] = Model("Model/Res/Gas.obj");
 
     glUseProgram(shaderPrograms[0]);
     glUniform3fv(glGetUniformLocation(shaderPrograms[0], "factionColors"), 10, glm::value_ptr(factionColors[0]));
@@ -93,10 +95,19 @@ void Game::init()
     HexGrid[glm::vec3(0.f,0.f,0.f) + cube_direction_vectors[0]].passable = 0;
     HexGrid[glm::vec3(0.f,0.f,0.f) + cube_direction_vectors[3]].passable = 0;
 
-    for(int i = 0; i < 5; i++){//zmien to potem na ile surowcuw ma byc wygenerowany
+    for(int i = 0; i < 5; i++){//zmien to potem na ile surowcuw ma byc wygenerowanych
         glm::vec3 randomHex = getRandomHex(boardSize);
-        if(HexGrid[randomHex].passable)
-            HexGrid[randomHex].presentResource = 0; //zmien to potem na losowy surowiec
+        if(HexGrid[randomHex].passable && HexGrid[randomHex].presentResource == -1)
+            HexGrid[randomHex].presentResource = ORE; //zmien to potem na losowy surowiec
+        else{
+            i--;
+        }
+    }
+
+        for(int i = 0; i < 5; i++){
+        glm::vec3 randomHex = getRandomHex(boardSize);
+        if(HexGrid[randomHex].passable && HexGrid[randomHex].presentResource == -1)
+            HexGrid[randomHex].presentResource = GAS; //zmien to potem na losowy surowiec
         else{
             i--;
         }
@@ -278,6 +289,13 @@ void Game::update(const double deltaTime)
     ImGui_ImplSDL2_NewFrame();
     ImGui::NewFrame();
 
+    vector<int> deadPlayers;
+/*
+    for(const auto& pair : playerIntes){
+        if(pair.second.get()->commanderID == -1)
+            deadPlayers.push_back(pair.first);
+    }
+*/
     //wtf?
     if(kamera.w)
         kamera.ProcessKeyboard(FORWARD, deltaTime);
@@ -296,42 +314,65 @@ void Game::update(const double deltaTime)
         pair.second->update(deltaTime);
     }
 
-    for(const auto& pair : obiekty)
-    {
-        Unit* isUnit = dynamic_cast<Unit*>(pair.second.get());
+    for(auto it = obiekty.begin(); it != obiekty.end();) {
+        Unit* isUnit = dynamic_cast<Unit*>(it->second.get());
 
-        if(isUnit != nullptr)
-        {
-            if(isUnit->stats.health <= 0)
-            {
-                for(auto it = initiativeQueue.begin(); it != initiativeQueue.end(); ++it) {
-                    if(it->ID == isUnit->ID) {
-                        if(isUnit->ID == initiativeQueue.front().ID){
-                            endTurn();
+        if(isUnit != nullptr) {
+            for(auto it: deadPlayers){
+                if(it == isUnit->owner)
+                    isUnit->takeDamage(999,true);
+            }
+
+            if(isUnit->stats.health <= 0) {
+                if(isUnit->ID == playerIntes[isUnit->owner]->commanderID)
+                    playerIntes[isUnit->owner]->commanderID = -1;
+
+                if(playerIntes[currentPlayersTurn]->selectedID == isUnit->ID)
+                    playerIntes[currentPlayersTurn]->selectedID  = -1;
+                if(isUnit->stats.flying) {
+                    HexGrid[isUnit->hexPos].airID = -1;
+                    HexGrid[isUnit->hexPos].occupiedAir = false;
+                } else {
+                    HexGrid[isUnit->hexPos].groundID = -1;
+                    HexGrid[isUnit->hexPos].occupiedGround = false;
+                }
+                int64_t tempID = isUnit->ID;
+
+                //it = obiekty.erase(it);
+                autoGraveyard.push_back(it->first);
+
+                for(auto queueIt = initiativeQueue.begin(); queueIt != initiativeQueue.end(); ++queueIt) {
+                    if(queueIt->ID == tempID) {
+                        if(tempID == initiativeQueue.front().ID) {
+                            endTurn(tempID);
+                        } else {
+                            initiativeQueue.erase(queueIt);
                         }
-                        else
-                            initiativeQueue.erase(it);
                         break;
                     }
                 }
-                if(playerIntes[currentPlayersTurn]->selectedID == isUnit->ID)
-                    playerIntes[currentPlayersTurn]->selectedID  = -1;
-                obiekty.erase(pair.first);
+                ++it;
                 continue;
             }
         }
 
-        if(!holdRotate)
-        {
-            Selectable* d = dynamic_cast<Selectable*>(pair.second.get());
-            if (d != nullptr)
-            {
-                collisonCubeRay(ray,d->boundingBox,pair.first);
+        if(!holdRotate) {
+            Selectable* d = dynamic_cast<Selectable*>(it->second.get());
+            if (d != nullptr) {
+                collisonCubeRay(ray, d->boundingBox, it->first);
                 d->refresh();
             }
         }
 
-        pair.second->update(deltaTime);
+        it->second->update(deltaTime);
+
+        TextParticle* isTextParticle = dynamic_cast<TextParticle*>(it->second.get());
+        if(isTextParticle != nullptr)
+        {
+            if(isTextParticle->lifeTimer <= 0)
+                autoGraveyard.push_back(it->first);
+        }
+        ++it;
     }
 
 
@@ -352,6 +393,11 @@ void Game::update(const double deltaTime)
     }
     initiativeHighlightID = -1;
     initiativeHighlightFlag = false;
+
+    for(auto it: autoGraveyard){
+        obiekty.erase(it);
+        autoGraveyard.pop_back();
+    }
 }
 
 
