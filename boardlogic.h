@@ -25,6 +25,32 @@ static glm::vec3 cube_direction_vectors[] =
     glm::vec3(-1,0,1), glm::vec3(-1,1,0), glm::vec3(0,1,-1)
 };
 
+///zwraca ci znormalizowany cube coordinate do hexow
+glm::vec3 cube_round(glm::vec3 cube) {
+    int rx = round(cube.x);
+    int ry = round(cube.y);
+    int rz = round(cube.z);
+
+    float x_diff = abs(rx - cube.x);
+    float y_diff = abs(ry - cube.y);
+    float z_diff = abs(rz - cube.z);
+
+    if (x_diff > y_diff && x_diff > z_diff)
+        rx = -ry - rz;
+    else if (y_diff > z_diff)
+        ry = -rx - rz;
+    else
+        rz = -rx - ry;
+
+    return glm::vec3(rx, ry, rz);
+}
+
+glm::vec3 get_direction(glm::vec3 target, glm::vec3 origin) {
+    glm::vec3 direction = origin - target;
+    direction = cube_round(direction);
+    return direction;
+}
+
 glm::vec3 getRandomHex(int boardSize){
     int coPos = rand()% boardSize + 1;
     int coNeg = -(rand()% boardSize + 1);

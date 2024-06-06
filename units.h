@@ -5,6 +5,13 @@
 
 using namespace std;
 
+enum AOE_TYPE{
+    RANGE,
+    LINE,
+    CROSS,
+    AOE_TYPE_COUNT
+};
+
 enum UnitType{
     GENERIC_UNIT,
     UNIT_TYPE_COUNT
@@ -18,8 +25,14 @@ struct UnitStats
     bool isBuilding = false;
     effect effects[EFFECTS_COUNT];
     int targetFaction;
+    float properHeight = 1.607f;
     array<int,RESOURCE_COUNT> cost;
     bool yourTurn = false;
+};
+
+struct AOE{
+    int radius = 1;
+    AOE_TYPE type = RANGE;
 };
 
 unordered_map<glm::vec3, int> getCellsUpToDist(unordered_map<glm::vec3, int> pathable, int dist);
@@ -36,12 +49,13 @@ class Unit : public HexObject
 public:
     glm::mat4 transformMat;
     glm::vec3 pos;
+    glm::vec3 scaleOutline = glm::vec3(1.05f);
     Model model;
-    float properHeight;
 
     int selectedAbil = -1;
     array<int, ABILITIES_COUNT> abilitiesList;
     array<int, ABILITIES_COUNT> abilitiesRanges;
+    array<AOE, ABILITIES_COUNT> abilitiesAOE;
     array<unordered_map<int,effect>, ABILITIES_COUNT> abilityEffects;
 
     UnitStats stats;
@@ -52,7 +66,7 @@ public:
     UnitBar guiHealthBar;
 
     Unit();
-    Unit(glm::vec3 hexCellCords, Model model, unordered_map<glm::vec3, HexCell> *HexGrid, int factionID, int64_t objID);
+    Unit(glm::vec3 hexCellCords, Model model, unordered_map<glm::vec3, HexCell> *HexGrid, int factionID, int64_t objID, bool flying);
     void commandLC(Selectable *target, abilityCall *orderInfo);
     void commandRC(Selectable *target, abilityCall *orderInfo);
     void onSelect();

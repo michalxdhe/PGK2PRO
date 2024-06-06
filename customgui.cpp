@@ -277,7 +277,7 @@ UnitBar::UnitBar(ImVec2 windowSize, UnitStats *stats, glm::vec3 *unitPos, int64_
 
 void UnitBar::update(double deltaTime)
 {
-    glm::vec3 aboveUnit = *unitPos + glm::vec3(0.f,1.f,0.f);
+    glm::vec3 aboveUnit = glm::vec3((*unitPos).x,stats->properHeight,(*unitPos).z) + glm::vec3(0.f,1.f,0.f);
     glm::vec2 screenPos = calculateScreenPosition(aboveUnit,*Object::viewRef, *Object::projectionRef,windowSpan.x,windowSpan.y);
     windowX = screenPos.x - windowWi*2;
     windowY = screenPos.y;

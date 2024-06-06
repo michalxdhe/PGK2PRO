@@ -1066,7 +1066,7 @@
 
 1714991992 c:\garigette\foryourgood\playerinterface.h
 
-1717587030 source:c:\garigette\pgk2pro\main.cpp
+1717666593 source:c:\garigette\pgk2pro\main.cpp
 	"common.h"
 	"mindless.h"
 
@@ -1089,9 +1089,9 @@
 
 1717099255 c:\garigette\pgk2pro\camerarevolting.h
 
-1717565102 c:\garigette\pgk2pro\boardlogic.h
+1717661030 c:\garigette\pgk2pro\boardlogic.h
 
-1717572223 c:\garigette\pgk2pro\metaphysical.h
+1717666072 c:\garigette\pgk2pro\metaphysical.h
 	"common.h"
 
 1717099255 c:\garigette\pgk2pro\model.h
@@ -1102,9 +1102,9 @@
 
 1717099255 c:\garigette\pgk2pro\mousepick.h
 
-1717099255 c:\garigette\pgk2pro\globals.h
+1717666072 c:\garigette\pgk2pro\globals.h
 
-1717585963 c:\garigette\pgk2pro\mindless.h
+1717661342 c:\garigette\pgk2pro\mindless.h
 	"metaphysical.h"
 	"model.h"
 	"PlayerInterface.h"
@@ -1128,7 +1128,7 @@
 1717512557 c:\garigette\pgk2pro\dijkstra.h
 	"boardlogic.h"
 
-1717586905 c:\garigette\pgk2pro\units.h
+1717673391 c:\garigette\pgk2pro\units.h
 	"globals.h"
 	"dijkstra.h"
 
@@ -1332,11 +1332,11 @@
 	"customgui.h"
 	"units.h"
 
-1717587312 c:\garigette\pgk2pro\units.cpp
+1717673389 c:\garigette\pgk2pro\units.cpp
 	"customgui.h"
 	"units.h"
 
-1717586059 c:\garigette\pgk2pro\customgui.cpp
+1717607096 c:\garigette\pgk2pro\customgui.cpp
 	"customgui.h"
 	"units.h"
 

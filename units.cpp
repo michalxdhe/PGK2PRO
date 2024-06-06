@@ -1,6 +1,59 @@
 #include "customgui.h"
 #include "units.h"
 
+vector<HexCell*> getHexesFromAOE(glm::vec3 culpritPos,AOE aoeInfo, glm::vec3 origin, unordered_map<glm::vec3, HexCell> *grid){
+    vector<HexCell*> result;
+
+    result.push_back(&(*grid)[origin]);
+
+    switch(aoeInfo.type){
+        case LINE:{
+            glm::vec3 direction = get_direction(culpritPos, origin);
+
+            int effective_radius = aoeInfo.radius;
+            if (abs(direction.x) > 0 && abs(direction.y) > 0 && abs(direction.z) > 0) {
+                effective_radius = static_cast<int>(floor(aoeInfo.radius * 0.5));
+            }
+
+            for (int i = 1; i < effective_radius; ++i) {
+                glm::vec3 next_hex = origin + direction * glm::vec3(i);
+                if ((*grid).find(next_hex) != (*grid).end()) {
+                    result.push_back(&(*grid)[next_hex]);
+                }
+            }
+            break;
+        }
+        case RANGE:{
+                unordered_map<glm::vec3, int> cells = getPathableCellsRange(*grid,origin);
+
+                for(auto it : cells)
+                {
+                    if(it.second <= aoeInfo.radius)
+                        result.push_back(&(*grid)[it.first]);
+                }
+
+            break;
+        }
+        case CROSS: {
+            int x = 2;
+            for (glm::vec3 direction : cube_direction_vectors) {
+                if(x%2 == 0){
+                    for (int i = 1; i <= aoeInfo.radius; ++i) {
+                        glm::vec3 next_hex = origin + direction * glm::vec3(i);
+                        if ((*grid).find(next_hex) != (*grid).end()) {
+                            result.push_back(&(*grid)[next_hex]);
+                        }
+                    }
+                }
+                x++;
+            }
+            break;
+        }
+        default:
+            break;
+    }
+    return result;
+}
 
 unordered_map<glm::vec3, int> getCellsUpToDist(unordered_map<glm::vec3, int> pathable, int dist)
 {
@@ -17,8 +70,8 @@ unordered_map<glm::vec3, int> getCellsUpToDist(unordered_map<glm::vec3, int> pat
 
 Unit::Unit() = default;
 
-Unit::Unit(glm::vec3 hexCellCords, Model model, unordered_map<glm::vec3, HexCell> *HexGrid, int factionID, int64_t objID)
-    : stats{5, 5, 3, 2, 1, 0, 4, 0, 2, 0},
+Unit::Unit(glm::vec3 hexCellCords, Model model, unordered_map<glm::vec3, HexCell> *HexGrid, int factionID, int64_t objID, bool flying)
+    : stats{5, 5, 3, 2, 1, 0, 4, 0, 2, 0, flying},
       guiHotBar(ImVec2(Globals::windowW, Globals::windowH), &stats, &abilitiesList, &selectedAbil), hexGrid(HexGrid),
       guiHealthBar(ImVec2(Globals::windowW, Globals::windowH), &stats, &pos, objID)
 {
@@ -26,7 +79,6 @@ Unit::Unit(glm::vec3 hexCellCords, Model model, unordered_map<glm::vec3, HexCell
     {
         it = -1;
     }
-    properHeight = 1.507f;
     abilitiesList[0] = 0;
     abilitiesRanges[0] = 1;
     this->ID = objID;
@@ -34,7 +86,7 @@ Unit::Unit(glm::vec3 hexCellCords, Model model, unordered_map<glm::vec3, HexCell
     hexPos = hexCellCords;
     this->model = model;
     pos = getWorldPosFromHex(hexPos);
-    pos.y = properHeight;
+    pos.y = 0;
     if(stats.flying){
         (*HexGrid)[hexPos].airID = this->ID;
         (*HexGrid)[hexPos].occupiedAir = true;
@@ -72,7 +124,7 @@ void Unit::commandRC(Selectable *target, abilityCall *orderInfo)
     glm::vec3 targetPos = getWorldPosFromHex(hexPos);
     rotateTowardsHex(targetPos);
     pos = targetPos;
-    pos.y = properHeight;
+    pos.y = 0;
     transformMat[3] = glm::vec4(pos,1.0f);
 }
 
@@ -90,7 +142,7 @@ void Unit::onHover()
 
 void Unit::update(double deltaTime)
 {
-    boundingBox.model = glm::translate(glm::mat4(1.f), pos);
+    boundingBox.model = glm::translate(glm::mat4(1.f), glm::vec3(pos.x, stats.properHeight, pos.z));
     updateMovRange();
     updateAbilRange();
     guiHealthBar.update(deltaTime);
@@ -110,6 +162,7 @@ void Unit::render(unsigned int shaderProgram, std::vector<unsigned int> shaderPr
 
     if(isSelected && selectedAbil != -1)
     {
+
         for(auto& pair : inAbilityRange)
         {
             (*hexGrid)[pair.first].abilityRangeView = true;
@@ -139,7 +192,7 @@ void Unit::render(unsigned int shaderProgram, std::vector<unsigned int> shaderPr
         glEnable(GL_DEPTH_TEST);
         glDepthFunc(GL_LEQUAL);
 
-        glm::mat4 modelScaled = glm::scale(transformMat,glm::vec3(1.05f));
+        glm::mat4 modelScaled = glm::scale(transformMat,scaleOutline);
         glUniformMatrix4fv(glGetUniformLocation(shaderProgram, "model"), 1, GL_FALSE, glm::value_ptr(modelScaled));
         model.Draw(shaderProgram,false);
 
@@ -196,7 +249,8 @@ void Unit::useAbilOnUnit(Selectable *target, abilityCall *orderInfo)
         for(auto it : abilityEffects[selectedAbil]){
             orderInfo->effects[it.first] = it.second;
         }
-        orderInfo->target.push_back(&(*isUnit->hexGrid)[isUnit->hexPos]);
+
+        orderInfo->target = getHexesFromAOE(this->hexPos,abilitiesAOE[selectedAbil],isUnit->hexPos,hexGrid);
     }
 }
 
@@ -205,16 +259,17 @@ void Unit::useAbilOnHex(Selectable *target, abilityCall *orderInfo)
     Hexagon* isHex = dynamic_cast<Hexagon*>(target);
     if(isHex != nullptr && inAbilityRange.find(isHex->cell.LogicPos) != inAbilityRange.end())
     {
-        ///prawdopodobnie bedziesz chcial ztargetowac terrain/building jesli klikasz na hex'a
         orderInfo->abilityID = selectedAbil;
         orderInfo->culprit = this;
-        orderInfo->target.push_back(&isHex->cell);
+        for(auto it : abilityEffects[selectedAbil]){
+            orderInfo->effects[it.first] = it.second;
+        }
+        orderInfo->target = getHexesFromAOE(this->hexPos,abilitiesAOE[selectedAbil],isHex->cell.LogicPos,hexGrid);
     }
 }
 
 void Unit::tryMoving(Selectable *target, abilityCall *orderInfo)
 {
-
     Hexagon* isHex = dynamic_cast<Hexagon*>(target);
     if(isHex != nullptr && reachableHexes.find(isHex->cell.LogicPos) != reachableHexes.end() && selectedAbil == -1)
     {
@@ -242,7 +297,7 @@ void Unit::tryMoving(Selectable *target, abilityCall *orderInfo)
 void Unit::takeDamage(int damage, bool ignoreArmor, EFFECTS effect){
     int finaldamage = max(0,damage - (ignoreArmor ? 0 : stats.def));
     stats.health = max(0,stats.health - finaldamage);
-    (*obiektyRef)[Globals::numberOfEntities++] = make_unique<TextParticle>(ImVec2(Globals::windowW,Globals::windowH), -finaldamage ,effect, this->pos,Globals::numberOfEntities);
+    (*obiektyRef)[Globals::numberOfEntities++] = make_unique<TextParticle>(ImVec2(Globals::windowW,Globals::windowH), -finaldamage ,effect, glm::vec3(pos.x,pos.y+stats.properHeight,pos.z),Globals::numberOfEntities);
 }
 
 void Unit::resolveEffects()
@@ -255,7 +310,8 @@ void Unit::resolveEffects()
             stats.effects[i].duration = 0;
             break;
         case POISON:
-            takeDamage(stats.effects[i].intensity/2,true, POISON);
+            if(!stats.isBuilding)
+                takeDamage(stats.effects[i].intensity/2,true, POISON);
             stats.def = max(0, stats.def - stats.effects[i].intensity);
             break;
         case BURNING:
@@ -295,7 +351,7 @@ void Unit::resolveEndOfTurn(endTurnEffects effects)
 class GenericUnit : public Unit {
 public:
     GenericUnit(glm::vec3 hexCellCords, unordered_map<glm::vec3, HexCell> *HexGrid, int factionID, int64_t objID)
-        : Unit(hexCellCords, Model("Model/GenericTest/bullshit.obj"), HexGrid, factionID, objID) {
+        : Unit(hexCellCords, Model("Model/GenericTest/antilionobj.obj"), HexGrid, factionID, objID, true) {
         stats = {5, 5, 7, 1, 1, 7, 7, 0, 2, 1, true, false};
         ///AbilityDec
         abilitiesList[ATTACK] = ATTACK;
@@ -305,13 +361,16 @@ public:
         abilitiesRanges[ATTACK] = 3;
         abilitiesRanges[MISSILE] = 4;
 
+        ///AbilityAOEtypes
+        abilitiesAOE[ATTACK] = {1,RANGE};
+        abilitiesAOE[MISSILE] = {1,RANGE};
+
         ///AbilityEffectList
-        (abilityEffects[0])[BURNING] = effect{2,1};
+        (abilityEffects[ATTACK])[POISON] = effect{2,1};
 
-        properHeight = 1.609f;
-        pos.y = properHeight;
-        transformMat = glm::translate(glm::mat4(1.f), pos);
-        transformMat = glm::scale(transformMat,glm::vec3(0.1f));
-
+        ///adjustments
+        stats.properHeight = 1.50f;
+        boundingBox = Cube(0.15f, 0.07, 0.15f, pos);
+        scaleOutline = glm::vec3(1.003);
     }
 };

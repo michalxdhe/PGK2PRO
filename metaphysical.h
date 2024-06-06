@@ -195,7 +195,6 @@ class Selectable : public BoundingColider
 {
 
 public:
-
     bool hovering = 0;
     bool isSelected = 0;
 

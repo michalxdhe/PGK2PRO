@@ -361,6 +361,7 @@ void Game::update(const double deltaTime)
             if (d != nullptr) {
                 collisonCubeRay(ray, d->boundingBox, it->first);
                 d->refresh();
+                Globals::currentlyHoveredID = -1;
             }
         }
 
@@ -382,8 +383,10 @@ void Game::update(const double deltaTime)
         if (closest != nullptr)
         {
             closest->onHover();
+            Globals::currentlyHoveredID = ray.closestID;
         }
     }
+
     if(initiativeHighlightFlag && initiativeHighlightID != -1){
         Unit* isUnit = dynamic_cast<Unit*>(obiekty[initiativeHighlightID].get());
         if(isUnit != nullptr)
@@ -393,6 +396,30 @@ void Game::update(const double deltaTime)
     }
     initiativeHighlightID = -1;
     initiativeHighlightFlag = false;
+
+
+    ///GIANT hack zeby pokazac zasieg umiejetnosci
+    if(playerIntes[currentPlayersTurn]->selectedID != -1){
+        Unit* currentSelectedUnit = dynamic_cast<Unit*>(obiekty[playerIntes[currentPlayersTurn]->selectedID].get());
+        if(currentSelectedUnit != nullptr){
+            if(currentSelectedUnit->selectedAbil != -1 && Globals::currentlyHoveredID != -1){
+                Hexagon* isHex = dynamic_cast<Hexagon*>(obiekty[Globals::currentlyHoveredID].get());
+                if(isHex != nullptr){
+                   vector<HexCell*> highlighted = getHexesFromAOE(currentSelectedUnit->hexPos,currentSelectedUnit->abilitiesAOE[currentSelectedUnit->selectedAbil],isHex->cell.LogicPos,&HexGrid);
+                    for(auto it : highlighted){
+                        it->moveRangeView = true;
+                    }
+                }
+                Unit* isUnit = dynamic_cast<Unit*>(obiekty[Globals::currentlyHoveredID].get());
+                if(isUnit != nullptr){
+                   vector<HexCell*> highlighted = getHexesFromAOE(currentSelectedUnit->hexPos,currentSelectedUnit->abilitiesAOE[currentSelectedUnit->selectedAbil],isUnit->hexPos,&HexGrid);
+                    for(auto it : highlighted){
+                        it->moveRangeView = true;
+                    }
+                }
+            }
+        }
+    }
 
     for(auto it: autoGraveyard){
         obiekty.erase(it);

@@ -324,16 +324,20 @@ void doAttack(abilityCall info, Game *gameRef)
     int damage = info.culprit->stats.att;
     for(auto it : info.target)
     {
-        if(it->groundID != -1)
+        int targetID = info.culprit->stats.flying ?  it->airID : it->groundID;
+        if(targetID != -1)
         {
-            Unit* inZone = dynamic_cast<Unit*>(gameRef->obiekty[it->groundID].get());
+            Unit* inZone = dynamic_cast<Unit*>(gameRef->obiekty[targetID].get());
             if(inZone != nullptr)
             {
-                inZone->takeDamage(damage);
-                for(int i = 0; i < EFFECTS_COUNT; i++)
+                if(info.culprit->stats.flying == inZone->stats.flying)///Redundant
                 {
-                    inZone->stats.effects[i].duration += info.effects[i].duration;
-                    inZone->stats.effects[i].intensity += info.effects[i].intensity;
+                    inZone->takeDamage(damage);
+                    for(int i = 0; i < EFFECTS_COUNT; i++)
+                    {
+                        inZone->stats.effects[i].duration += info.effects[i].duration;
+                        inZone->stats.effects[i].intensity += info.effects[i].intensity;
+                    }
                 }
             }
         }
