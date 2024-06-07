@@ -62,6 +62,7 @@ public:
     std::array<int, ABILITIES_COUNT> *abilityList;
     int* selectedAbil;
     array<UnitType, 10> *buildMenu;
+    array<UnitType, 10> *morphMenu;
 
     GLuint activeTokenTexture;
     GLuint inactiveTokenTexture;
@@ -71,7 +72,7 @@ public:
     GLuint effectText[EFFECTS_COUNT];
 
     UnitGui();
-    UnitGui(ImVec2 windowSize, UnitStats *stats,  std::array<int, ABILITIES_COUNT> *abilityList, int* selectedAbil, array<UnitType, 10> *buildMenu);
+    UnitGui(ImVec2 windowSize, UnitStats *stats,  std::array<int, ABILITIES_COUNT> *abilityList, int* selectedAbil, array<UnitType, 10> *buildMenu, array<UnitType, 10> *morphMenu);
     void update(double deltaTime);
     void render(unsigned int shaderProgram, std::vector<unsigned int> shaderPrograms);
 };

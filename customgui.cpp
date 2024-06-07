@@ -54,8 +54,8 @@ void TextParticle::render(unsigned int shaderProgram, std::vector<unsigned int> 
     ImGui::End();
 }
 
-UnitGui::UnitGui(ImVec2 windowSize, UnitStats *stats,  std::array<int, ABILITIES_COUNT> *abilityList,int* selectedAbil, array<UnitType, 10> *buildMenu)
-    : stats(stats), abilityList(abilityList), selectedAbil(selectedAbil), buildMenu(buildMenu)
+UnitGui::UnitGui(ImVec2 windowSize, UnitStats *stats,  std::array<int, ABILITIES_COUNT> *abilityList,int* selectedAbil, array<UnitType, 10> *buildMenu, array<UnitType, 10> *morphMenu)
+    : stats(stats), abilityList(abilityList), selectedAbil(selectedAbil), buildMenu(buildMenu), morphMenu(morphMenu)
 {
     windowSpan = windowSize;
     windowHe = 45;
@@ -114,15 +114,26 @@ void UnitGui::render(unsigned int shaderProgram, std::vector<unsigned int> shade
     ImGui::SetNextWindowSize(ImVec2(windowWi, windowHe), ImGuiCond_Always);
     ImGui::SetNextWindowPos(ImVec2(windowX, windowY), ImGuiCond_Always);
     ImGui::Begin("hotBar", nullptr, invisPreset);
+    bool rainingToday = false;
     for(const auto& it : *abilityList)
     {
+        if(it == *selectedAbil){
+            ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.4f, 0.7f, 0.0f, 1.0f));
+            rainingToday = true;
+        }
         if(it >= 0){
             if(ImGui::Button(abilityNames[it].c_str(),ImVec2(25.f,25.f)))
+
                 *selectedAbil = it;
             }
+        if(rainingToday){
+            ImGui::PopStyleColor(1);
+            rainingToday = false;
+        }
 
         ImGui::SameLine();
     }
+
 
     if(*selectedAbil == CREATE){
         int countOfButtons = 0;
@@ -138,14 +149,54 @@ void UnitGui::render(unsigned int shaderProgram, std::vector<unsigned int> shade
 
         for(auto itt : *buildMenu){
             if(itt != UNIT_TYPE_COUNT){
+                if(itt == stats->selectedToBuild){
+                    ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.4f, 0.7f, 0.0f, 1.0f));
+                    rainingToday = true;
+                }
                 if(ImGui::Button(std::to_string(itt).c_str(),ImVec2(25.f,25.f))){
                     stats->selectedToBuild = itt;
+                }
+                if(rainingToday){
+                    ImGui::PopStyleColor(1);
+                    rainingToday = false;
                 }
                 ImGui::SameLine();
             }
         }
         ImGui::End();
     }
+
+    if(*selectedAbil == MORPH){
+        int countOfButtons = 0;
+        for(auto itt : *buildMenu){
+            if(itt != UNIT_TYPE_COUNT){
+                countOfButtons += 1;
+            }
+        }
+
+        ImGui::SetNextWindowSize(ImVec2((countOfButtons * 27.f) + padding*2, windowHe), ImGuiCond_Always);
+        ImGui::SetNextWindowPos(ImVec2(windowX, windowY - 45.f), ImGuiCond_Always);
+        ImGui::Begin("BuildSelect", nullptr, invisPreset);
+
+        for(auto itt : *buildMenu){
+            if(itt != UNIT_TYPE_COUNT){
+                if(itt == stats->selectedToBuild){
+                    ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.4f, 0.7f, 0.0f, 1.0f));
+                    rainingToday = true;
+                }
+                if(ImGui::Button(std::to_string(itt).c_str(),ImVec2(25.f,25.f))){
+                    stats->selectedToBuild = itt;
+                }
+                if(rainingToday){
+                    ImGui::PopStyleColor(1);
+                    rainingToday = false;
+                }
+                ImGui::SameLine();
+            }
+        }
+        ImGui::End();
+    }
+
     ImGui::End();
     ImGui::PopStyleVar();
 

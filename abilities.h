@@ -5,7 +5,7 @@ enum ABILITIES
 {
     ATTACK,
     CREATE,
-    MISSILE,
+    MORPH,
     ABILITIES_COUNT
 };
 

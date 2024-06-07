@@ -73,7 +73,7 @@ Unit::Unit() = default;
 
 Unit::Unit(glm::vec3 hexCellCords, ModelWithPath mod, unordered_map<glm::vec3, HexCell> *HexGrid, int factionID, int64_t objID, bool flying)
     : stats{5, 5, 3, 2, 1, 0, 4, 0, 2, 0, flying},
-      guiHotBar(ImVec2(Globals::windowW, Globals::windowH), &stats, &abilitiesList, &selectedAbil, &availableToBuild), hexGrid(HexGrid),
+      guiHotBar(ImVec2(Globals::windowW, Globals::windowH), &stats, &abilitiesList, &selectedAbil, &availableToBuild, &availableToMorph), hexGrid(HexGrid),
       guiHealthBar(ImVec2(Globals::windowW, Globals::windowH), &stats, &pos, objID)
 {
     for(auto &it : abilitiesList)
@@ -93,6 +93,10 @@ Unit::Unit(glm::vec3 hexCellCords, ModelWithPath mod, unordered_map<glm::vec3, H
 
     for(int i = 0; i < 10; i++){
         availableToBuild[i] = UNIT_TYPE_COUNT;
+    }
+
+    for(int i = 0; i < 10; i++){
+        availableToMorph[i] = UNIT_TYPE_COUNT;
     }
 
     pos = getWorldPosFromHex(hexPos);
@@ -454,12 +458,46 @@ public:
         ///BuildList IF CREATE ABIL IS PRESENT
         availableToBuild[0] = GENERIC_UNIT;
 
-        ///LaMusica
-
+        ///Cost Adjustment
+        stats.cost[ORE] = 1;
+        stats.buildActionPointCost = 1;
 
         ///adjustments
         stats.properHeight = 1.50f;
         boundingBox = Cube(0.15f, 0.07, 0.15f, pos);
         scaleOutline = glm::vec3(1.003);
     }
+};
+
+
+struct UnitFactory{
+        inline static deque<unique_ptr<Unit>> toBeCreated;
+        inline static unordered_map<glm::vec3, HexCell> *HexGridRef;
+        inline static unordered_map<UnitType, function<unique_ptr<Unit>(glm::vec3, unordered_map<glm::vec3, HexCell>*, int, int)>> unitCreationMap;
+
+        static void initialize(unordered_map<glm::vec3, HexCell> *HexGrid) {
+            HexGridRef = HexGrid;
+
+            unitCreationMap[GENERIC_UNIT] = [](glm::vec3 hexCellCords, unordered_map<glm::vec3, HexCell>* HexGrid, int factionID, int objID) {
+                return std::make_unique<GenericUnit>(hexCellCords, HexGrid, factionID, objID);
+            };
+
+        }
+
+        static void createUnit(UnitType unitType, glm::vec3 hexCellCords, int factionID){
+            auto it = unitCreationMap.find(unitType);
+            if (it != unitCreationMap.end()) {
+                toBeCreated.push_back(it->second(hexCellCords, HexGridRef, factionID,Globals::numberOfEntities++));
+            } else {
+                std::cerr << "Error: Unknown unit type." << std::endl;
+            }
+        }
+
+        static void resolveCreation(unordered_map<int, unique_ptr<Object>> *obiekty, deque<Unit> *initiativeQueue){
+            while(!toBeCreated.empty()){
+                //(*initiativeQueue).push_back(*toBeCreated.front());
+                (*obiekty)[toBeCreated.front()->ID] = move(toBeCreated.front());
+                toBeCreated.pop_front();
+            }
+        }
 };

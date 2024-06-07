@@ -17,38 +17,6 @@
 
 using namespace std;
 
-struct UnitFactory{
-        inline static deque<unique_ptr<Unit>> toBeCreated;
-        inline static unordered_map<glm::vec3, HexCell> *HexGridRef;
-        inline static unordered_map<UnitType, function<unique_ptr<Unit>(glm::vec3, unordered_map<glm::vec3, HexCell>*, int, int)>> unitCreationMap;
-
-        static void initialize(unordered_map<glm::vec3, HexCell> *HexGrid) {
-            HexGridRef = HexGrid;
-
-            unitCreationMap[GENERIC_UNIT] = [](glm::vec3 hexCellCords, unordered_map<glm::vec3, HexCell>* HexGrid, int factionID, int objID) {
-                return std::make_unique<GenericUnit>(hexCellCords, HexGrid, factionID, objID);
-            };
-
-        }
-
-        static void createUnit(UnitType unitType, glm::vec3 hexCellCords, int factionID){
-            auto it = unitCreationMap.find(unitType);
-            if (it != unitCreationMap.end()) {
-                toBeCreated.push_back(it->second(hexCellCords, HexGridRef, factionID,Globals::numberOfEntities++));
-            } else {
-                std::cerr << "Error: Unknown unit type." << std::endl;
-            }
-        }
-
-        static void resolveCreation(unordered_map<int, unique_ptr<Object>> *obiekty, deque<Unit> *initiativeQueue){
-            while(!toBeCreated.empty()){
-                //(*initiativeQueue).push_back(*toBeCreated.front());
-                (*obiekty)[toBeCreated.front()->ID] = move(toBeCreated.front());
-                toBeCreated.pop_front();
-            }
-        }
-};
-
 /** \brief  Taka tam pomocna funkcja co zwraca znak -1,0,1 dla double'a
  *
  * \param x double
@@ -395,6 +363,166 @@ private:
         }
     }
 
+    void doAttack(abilityCall info, Game *gameRef)
+{
+    int damage = info.culprit->stats.att;
+    for(auto it : info.target)
+    {
+        int targetID = info.culprit->stats.flying ?  it->airID : it->groundID;
+        if(targetID != -1)
+        {
+            Unit* inZone = dynamic_cast<Unit*>(gameRef->obiekty[targetID].get());
+            if(inZone != nullptr)
+            {
+                if(info.culprit->stats.flying == inZone->stats.flying)///Redundant
+                {
+                    inZone->takeDamage(damage);
+                    for(int i = 0; i < EFFECTS_COUNT; i++)
+                    {
+                        inZone->stats.effects[i].duration += info.effects[i].duration;
+                        inZone->stats.effects[i].intensity += info.effects[i].intensity;
+                    }
+                }
+            }
+        }
+    }
+}
+
+bool doCreate(abilityCall info, Game *gameRef)
+{
+    Unit offspringTemp;
+    bool status = false;
+    if(info.offSpring != -1 && info.offSpring < UNIT_TYPE_COUNT){
+        offspringTemp = *(UnitFactory::unitCreationMap[info.offSpring](glm::vec3(100.f),info.culprit->hexGrid,info.culprit->owner,-1));
+        for(auto it : info.target)
+        {
+            if(offspringTemp.stats.flying){
+                if(it->airID == -1 && !it->occupiedAir)
+                {
+                    status = true;
+                    UnitFactory::createUnit(info.offSpring,it->LogicPos,info.culprit->owner);
+                }
+            }else{
+                if(it->groundID == -1 && !it->occupiedGround)
+                {
+                    status = true;
+                    UnitFactory::createUnit(info.offSpring,it->LogicPos,info.culprit->owner);
+                }
+            }
+        }
+    }
+    UnitFactory::resolveCreation(&gameRef->obiekty,&gameRef->initiativeQueue);
+
+    return status;
+}
+
+bool doMorph(abilityCall info, Game *gameRef)
+{
+    bool status = false;
+    Unit offspringTemp;
+    if(info.offSpring != -1 && info.offSpring < UNIT_TYPE_COUNT){
+        offspringTemp = *(UnitFactory::unitCreationMap[info.offSpring](glm::vec3(100.f),info.culprit->hexGrid,info.culprit->owner,-1));
+            HexCell &culpritOrigin = (*info.culprit->hexGrid)[info.culprit->hexPos];
+
+            if(!info.culprit->stats.flying){
+            culpritOrigin.groundID = -1;
+            culpritOrigin.occupiedGround = false;
+            }else{
+            culpritOrigin.airID = -1;
+            culpritOrigin.occupiedAir = false;
+            }
+
+            if(offspringTemp.stats.flying){
+                if(culpritOrigin.airID == -1 && !culpritOrigin.occupiedAir)
+                {
+                    status = true;
+                    UnitFactory::createUnit(info.offSpring,info.culprit->hexPos,info.culprit->owner);
+                }
+            }else{
+                if(culpritOrigin.groundID == -1 && !culpritOrigin.occupiedGround)
+                {
+                    status = true;
+                    UnitFactory::createUnit(info.offSpring,info.culprit->hexPos,info.culprit->owner);
+                }
+            }
+    }
+    if(status)
+        info.culprit->stats.health = 0;
+
+    UnitFactory::resolveCreation(&gameRef->obiekty,&gameRef->initiativeQueue);
+    return status;
+}
+
+bool handleAbility(abilityCall info, Game *gameRef)
+{
+    switch(info.abilityID)
+    {
+    case ATTACK:
+        if(info.culprit->stats.actionTokens >= 1){
+            doAttack(info,gameRef);
+            info.culprit->stats.actionTokens -= 1;
+            return true;
+        }else
+        return false;
+        break;
+    case CREATE:{
+        Unit offspringTemp;
+         if(info.offSpring != -1 && info.offSpring < UNIT_TYPE_COUNT){
+        offspringTemp = *(UnitFactory::unitCreationMap[info.offSpring](glm::vec3(100.f),info.culprit->hexGrid,info.culprit->owner,-1));
+
+        bool hasTheResources = true;
+
+        for(int i = 0; i < RESOURCE_COUNT; i++){
+                if(playerIntes[info.culprit->owner]->resources[i] < offspringTemp.stats.cost[i])
+                {
+                 hasTheResources = false;
+                }
+        }
+
+        if(info.culprit->stats.actionTokens >= offspringTemp.stats.buildActionPointCost && hasTheResources){
+            if(doCreate(info,gameRef)){
+                info.culprit->stats.actionTokens -= offspringTemp.stats.buildActionPointCost;
+                for(int i = 0; i < RESOURCE_COUNT; i++){
+                    playerIntes[info.culprit->owner]->resources[i] = max(0,playerIntes[info.culprit->owner]->resources[i] - offspringTemp.stats.cost[i]);
+                }
+            }
+            return true;
+            }
+        }
+        return false;
+        break;
+    }
+    case MORPH:{
+        Unit offspringTemp;
+        if(info.offSpring != -1 && info.offSpring < UNIT_TYPE_COUNT){
+        offspringTemp = *(UnitFactory::unitCreationMap[info.offSpring](glm::vec3(100.f),info.culprit->hexGrid,info.culprit->owner,-1));
+
+        bool hasTheResources = true;
+
+        for(int i = 0; i < RESOURCE_COUNT; i++){
+                if(playerIntes[info.culprit->owner]->resources[i] < offspringTemp.stats.cost[i])
+                {
+                 hasTheResources = false;
+                }
+        }
+
+        if(info.culprit->stats.actionTokens >= offspringTemp.stats.buildActionPointCost && hasTheResources){
+            if(doMorph(info,gameRef)){
+                info.culprit->stats.actionTokens -= offspringTemp.stats.buildActionPointCost;
+                for(int i = 0; i < RESOURCE_COUNT; i++){
+                    playerIntes[info.culprit->owner]->resources[i] = max(0,playerIntes[info.culprit->owner]->resources[i] - offspringTemp.stats.cost[i]);
+                }
+            }
+            return true;
+            }
+        }
+        return false;
+        break;
+        }
+    }
+    return false;
+}
+
 };
 
 bool Game::inputCore(double deltaTime)
@@ -421,107 +549,5 @@ bool Game::renderCore(double deltaTime)
     return 1;
 }
 
-void doAttack(abilityCall info, Game *gameRef)
-{
-    int damage = info.culprit->stats.att;
-    for(auto it : info.target)
-    {
-        int targetID = info.culprit->stats.flying ?  it->airID : it->groundID;
-        if(targetID != -1)
-        {
-            Unit* inZone = dynamic_cast<Unit*>(gameRef->obiekty[targetID].get());
-            if(inZone != nullptr)
-            {
-                if(info.culprit->stats.flying == inZone->stats.flying)///Redundant
-                {
-                    inZone->takeDamage(damage);
-                    for(int i = 0; i < EFFECTS_COUNT; i++)
-                    {
-                        inZone->stats.effects[i].duration += info.effects[i].duration;
-                        inZone->stats.effects[i].intensity += info.effects[i].intensity;
-                    }
-                }
-            }
-        }
-    }
-}
-
-void doCreate(abilityCall info, Game *gameRef)
-{
-    Unit offspringTemp;
-    if(info.offSpring != -1 && info.offSpring < UNIT_TYPE_COUNT){
-        offspringTemp = *(UnitFactory::unitCreationMap[info.offSpring](glm::vec3(100.f),info.culprit->hexGrid,info.culprit->owner,-1));
-        for(auto it : info.target)
-        {
-            if(offspringTemp.stats.flying){
-                if(it->airID == -1 && !it->occupiedAir)
-                {
-                    UnitFactory::createUnit(info.offSpring,it->LogicPos,info.culprit->owner);
-                }
-            }else{
-                if(it->groundID == -1 && !it->occupiedGround)
-                {
-                    UnitFactory::createUnit(info.offSpring,it->LogicPos,info.culprit->owner);
-                }
-            }
-        }
-    }
-
-    UnitFactory::resolveCreation(&gameRef->obiekty,&gameRef->initiativeQueue);
-}
-
-void doMissile(abilityCall info, Game *gameRef)
-{
-    int damage = info.culprit->stats.att;
-    for(auto it : info.target)
-    {
-        if(it->groundID != -1)
-        {
-            Unit* inZone = dynamic_cast<Unit*>(gameRef->obiekty[it->groundID].get());
-            if(inZone != nullptr)
-            {
-                inZone->takeDamage(damage);
-                for(int i = 0; i < EFFECTS_COUNT; i++)
-                {
-                    inZone->stats.effects[i].duration += info.effects[i].duration;
-                    inZone->stats.effects[i].intensity += info.effects[i].intensity;
-                }
-            }
-        }
-        it->presentResource = ORE;
-    }
-}
-
-bool handleAbility(abilityCall info, Game *gameRef)
-{
-    switch(info.abilityID)
-    {
-    case ATTACK:
-        if(info.culprit->stats.actionTokens >= 1){
-            doAttack(info,gameRef);
-            info.culprit->stats.actionTokens -= 1;
-            return true;
-        }else
-        return false;
-        break;
-    case CREATE:
-        if(info.culprit->stats.actionTokens >= 1 && info.offSpring != UNIT_TYPE_COUNT){
-            doCreate(info,gameRef);
-            info.culprit->stats.actionTokens -= 1;
-            return true;
-        }else
-        return false;
-        break;
-    case MISSILE:
-        if(info.culprit->stats.actionTokens >= 2){
-            doMissile(info,gameRef);
-            info.culprit->stats.actionTokens -= 2;
-            return true;
-        }else
-        return false;
-        break;
-    }
-    return false;
-}
 
 #endif // MINDLESS_H_INCLUDED

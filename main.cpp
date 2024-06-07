@@ -14,7 +14,7 @@ void GLAPIENTRY MessageCallback(GLenum source, GLenum type, GLuint id, GLenum se
 void Game::init()
 {
     audioJungle.loadAudio("audioStuff/grunt1.wav");
-    audioJungle.play();
+    audioJungle.play(0);
     for(int i = 1; i <= numOfPlayers; i++)
     {
         playerIntes[i] = make_unique<PlayerInterface>();
@@ -303,8 +303,6 @@ void Game::update(const double deltaTime)
     ImGui_ImplOpenGL3_NewFrame();
     ImGui_ImplSDL2_NewFrame();
     ImGui::NewFrame();
-
-    audioJungle.stop();
 
 
     vector<int> deadPlayers;

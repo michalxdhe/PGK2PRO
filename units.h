@@ -47,6 +47,7 @@ struct UnitStats
     int targetFaction;
     float properHeight = 1.607f;
     array<int,RESOURCE_COUNT> cost;
+    int buildActionPointCost = 1;
     bool yourTurn = false;
     UnitType selectedToBuild = UNIT_TYPE_COUNT;
 };
@@ -83,6 +84,7 @@ public:
     array<int, ABILITIES_COUNT> abilitiesRanges;
     array<AOE, ABILITIES_COUNT> abilitiesAOE;
     array<UnitType, 10> availableToBuild;
+    array<UnitType, 10> availableToMorph;
     array<unordered_map<int,effect>, ABILITIES_COUNT> abilityEffects;
 
     UnitStats stats;

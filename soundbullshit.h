@@ -4,49 +4,51 @@
 class AudioPlayer {
 public:
 
-    AudioPlayer() : audio_pos(nullptr), audio_len(0), wav_buffer(nullptr) {
-    }
+    AudioPlayer() = default;
 
     ~AudioPlayer() {
-        if (wav_buffer) {
-            SDL_FreeWAV(wav_buffer);
+        for (auto& sound : sounds) {
+            if (sound.wav_buffer) {
+                SDL_FreeWAV(sound.wav_buffer);
+            }
         }
         SDL_CloseAudio();
+        SDL_Quit();
     }
 
     void loadAudio(const std::string& filePath) {
-        // Load the WAV file
-        if (SDL_LoadWAV(filePath.c_str(), &wav_spec, &wav_buffer, &wav_length) == NULL) {
+        SoundData sound;
+        if (SDL_LoadWAV(filePath.c_str(), &sound.wav_spec, &sound.wav_buffer, &sound.wav_length) == NULL) {
             throw std::runtime_error("Failed to load WAV file: " + std::string(SDL_GetError()));
         }
+        sounds.push_back(sound);
+    }
 
-        // Set our audio position and length
-        audio_pos = wav_buffer;
-        audio_len = wav_length;
+    void play(int index) {
+        if (index < 0 || index >= sounds.size()) {
+            throw std::out_of_range("Sound index out of range");
+        }
 
-        // Open the audio device
+        SDL_AudioSpec& wav_spec = sounds[index].wav_spec;
+        Uint8* wav_buffer = sounds[index].wav_buffer;
+        Uint32 wav_length = sounds[index].wav_length;
+
         if (SDL_OpenAudio(&wav_spec, NULL) < 0) {
             throw std::runtime_error("Couldn't open audio: " + std::string(SDL_GetError()));
         }
-        SDL_QueueAudio(1, wav_buffer, wav_length);
-    }
 
-    void play() {
+        SDL_QueueAudio(1, wav_buffer, wav_length);
         SDL_PauseAudio(0);
     }
 
-    void stop() {
-        //if(audio_len <= 0)
-            //SDL_PauseAudio(1);
-    }
-
-
 private:
-    Uint8* audio_pos;
-    Uint32 audio_len;
-    Uint8* wav_buffer;
-    Uint32 wav_length;
-    SDL_AudioSpec wav_spec;
+    struct SoundData {
+        Uint8* wav_buffer = nullptr;
+        Uint32 wav_length = 0;
+        SDL_AudioSpec wav_spec;
+    };
+
+    std::vector<SoundData> sounds;
 };
 
 #endif // SOUNDBULLSHIT_H_INCLUDED
