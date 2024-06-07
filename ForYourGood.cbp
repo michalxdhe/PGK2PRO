@@ -59,7 +59,10 @@
 		</ExtraCommands>
 		<Unit filename="PlayerInterface.h" />
 		<Unit filename="abilities.h" />
+		<Unit filename="animation.h" />
+		<Unit filename="animator.h" />
 		<Unit filename="boardlogic.h" />
+		<Unit filename="bone.h" />
 		<Unit filename="camerarevolting.h" />
 		<Unit filename="cameraworks.h" />
 		<Unit filename="common.h" />

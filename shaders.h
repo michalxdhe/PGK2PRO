@@ -73,7 +73,14 @@ bool readShaderFile(const char* filePath, std::string& shaderCode)
         return false;
     }
 }
-
+/** \brief Tworzy i kompiluje shader zwracajac jego id
+ *
+ * \param source const char* kod zrodlowy glsl'a
+ * \param type int GL_VERTEX_SHADER lub GL_FRAGMENT_SHADER
+ * \param destination GLuint& zmienna do ktorej zapisane jest ID
+ * \return bool czy sie udalo
+ *
+ */
 bool createAndCompileShader(const char* filePath, int type, GLuint &destination)
 {
     std::string shaderCode;

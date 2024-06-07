@@ -5,6 +5,13 @@
 
 using namespace std;
 
+/** \brief Dijkstra algorytm dla pathowania po ziemi
+ *
+ * \param HexGrid unordered_map<glm::vec3, HexCell> Grid po ktorym Dijkstra szuka sciezki
+ * \param source glm::vec3 zrodlo odkad idzie jednostka
+ * \return unordered_map<glm::vec3, int> zwraca mape pozycji i liczbe krokow potrzebnych do dostania sie do nich
+ *
+ */
 unordered_map<glm::vec3, int> getPathableCellsGround(unordered_map<glm::vec3, HexCell> HexGrid, glm::vec3 source)
 {
     unordered_map<glm::vec3, int> distances;
@@ -39,6 +46,13 @@ unordered_map<glm::vec3, int> getPathableCellsGround(unordered_map<glm::vec3, He
     return distances;
 }
 
+/** \brief Dijkstra algorytm dla pathowania po powietrzu
+ *
+ * \param HexGrid unordered_map<glm::vec3, HexCell> Grid po ktorym Dijkstra szuka sciezki
+ * \param source glm::vec3 zrodlo odkad idzie jednostka
+ * \return unordered_map<glm::vec3, int> zwraca mape pozycji i liczbe krokow potrzebnych do dostania sie do nich
+ *
+ */
 unordered_map<glm::vec3, int> getPathableCellsAir(unordered_map<glm::vec3, HexCell> HexGrid, glm::vec3 source)
 {
     unordered_map<glm::vec3, int> distances;
@@ -73,6 +87,13 @@ unordered_map<glm::vec3, int> getPathableCellsAir(unordered_map<glm::vec3, HexCe
     return distances;
 }
 
+/** \brief Dijkstra algorytm dla pathowania po calym gridzie
+ *
+ * \param HexGrid unordered_map<glm::vec3, HexCell> Grid po ktorym Dijkstra szuka sciezki
+ * \param source glm::vec3 zrodlo odkad idzie jednostka
+ * \return unordered_map<glm::vec3, int> zwraca mape pozycji i liczbe krokow potrzebnych do dostania sie do nich
+ *
+ */
 unordered_map<glm::vec3, int> getPathableCellsRange(unordered_map<glm::vec3, HexCell> HexGrid, glm::vec3 source)
 {
     unordered_map<glm::vec3, int> distances;

@@ -1066,11 +1066,11 @@
 
 1714991992 c:\garigette\foryourgood\playerinterface.h
 
-1717666593 source:c:\garigette\pgk2pro\main.cpp
+1717787907 source:c:\garigette\pgk2pro\main.cpp
 	"common.h"
 	"mindless.h"
 
-1715449405 c:\garigette\pgk2pro\stb_image.h
+1717679781 c:\garigette\pgk2pro\stb_image.h
 	"stb_image.h"
 	<stdio.h>
 	<stdlib.h>
@@ -1087,24 +1087,28 @@
 	<intrin.h>
 	<arm_neon.h>
 
-1717099255 c:\garigette\pgk2pro\camerarevolting.h
+1717679781 c:\garigette\pgk2pro\camerarevolting.h
 
-1717661030 c:\garigette\pgk2pro\boardlogic.h
+1717774049 c:\garigette\pgk2pro\boardlogic.h
 
-1717666072 c:\garigette\pgk2pro\metaphysical.h
+1717774049 c:\garigette\pgk2pro\metaphysical.h
 	"common.h"
 
-1717099255 c:\garigette\pgk2pro\model.h
+1717703331 c:\garigette\pgk2pro\model.h
+	"common.h"
 	"mesh.h"
 	"stb_image.h"
+	"assimp_glm_helpers.h"
+	"animdata.h"
 
-1717099255 c:\garigette\pgk2pro\mesh.h
+1717679781 c:\garigette\pgk2pro\mesh.h
 
-1717099255 c:\garigette\pgk2pro\mousepick.h
+1717774048 c:\garigette\pgk2pro\mousepick.h
 
-1717666072 c:\garigette\pgk2pro\globals.h
+1717774049 c:\garigette\pgk2pro\globals.h
 
-1717661342 c:\garigette\pgk2pro\mindless.h
+1717788795 c:\garigette\pgk2pro\mindless.h
+	"animator.h"
 	"metaphysical.h"
 	"model.h"
 	"PlayerInterface.h"
@@ -1118,27 +1122,29 @@
 	"customgui.cpp"
 	"abilities.h"
 
-1717408207 c:\garigette\pgk2pro\shaders.h
+1717774049 c:\garigette\pgk2pro\shaders.h
 	"common.h"
 	"stb_image.h"
 
-1717099255 source:c:\garigette\pgk2pro\weird.cpp
+1717679781 source:c:\garigette\pgk2pro\weird.cpp
 	"stb_image.h"
 
-1717512557 c:\garigette\pgk2pro\dijkstra.h
+1717774049 c:\garigette\pgk2pro\dijkstra.h
 	"boardlogic.h"
 
-1717673391 c:\garigette\pgk2pro\units.h
+1717787296 c:\garigette\pgk2pro\units.h
 	"globals.h"
 	"dijkstra.h"
+	"abilities.h"
+	"soundbullshit.h"
 
-1717581447 c:\garigette\pgk2pro\playerinterface.h
+1717774049 c:\garigette\pgk2pro\playerinterface.h
 	"globals.h"
 	"customgui.h"
 
 1715449405 c:\garigette\pgk2pro\cameraworks.h
 
-1715175513 c:\garigette\pgk2pro\imgui\imgui.h
+1717679781 c:\garigette\pgk2pro\imgui\imgui.h
 	"imconfig.h"
 	<float.h>
 	<stdarg.h>
@@ -1147,16 +1153,16 @@
 	<assert.h>
 	"imgui_user.h"
 
-1715175513 c:\garigette\pgk2pro\imgui\imconfig.h
+1717679781 c:\garigette\pgk2pro\imgui\imconfig.h
 
-1715175513 c:\garigette\pgk2pro\imgui\imgui_impl_sdl2.h
+1717679781 c:\garigette\pgk2pro\imgui\imgui_impl_sdl2.h
 	"imgui.h"
 
-1715175513 c:\garigette\pgk2pro\imgui\imgui_impl_opengl3.h
+1717679781 c:\garigette\pgk2pro\imgui\imgui_impl_opengl3.h
 	"imgui.h"
 	<TargetConditionals.h>
 
-1716751675 source:c:\garigette\pgk2pro\imgui\imgui_impl_opengl3.cpp
+1717679781 source:c:\garigette\pgk2pro\imgui\imgui_impl_opengl3.cpp
 	"imgui.h"
 	"imgui_impl_opengl3.h"
 	<stdio.h>
@@ -1170,7 +1176,7 @@
 	"imgui_impl_opengl3_loader.h"
 	<stdio.h>
 
-1715175513 c:\garigette\pgk2pro\imgui\imgui_impl_opengl3_loader.h
+1717679781 c:\garigette\pgk2pro\imgui\imgui_impl_opengl3_loader.h
 	<stdint.h>
 	<windows.h>
 	<stdlib.h>
@@ -1178,7 +1184,7 @@
 	<dlfcn.h>
 	<dlfcn.h>
 
-1716750140 source:c:\garigette\pgk2pro\imgui\imgui_impl_sdl2.cpp
+1717679781 source:c:\garigette\pgk2pro\imgui\imgui_impl_sdl2.cpp
 	"imgui.h"
 	"imgui_impl_sdl2.h"
 	<SDL2/SDL.h>
@@ -1213,7 +1219,7 @@
 	<X11/Xutil.h>
 	<kernel/image.h>
 
-1715175513 source:c:\garigette\pgk2pro\imgui\imgui.cpp
+1717679781 source:c:\garigette\pgk2pro\imgui\imgui.cpp
 	"imgui.h"
 	"imgui_internal.h"
 	<stdio.h>
@@ -1226,7 +1232,7 @@
 	<imm.h>
 	"imgui_user.inl"
 
-1715175513 c:\garigette\pgk2pro\imgui\imgui_internal.h
+1717679781 c:\garigette\pgk2pro\imgui\imgui_internal.h
 	"imgui.h"
 	<stdio.h>
 	<stdlib.h>
@@ -1235,10 +1241,10 @@
 	<immintrin.h>
 	"imstb_textedit.h"
 
-1715175513 c:\garigette\pgk2pro\imgui\imstb_textedit.h
+1717679781 c:\garigette\pgk2pro\imgui\imstb_textedit.h
 	<string.h>
 
-1715175513 source:c:\garigette\pgk2pro\imgui\imgui_demo.cpp
+1717679781 source:c:\garigette\pgk2pro\imgui\imgui_demo.cpp
 	"imgui.h"
 	<ctype.h>
 	<limits.h>
@@ -1248,7 +1254,7 @@
 	<stdint.h>
 	<inttypes.h>
 
-1715175513 source:c:\garigette\pgk2pro\imgui\imgui_draw.cpp
+1717679781 source:c:\garigette\pgk2pro\imgui\imgui_draw.cpp
 	"imgui.h"
 	"imgui_internal.h"
 	"misc/freetype/imgui_freetype.h"
@@ -1256,14 +1262,14 @@
 	"imstb_rectpack.h"
 	"imstb_truetype.h"
 
-1715175513 c:\garigette\pgk2pro\imgui\misc\freetype\imgui_freetype.h
+1717679781 c:\garigette\pgk2pro\imgui\misc\freetype\imgui_freetype.h
 	"imgui.h"
 
-1715175513 c:\garigette\pgk2pro\imgui\imstb_rectpack.h
+1717679781 c:\garigette\pgk2pro\imgui\imstb_rectpack.h
 	<stdlib.h>
 	<assert.h>
 
-1715175513 c:\garigette\pgk2pro\imgui\imstb_truetype.h
+1717679781 c:\garigette\pgk2pro\imgui\imstb_truetype.h
 	"stb_truetype.h"
 	<stdio.h>
 	"stb_truetype.h"
@@ -1277,18 +1283,18 @@
 	<string.h>
 	<string.h>
 
-1715175513 source:c:\garigette\pgk2pro\imgui\imgui_tables.cpp
+1717679781 source:c:\garigette\pgk2pro\imgui\imgui_tables.cpp
 	"imgui.h"
 	"imgui_internal.h"
 	<stdint.h>
 
-1715175513 source:c:\garigette\pgk2pro\imgui\imgui_widgets.cpp
+1717679781 source:c:\garigette\pgk2pro\imgui\imgui_widgets.cpp
 	"imgui.h"
 	"imgui_internal.h"
 	<stdint.h>
 	"imstb_textedit.h"
 
-1717585646 c:\garigette\pgk2pro\customgui.h
+1717786370 c:\garigette\pgk2pro\customgui.h
 	"abilities.h"
 	"shaders.h"
 
@@ -1300,7 +1306,7 @@
 	"customgui.h"
 	"units.h"
 
-1717570731 c:\garigette\pgk2pro\common.h
+1717785536 c:\garigette\pgk2pro\common.h
 	<iostream>
 	<fstream>
 	<sstream>
@@ -1312,6 +1318,8 @@
 	<vector>
 	<list>
 	<limits>
+	<map>
+	<chrono>
 	<GL/glew.h>
 	<glm/glm.hpp>
 	<glm/gtc/matrix_transform.hpp>
@@ -1332,11 +1340,11 @@
 	"customgui.h"
 	"units.h"
 
-1717673389 c:\garigette\pgk2pro\units.cpp
+1717787296 c:\garigette\pgk2pro\units.cpp
 	"customgui.h"
 	"units.h"
 
-1717607096 c:\garigette\pgk2pro\customgui.cpp
+1717774099 c:\garigette\pgk2pro\customgui.cpp
 	"customgui.h"
 	"units.h"
 
@@ -1573,5 +1581,494 @@
 1717099255 source:c:\garigette\pgk2proold\weird.cpp
 	"stb_image.h"
 
-1717512557 c:\garigette\pgk2pro\abilities.h
+1717764553 c:\garigette\pgk2pro\abilities.h
+
+1717679781 source:c:\garigette\pgk2pro-master(1)\pgk2pro-master\imgui\imgui.cpp
+	"imgui.h"
+	"imgui_internal.h"
+	<stdio.h>
+	<stdint.h>
+	<Windows.h>
+	<windows.h>
+	<TargetConditionals.h>
+	"stb_sprintf.h"
+	<Carbon/Carbon.h>
+	<imm.h>
+	"imgui_user.inl"
+
+1717679781 c:\garigette\pgk2pro-master(1)\pgk2pro-master\imgui\imgui.h
+	"imconfig.h"
+	<float.h>
+	<stdarg.h>
+	<stddef.h>
+	<string.h>
+	<assert.h>
+	"imgui_user.h"
+
+1717679781 c:\garigette\pgk2pro-master(1)\pgk2pro-master\imgui\imconfig.h
+
+1717679781 c:\garigette\pgk2pro-master(1)\pgk2pro-master\imgui\imgui_internal.h
+	"imgui.h"
+	<stdio.h>
+	<stdlib.h>
+	<math.h>
+	<limits.h>
+	<immintrin.h>
+	"imstb_textedit.h"
+
+1717679781 c:\garigette\pgk2pro-master(1)\pgk2pro-master\imgui\imstb_textedit.h
+	<string.h>
+
+1717679781 source:c:\garigette\pgk2pro-master(1)\pgk2pro-master\imgui\imgui_demo.cpp
+	"imgui.h"
+	<ctype.h>
+	<limits.h>
+	<math.h>
+	<stdio.h>
+	<stdlib.h>
+	<stdint.h>
+	<inttypes.h>
+
+1717679781 source:c:\garigette\pgk2pro-master(1)\pgk2pro-master\imgui\imgui_draw.cpp
+	"imgui.h"
+	"imgui_internal.h"
+	"misc/freetype/imgui_freetype.h"
+	<stdio.h>
+	"imstb_rectpack.h"
+	"imstb_truetype.h"
+
+1717679781 c:\garigette\pgk2pro-master(1)\pgk2pro-master\imgui\misc\freetype\imgui_freetype.h
+	"imgui.h"
+
+1717679781 c:\garigette\pgk2pro-master(1)\pgk2pro-master\imgui\imstb_rectpack.h
+	<stdlib.h>
+	<assert.h>
+
+1717679781 c:\garigette\pgk2pro-master(1)\pgk2pro-master\imgui\imstb_truetype.h
+	"stb_truetype.h"
+	<stdio.h>
+	"stb_truetype.h"
+	<math.h>
+	<math.h>
+	<math.h>
+	<math.h>
+	<math.h>
+	<stdlib.h>
+	<assert.h>
+	<string.h>
+	<string.h>
+
+1717679781 source:c:\garigette\pgk2pro-master(1)\pgk2pro-master\imgui\imgui_impl_opengl3.cpp
+	"imgui.h"
+	"imgui_impl_opengl3.h"
+	<stdio.h>
+	<stdint.h>
+	<TargetConditionals.h>
+	<OpenGLES/ES2/gl.h>
+	<GLES2/gl2.h>
+	<GLES2/gl2ext.h>
+	<OpenGLES/ES3/gl.h>
+	<GLES3/gl3.h>
+	"imgui_impl_opengl3_loader.h"
+	<stdio.h>
+
+1717679781 c:\garigette\pgk2pro-master(1)\pgk2pro-master\imgui\imgui_impl_opengl3.h
+	"imgui.h"
+	<TargetConditionals.h>
+
+1717679781 c:\garigette\pgk2pro-master(1)\pgk2pro-master\imgui\imgui_impl_opengl3_loader.h
+	<stdint.h>
+	<windows.h>
+	<stdlib.h>
+	<windows.h>
+	<dlfcn.h>
+	<dlfcn.h>
+
+1717679781 source:c:\garigette\pgk2pro-master(1)\pgk2pro-master\imgui\imgui_impl_sdl2.cpp
+	"imgui.h"
+	"imgui_impl_sdl2.h"
+	<SDL2/SDL.h>
+	<SDL2/SDL_syswm.h>
+	<TargetConditionals.h>
+
+1717679781 c:\garigette\pgk2pro-master(1)\pgk2pro-master\imgui\imgui_impl_sdl2.h
+	"imgui.h"
+
+1717679781 source:c:\garigette\pgk2pro-master(1)\pgk2pro-master\imgui\imgui_tables.cpp
+	"imgui.h"
+	"imgui_internal.h"
+	<stdint.h>
+
+1717679781 source:c:\garigette\pgk2pro-master(1)\pgk2pro-master\imgui\imgui_widgets.cpp
+	"imgui.h"
+	"imgui_internal.h"
+	<stdint.h>
+	"imstb_textedit.h"
+
+1717787907 source:c:\garigette\pgk2pro-master(1)\pgk2pro-master\main.cpp
+	"common.h"
+	"mindless.h"
+
+1717785536 c:\garigette\pgk2pro-master(1)\pgk2pro-master\common.h
+	<iostream>
+	<fstream>
+	<sstream>
+	<time.h>
+	<memory>
+	<algorithm>
+	<unordered_map>
+	<queue>
+	<vector>
+	<list>
+	<limits>
+	<map>
+	<chrono>
+	<GL/glew.h>
+	<glm/glm.hpp>
+	<glm/gtc/matrix_transform.hpp>
+	<glm/gtc/type_ptr.hpp>
+	<glm/gtx/hash.hpp>
+	<glm/gtx/string_cast.hpp>
+	<glm/gtx/matrix_decompose.hpp>
+	"imgui.h"
+	"imgui_impl_sdl2.h"
+	"imgui_impl_opengl3.h"
+	<SDL2/SDL.h>
+	<SDL2/SDL_opengl.h>
+	<assimp/Importer.hpp>
+	<assimp/scene.h>
+	<assimp/postprocess.h>
+
+1717787296 c:\garigette\pgk2pro-master(1)\pgk2pro-master\mindless.h
+	"animator.h"
+	"metaphysical.h"
+	"model.h"
+	"PlayerInterface.h"
+	"mousepick.h"
+	"camerarevolting.h"
+	"globals.h"
+	"units.h"
+	"customgui.h"
+	"boardlogic.h"
+	"units.cpp"
+	"customgui.cpp"
+	"abilities.h"
+
+1717774049 c:\garigette\pgk2pro-master(1)\pgk2pro-master\metaphysical.h
+	"common.h"
+
+1717703331 c:\garigette\pgk2pro-master(1)\pgk2pro-master\model.h
+	"common.h"
+	"mesh.h"
+	"stb_image.h"
+	"assimp_glm_helpers.h"
+	"animdata.h"
+
+1717679781 c:\garigette\pgk2pro-master(1)\pgk2pro-master\mesh.h
+
+1717679781 c:\garigette\pgk2pro-master(1)\pgk2pro-master\stb_image.h
+	"stb_image.h"
+	<stdio.h>
+	<stdlib.h>
+	<stdarg.h>
+	<stddef.h>
+	<stdlib.h>
+	<string.h>
+	<limits.h>
+	<math.h>
+	<stdio.h>
+	<assert.h>
+	<stdint.h>
+	<emmintrin.h>
+	<intrin.h>
+	<arm_neon.h>
+
+1717774049 c:\garigette\pgk2pro-master(1)\pgk2pro-master\playerinterface.h
+	"globals.h"
+	"customgui.h"
+
+1717774049 c:\garigette\pgk2pro-master(1)\pgk2pro-master\globals.h
+
+1717786370 c:\garigette\pgk2pro-master(1)\pgk2pro-master\customgui.h
+	"abilities.h"
+	"shaders.h"
+
+1717764553 c:\garigette\pgk2pro-master(1)\pgk2pro-master\abilities.h
+
+1717774049 c:\garigette\pgk2pro-master(1)\pgk2pro-master\shaders.h
+	"common.h"
+	"stb_image.h"
+
+1717774048 c:\garigette\pgk2pro-master(1)\pgk2pro-master\mousepick.h
+
+1717679781 c:\garigette\pgk2pro-master(1)\pgk2pro-master\camerarevolting.h
+
+1717787296 c:\garigette\pgk2pro-master(1)\pgk2pro-master\units.h
+	"globals.h"
+	"dijkstra.h"
+	"abilities.h"
+	"soundbullshit.h"
+
+1717774049 c:\garigette\pgk2pro-master(1)\pgk2pro-master\dijkstra.h
+	"boardlogic.h"
+
+1717774049 c:\garigette\pgk2pro-master(1)\pgk2pro-master\boardlogic.h
+
+1717787296 c:\garigette\pgk2pro-master(1)\pgk2pro-master\units.cpp
+	"customgui.h"
+	"units.h"
+
+1717774099 c:\garigette\pgk2pro-master(1)\pgk2pro-master\customgui.cpp
+	"customgui.h"
+	"units.h"
+
+1717679781 source:c:\garigette\pgk2pro-master(1)\pgk2pro-master\weird.cpp
+	"stb_image.h"
+
+1717680852 c:\garigette\pgk2pro-master(1)\pgk2pro-master\assimp_glm_helpers.h
+	"common.h"
+
+1717680852 c:\garigette\pgk2pro-master(1)\pgk2pro-master\animdata.h
+
+1717704042 c:\garigette\pgk2pro-master(1)\pgk2pro-master\animator.h
+	"common.h"
+	"animation.h"
+	"bone.h"
+
+1717693396 c:\garigette\pgk2pro-master(1)\pgk2pro-master\animation.h
+	"common.h"
+	"bone.h"
+	"animdata.h"
+	"model.h"
+
+1717786370 c:\garigette\pgk2pro-master(1)\pgk2pro-master\bone.h
+	"common.h"
+	"assimp_glm_helpers.h"
+
+1517303046 c:\garigette\pgk2pro-master(1)\pgk2pro-master\irrklanginc\irrklang.h
+	"ik_irrKlangTypes.h"
+	"ik_vec3d.h"
+	"ik_IRefCounted.h"
+	"ik_IVirtualRefCounted.h"
+	"ik_ESoundOutputDrivers.h"
+	"ik_ESoundEngineOptions.h"
+	"ik_EStreamModes.h"
+	"ik_SAudioStreamFormat.h"
+	"ik_ISoundEngine.h"
+	"ik_ISoundSource.h"
+	"ik_ISound.h"
+	"ik_IAudioStream.h"
+	"ik_IAudioStreamLoader.h"
+	"ik_ISoundEffectControl.h"
+	"ik_ISoundStopEventReceiver.h"
+	"ik_IFileFactory.h"
+	"ik_IFileReader.h"
+	"ik_ISoundDeviceList.h"
+	"ik_IAudioRecorder.h"
+	"ik_ISoundMixedOutputReceiver.h"
+
+1517223608 c:\garigette\pgk2pro-master(1)\pgk2pro-master\irrklanginc\ik_irrklangtypes.h
+	<wchar.h>
+
+1517223608 c:\garigette\pgk2pro-master(1)\pgk2pro-master\irrklanginc\ik_vec3d.h
+	<math.h>
+	"ik_irrKlangTypes.h"
+
+1517223608 c:\garigette\pgk2pro-master(1)\pgk2pro-master\irrklanginc\ik_irefcounted.h
+	"ik_irrKlangTypes.h"
+
+1517223608 c:\garigette\pgk2pro-master(1)\pgk2pro-master\irrklanginc\ik_ivirtualrefcounted.h
+	"ik_irrKlangTypes.h"
+
+1517223608 c:\garigette\pgk2pro-master(1)\pgk2pro-master\irrklanginc\ik_esoundoutputdrivers.h
+
+1517223608 c:\garigette\pgk2pro-master(1)\pgk2pro-master\irrklanginc\ik_esoundengineoptions.h
+
+1517223608 c:\garigette\pgk2pro-master(1)\pgk2pro-master\irrklanginc\ik_estreammodes.h
+
+1517223608 c:\garigette\pgk2pro-master(1)\pgk2pro-master\irrklanginc\ik_saudiostreamformat.h
+	"ik_IRefCounted.h"
+
+1517223608 c:\garigette\pgk2pro-master(1)\pgk2pro-master\irrklanginc\ik_isoundengine.h
+	"ik_IRefCounted.h"
+	"ik_vec3d.h"
+	"ik_ISoundSource.h"
+	"ik_ISound.h"
+	"ik_EStreamModes.h"
+	"ik_IFileFactory.h"
+	"ik_ISoundMixedOutputReceiver.h"
+
+1517223632 c:\garigette\pgk2pro-master(1)\pgk2pro-master\irrklanginc\ik_isoundsource.h
+	"ik_IVirtualRefCounted.h"
+	"ik_vec3d.h"
+	"ik_EStreamModes.h"
+	"ik_SAudioStreamFormat.h"
+
+1517223608 c:\garigette\pgk2pro-master(1)\pgk2pro-master\irrklanginc\ik_isound.h
+	"ik_IVirtualRefCounted.h"
+	"ik_ISoundEffectControl.h"
+	"ik_vec3d.h"
+
+1517223608 c:\garigette\pgk2pro-master(1)\pgk2pro-master\irrklanginc\ik_isoundeffectcontrol.h
+	"ik_IVirtualRefCounted.h"
+	"ik_vec3d.h"
+
+1517223608 c:\garigette\pgk2pro-master(1)\pgk2pro-master\irrklanginc\ik_ifilefactory.h
+	"ik_IRefCounted.h"
+
+1517223608 c:\garigette\pgk2pro-master(1)\pgk2pro-master\irrklanginc\ik_isoundmixedoutputreceiver.h
+	"ik_IRefCounted.h"
+	"ik_SAudioStreamFormat.h"
+
+1517223608 c:\garigette\pgk2pro-master(1)\pgk2pro-master\irrklanginc\ik_iaudiostream.h
+	"ik_IRefCounted.h"
+	"ik_SAudioStreamFormat.h"
+
+1517223608 c:\garigette\pgk2pro-master(1)\pgk2pro-master\irrklanginc\ik_iaudiostreamloader.h
+	"ik_IRefCounted.h"
+	"ik_IFileReader.h"
+
+1517223608 c:\garigette\pgk2pro-master(1)\pgk2pro-master\irrklanginc\ik_ifilereader.h
+	"ik_IRefCounted.h"
+
+1517223608 c:\garigette\pgk2pro-master(1)\pgk2pro-master\irrklanginc\ik_isoundstopeventreceiver.h
+	"ik_IRefCounted.h"
+	"ik_SAudioStreamFormat.h"
+
+1517223608 c:\garigette\pgk2pro-master(1)\pgk2pro-master\irrklanginc\ik_isounddevicelist.h
+	"ik_IRefCounted.h"
+
+1517223624 c:\garigette\pgk2pro-master(1)\pgk2pro-master\irrklanginc\ik_iaudiorecorder.h
+	"ik_IRefCounted.h"
+	"ik_ISoundSource.h"
+
+1398487410 c:\garigette\pgk2pro-master(1)\pgk2pro-master\irrklang\irrklang.h
+	"ik_irrKlangTypes.h"
+	"ik_vec3d.h"
+	"ik_IRefCounted.h"
+	"ik_IVirtualRefCounted.h"
+	"ik_ESoundOutputDrivers.h"
+	"ik_ESoundEngineOptions.h"
+	"ik_EStreamModes.h"
+	"ik_SAudioStreamFormat.h"
+	"ik_ISoundEngine.h"
+	"ik_ISoundSource.h"
+	"ik_ISound.h"
+	"ik_IAudioStream.h"
+	"ik_IAudioStreamLoader.h"
+	"ik_ISoundEffectControl.h"
+	"ik_ISoundStopEventReceiver.h"
+	"ik_IFileFactory.h"
+	"ik_IFileReader.h"
+	"ik_ISoundDeviceList.h"
+	"ik_IAudioRecorder.h"
+	"ik_ISoundMixedOutputReceiver.h"
+
+1394099054 c:\garigette\pgk2pro-master(1)\pgk2pro-master\irrklang\ik_irrklangtypes.h
+	<wchar.h>
+
+1399012338 c:\garigette\pgk2pro-master(1)\pgk2pro-master\irrklang\ik_vec3d.h
+	<math.h>
+	"ik_irrKlangTypes.h"
+
+1394088894 c:\garigette\pgk2pro-master(1)\pgk2pro-master\irrklang\ik_irefcounted.h
+	"ik_irrKlangTypes.h"
+
+1394088894 c:\garigette\pgk2pro-master(1)\pgk2pro-master\irrklang\ik_ivirtualrefcounted.h
+	"ik_irrKlangTypes.h"
+
+1394088900 c:\garigette\pgk2pro-master(1)\pgk2pro-master\irrklang\ik_esoundoutputdrivers.h
+
+1394088894 c:\garigette\pgk2pro-master(1)\pgk2pro-master\irrklang\ik_esoundengineoptions.h
+
+1394088894 c:\garigette\pgk2pro-master(1)\pgk2pro-master\irrklang\ik_estreammodes.h
+
+1394088894 c:\garigette\pgk2pro-master(1)\pgk2pro-master\irrklang\ik_saudiostreamformat.h
+	"ik_IRefCounted.h"
+
+1394096464 c:\garigette\pgk2pro-master(1)\pgk2pro-master\irrklang\ik_isoundengine.h
+	"ik_IRefCounted.h"
+	"ik_vec3d.h"
+	"ik_ISoundSource.h"
+	"ik_ISound.h"
+	"ik_EStreamModes.h"
+	"ik_IFileFactory.h"
+	"ik_ISoundMixedOutputReceiver.h"
+
+1394088894 c:\garigette\pgk2pro-master(1)\pgk2pro-master\irrklang\ik_isoundsource.h
+	"ik_IVirtualRefCounted.h"
+	"ik_vec3d.h"
+	"ik_EStreamModes.h"
+	"ik_SAudioStreamFormat.h"
+
+1394088894 c:\garigette\pgk2pro-master(1)\pgk2pro-master\irrklang\ik_isound.h
+	"ik_IVirtualRefCounted.h"
+	"ik_ISoundEffectControl.h"
+	"ik_vec3d.h"
+
+1394088894 c:\garigette\pgk2pro-master(1)\pgk2pro-master\irrklang\ik_isoundeffectcontrol.h
+	"ik_IVirtualRefCounted.h"
+	"ik_vec3d.h"
+
+1394096452 c:\garigette\pgk2pro-master(1)\pgk2pro-master\irrklang\ik_ifilefactory.h
+	"ik_IRefCounted.h"
+
+1394088894 c:\garigette\pgk2pro-master(1)\pgk2pro-master\irrklang\ik_isoundmixedoutputreceiver.h
+	"ik_IRefCounted.h"
+	"ik_SAudioStreamFormat.h"
+
+1394088894 c:\garigette\pgk2pro-master(1)\pgk2pro-master\irrklang\ik_iaudiostream.h
+	"ik_IRefCounted.h"
+	"ik_SAudioStreamFormat.h"
+
+1394088894 c:\garigette\pgk2pro-master(1)\pgk2pro-master\irrklang\ik_iaudiostreamloader.h
+	"ik_IRefCounted.h"
+	"ik_IFileReader.h"
+
+1394088894 c:\garigette\pgk2pro-master(1)\pgk2pro-master\irrklang\ik_ifilereader.h
+	"ik_IRefCounted.h"
+
+1394088894 c:\garigette\pgk2pro-master(1)\pgk2pro-master\irrklang\ik_isoundstopeventreceiver.h
+	"ik_IRefCounted.h"
+	"ik_SAudioStreamFormat.h"
+
+1394088894 c:\garigette\pgk2pro-master(1)\pgk2pro-master\irrklang\ik_isounddevicelist.h
+	"ik_IRefCounted.h"
+
+1394096448 c:\garigette\pgk2pro-master(1)\pgk2pro-master\irrklang\ik_iaudiorecorder.h
+	"ik_IRefCounted.h"
+	"ik_ISoundSource.h"
+
+1705861352 c:\sdl2\include\sdl2\sdl_mixer.h
+	"SDL_stdinc.h"
+	"SDL_rwops.h"
+	"SDL_audio.h"
+	"SDL_endian.h"
+	"SDL_version.h"
+	"begin_code.h"
+	"close_code.h"
+
+1717788312 c:\garigette\pgk2pro-master(1)\pgk2pro-master\soundbullshit.h
+
+1717704042 c:\garigette\pgk2pro\animator.h
+	"common.h"
+	"animation.h"
+	"bone.h"
+
+1717693396 c:\garigette\pgk2pro\animation.h
+	"common.h"
+	"bone.h"
+	"animdata.h"
+	"model.h"
+
+1717786370 c:\garigette\pgk2pro\bone.h
+	"common.h"
+	"assimp_glm_helpers.h"
+
+1717680852 c:\garigette\pgk2pro\assimp_glm_helpers.h
+	"common.h"
+
+1717680852 c:\garigette\pgk2pro\animdata.h
+
+1717788312 c:\garigette\pgk2pro\soundbullshit.h
 

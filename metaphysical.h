@@ -3,6 +3,13 @@
 
 #include "common.h"
 
+/** \brief deprecated,
+ *
+ * \param lightPos glm::vec3
+ * \param up glm::vec3
+ * \return glm::mat4 lightspacematrix dla shadowmapy
+ *
+ */
 glm::mat4 calculateLightSpaceMatrix(glm::vec3 lightPos, glm::vec3 up)
 {
     glm::mat4 viewMatrix = glm::lookAt(lightPos, glm::vec3(0.0f), up);
@@ -17,12 +24,15 @@ glm::mat4 calculateLightSpaceMatrix(glm::vec3 lightPos, glm::vec3 up)
     return lightSpaceMatrix;
 }
 
+/** \brief Obiekt komorki hexagonalnej
+ */
 class HexCell
 {
 
 public:
+    ///Pozycja logiczna Cube coordynatow komorki
     glm::vec3 LogicPos;
-    int distanceFrom;
+
     bool passable = 1;
     bool moveRangeView = false;
     bool abilityRangeView = false;
@@ -41,6 +51,8 @@ public:
     }
 };
 
+/** \brief Obiekt verticów u³o¿onych w kostkê, raczej deprecated, uzywane tylko do debugowania i skybox'a
+ */
 class Cube
 {
 
@@ -141,7 +153,17 @@ public:
 };
 
 
-glm::vec2 calculateScreenPosition(const glm::vec3& pos, const glm::mat4& viewMatrix, const glm::mat4& projectionMatrix, int screenWidth, int screenHeight) {
+/** \brief Funkcja do obliczenia pozycji ekranowej na bazie pozycji w worldSpace, to samo co w mousepickerze ale na odwrot
+ *
+ * \param pos const glm::vec3& pozycja w worldspace
+ * \param viewMatrix const glm::mat4&
+ * \param projectionMatrix const glm::mat4&
+ * \param screenWidth int
+ * \param screenHeight int
+ * \return glm::vec2 2D pozycja ekranu
+ *
+ */
+glm::vec2 calculateScreenPosition(glm::vec3 pos,  glm::mat4 viewMatrix, glm::mat4 projectionMatrix, int screenWidth, int screenHeight) {
     glm::vec4 clipSpacePos = projectionMatrix * viewMatrix * glm::vec4(pos, 1.0);
 
     if (clipSpacePos.w <= 0.0f) {
@@ -161,12 +183,16 @@ glm::vec2 calculateScreenPosition(const glm::vec3& pos, const glm::mat4& viewMat
     return screenSpacePos;
 }
 
+
+/** \brief Glowny abstrakt obiektu gry
+ */
 class Object
 {
 
 public:
     static glm::mat4 *viewRef;
     static glm::mat4 *projectionRef;
+    /// Jakis hack, ref do mapy wszystkich obiektow, chyba uzywany tylko do damageparticles, jak narazie
     static std::unordered_map<int, std::unique_ptr<Object>> *obiektyRef;
     int64_t ID;
     virtual ~Object() = default;
@@ -179,6 +205,8 @@ glm::mat4* Object::viewRef = nullptr;
 glm::mat4* Object::projectionRef = nullptr;
 std::unordered_map<int, std::unique_ptr<Object>>* Object::obiektyRef = nullptr;
 
+/** \brief Abstrakt klasa obiektu zdolnego do kolizji
+ */
 class BoundingColider
 {
 
@@ -191,6 +219,8 @@ public:
 
 struct abilityCall;
 
+/** \brief Abstrakt klasa obiektu ktory da sie kliknac i wybrac, reaguje na najechanie
+ */
 class Selectable : public BoundingColider
 {
 
@@ -212,6 +242,8 @@ public:
     virtual void commandLC(Selectable *target, abilityCall *orderInfo) = 0;
 };
 
+/** \brief Bazowa klasa obiektow swiatla, mozna rozszerzyc o wiecej parametrow jak np. kolor, intensity etc.
+ */
 class LightSource : public Object
 {
 
@@ -220,7 +252,8 @@ public:
     glm::vec3 lightTarget;
     glm::vec3 lightPos = glm::vec3(0.001f,3.f,0.001f);
 };
-
+/** \brief Klasa obiektu fizycznego swiatla
+ */
 class LightCube : public LightSource
 {
 
@@ -327,6 +360,8 @@ public:
     }
 };
 
+/** \brief Obiekt wiazki, glownie uzywany do mousePickera, zoptymalizowany tak aby inverse dzielenie dzialo sie tylko raz na klatke
+ */
 class optimizedRay
 {
 
@@ -352,6 +387,14 @@ public:
 
 };
 
+/** \brief Check kolizji miedzy Ray'em a AABB
+ *
+ * \param optray optimizedRay& Ray
+ * \param box Cube AABB
+ * \param objID int64_t ID podawane w ramach determinowania najblizszego obiektu
+ * \return bool Czy jest kolizja
+ *
+ */
 bool collisonCubeRay(optimizedRay &optray, Cube box, int64_t objID)
 {
     glm::vec3 cubePos = glm::vec3(box.model * glm::vec4(glm::vec3(0.f,0.f,0.f), 1.0f));

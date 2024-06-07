@@ -4,6 +4,9 @@
 #include "globals.h"
 #include "customgui.h"
 
+
+/** \brief Klasa definiujaca instancje gracza
+ */
 class PlayerInterface
 {
 

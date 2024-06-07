@@ -1,6 +1,8 @@
 #ifndef MOUSEPICK_H_INCLUDED
 #define MOUSEPICK_H_INCLUDED
 
+/** \brief Klasa dla MousePicker'a, tworzy Ray na podstawie view, perspektywy i pozycji myszy na ekranie
+ */
 class MousePicker
 {
 public:

@@ -24,6 +24,7 @@ vector<HexCell*> getHexesFromAOE(glm::vec3 culpritPos,AOE aoeInfo, glm::vec3 ori
             break;
         }
         case RANGE:{
+                result.clear();
                 unordered_map<glm::vec3, int> cells = getPathableCellsRange(*grid,origin);
 
                 for(auto it : cells)
@@ -70,9 +71,9 @@ unordered_map<glm::vec3, int> getCellsUpToDist(unordered_map<glm::vec3, int> pat
 
 Unit::Unit() = default;
 
-Unit::Unit(glm::vec3 hexCellCords, Model model, unordered_map<glm::vec3, HexCell> *HexGrid, int factionID, int64_t objID, bool flying)
+Unit::Unit(glm::vec3 hexCellCords, ModelWithPath mod, unordered_map<glm::vec3, HexCell> *HexGrid, int factionID, int64_t objID, bool flying)
     : stats{5, 5, 3, 2, 1, 0, 4, 0, 2, 0, flying},
-      guiHotBar(ImVec2(Globals::windowW, Globals::windowH), &stats, &abilitiesList, &selectedAbil), hexGrid(HexGrid),
+      guiHotBar(ImVec2(Globals::windowW, Globals::windowH), &stats, &abilitiesList, &selectedAbil, &availableToBuild), hexGrid(HexGrid),
       guiHealthBar(ImVec2(Globals::windowW, Globals::windowH), &stats, &pos, objID)
 {
     for(auto &it : abilitiesList)
@@ -84,20 +85,38 @@ Unit::Unit(glm::vec3 hexCellCords, Model model, unordered_map<glm::vec3, HexCell
     this->ID = objID;
     this->owner = factionID;
     hexPos = hexCellCords;
-    this->model = model;
+
+    ///model i animacja
+    this->model = mod.model;
+    animations = Animation(mod.path,&model);
+    animator = Animator(&animations);
+
+    for(int i = 0; i < 10; i++){
+        availableToBuild[i] = UNIT_TYPE_COUNT;
+    }
+
     pos = getWorldPosFromHex(hexPos);
     pos.y = 0;
+
     if(stats.flying){
-        (*HexGrid)[hexPos].airID = this->ID;
-        (*HexGrid)[hexPos].occupiedAir = true;
+        (*hexGrid)[hexPos].airID = this->ID;
+        (*hexGrid)[hexPos].occupiedAir = true;
     }else{
-        (*HexGrid)[hexPos].groundID = this->ID;
-        (*HexGrid)[hexPos].occupiedGround = true;
+        (*hexGrid)[hexPos].groundID = this->ID;
+        (*hexGrid)[hexPos].occupiedGround = true;
     }
+
     transformMat = glm::translate(glm::mat4(1.f), pos);
     boundingBox = Cube(0.21f, 0.21f, 0.21f, pos);
 }
 
+/** \brief Metoda wykonujaca siê przy kliknieciu lewego przycisku myszy gdy Unit jest selected
+ *
+ * \param target Selectable* To w co sie kliknelo
+ * \param orderInfo abilityCall* Uzywane do obslugi umiejetnosci, jesli takowa jest uzyta
+ * \return void
+ *
+ */
 void Unit::commandLC(Selectable *target, abilityCall *orderInfo)
 {
     useAbilOnUnit(target,orderInfo);
@@ -118,6 +137,13 @@ void Unit::commandLC(Selectable *target, abilityCall *orderInfo)
     //lol
 }
 
+/** \brief Metoda wykonujaca siê przy kliknieciu prawego przycisku myszy gdy Unit jest selected
+ *
+ * \param target Selectable* To w co sie kliknelo
+ * \param orderInfo abilityCall* Uzywane do obslugi umiejetnosci, jesli takowa jest uzyta
+ * \return void
+ *
+ */
 void Unit::commandRC(Selectable *target, abilityCall *orderInfo)
 {
     tryMoving(target,orderInfo);
@@ -142,9 +168,12 @@ void Unit::onHover()
 
 void Unit::update(double deltaTime)
 {
+    animator.UpdateAnimation(deltaTime);
     boundingBox.model = glm::translate(glm::mat4(1.f), glm::vec3(pos.x, stats.properHeight, pos.z));
-    updateMovRange();
-    updateAbilRange();
+    if(isSelected){
+        updateMovRange();
+        updateAbilRange();
+    }
     guiHealthBar.update(deltaTime);
     if(!isSelected)
         selectedAbil = -1;
@@ -152,6 +181,14 @@ void Unit::update(double deltaTime)
 
 void Unit::render(unsigned int shaderProgram, std::vector<unsigned int> shaderPrograms)
 {
+
+    auto transforms = animator.GetFinalBoneMatrices();
+		for (int i = 0; i < transforms.size(); ++i){
+            std::string uniformName = "finalBonesMatrices[" + std::to_string(i) + "]";
+            glUniformMatrix4fv(glGetUniformLocation(shaderProgram, uniformName.c_str()), 1, GL_FALSE, glm::value_ptr(transforms[i]));
+        }
+
+
     if(isSelected && selectedAbil == -1)
     {
         for(auto& pair : reachableHexes)
@@ -179,6 +216,8 @@ void Unit::render(unsigned int shaderProgram, std::vector<unsigned int> shaderPr
         glStencilFunc(GL_ALWAYS, 1, 0xFF);
         glStencilMask(0xFF);
     }
+
+
 
     glUniformMatrix4fv(glGetUniformLocation(shaderProgram, "model"), 1, GL_FALSE, glm::value_ptr(transformMat));
 
@@ -231,6 +270,12 @@ void Unit::rotateTowardsHex(glm::vec3 theHex){
         this->transformMat = glm::translate(glm::mat4(1.f),translation) * glm::mat4(newRotation) * glm::scale(glm::mat4(1.f),scale);
 }
 
+/** \brief Kalkuluje i store'uje zasieg umiejetnosci aktualnie wybranej
+ *
+ * \param malus int
+ * \return void
+ *
+ */
 void Unit::updateAbilRange(int malus)
 {
     inAbilityRange.clear();
@@ -238,6 +283,13 @@ void Unit::updateAbilRange(int malus)
         inAbilityRange = getCellsUpToDist(getPathableCellsRange(*hexGrid, hexPos), std::max(0, abilitiesRanges[selectedAbil]));
 }
 
+/** \brief Jesli zostal klikniety unit z wybrana umiejetnoscia to uzywa jej na niego
+ *
+ * \param target Selectable* To w co sie kliknelo
+ * \param orderInfo abilityCall* Uzywane do obslugi umiejetnosci, jesli takowa jest uzyta
+ * \return void
+ *
+ */
 void Unit::useAbilOnUnit(Selectable *target, abilityCall *orderInfo)
 {
     Unit* isUnit = dynamic_cast<Unit*>(target);
@@ -249,11 +301,19 @@ void Unit::useAbilOnUnit(Selectable *target, abilityCall *orderInfo)
         for(auto it : abilityEffects[selectedAbil]){
             orderInfo->effects[it.first] = it.second;
         }
+        orderInfo->offSpring = stats.selectedToBuild;
 
         orderInfo->target = getHexesFromAOE(this->hexPos,abilitiesAOE[selectedAbil],isUnit->hexPos,hexGrid);
     }
 }
 
+/** \brief Jesli zostal klikniety hex z wybrana umiejetnoscia to uzywa jej na niego
+ *
+ * \param target Selectable* To w co sie kliknelo
+ * \param orderInfo abilityCall* Uzywane do obslugi umiejetnosci, jesli takowa jest uzyta
+ * \return void
+ *
+ */
 void Unit::useAbilOnHex(Selectable *target, abilityCall *orderInfo)
 {
     Hexagon* isHex = dynamic_cast<Hexagon*>(target);
@@ -265,9 +325,17 @@ void Unit::useAbilOnHex(Selectable *target, abilityCall *orderInfo)
             orderInfo->effects[it.first] = it.second;
         }
         orderInfo->target = getHexesFromAOE(this->hexPos,abilitiesAOE[selectedAbil],isHex->cell.LogicPos,hexGrid);
+        orderInfo->offSpring = stats.selectedToBuild;
     }
 }
 
+/** \brief Jesli zostal klikniety hex bez wybranej umiejetnosci to porusza sie do niego
+ *
+ * \param target Selectable* To w co sie kliknelo
+ * \param orderInfo abilityCall* Uzywane do obslugi umiejetnosci, jesli takowa jest uzyta
+ * \return void
+ *
+ */
 void Unit::tryMoving(Selectable *target, abilityCall *orderInfo)
 {
     Hexagon* isHex = dynamic_cast<Hexagon*>(target);
@@ -300,6 +368,11 @@ void Unit::takeDamage(int damage, bool ignoreArmor, EFFECTS effect){
     (*obiektyRef)[Globals::numberOfEntities++] = make_unique<TextParticle>(ImVec2(Globals::windowW,Globals::windowH), -finaldamage ,effect, glm::vec3(pos.x,pos.y+stats.properHeight,pos.z),Globals::numberOfEntities);
 }
 
+/** \brief Obsluga efektow na jednostce
+ *
+ * \return void
+ *
+ */
 void Unit::resolveEffects()
 {
     for(int i = 0; i < EFFECTS_COUNT; i++){
@@ -328,11 +401,21 @@ void Unit::resolveEffects()
     }
 }
 
+/** \brief Pomocnicza metoda, jakby ktos chcial aby jego jednostka robila co innego na poczatku tury, np. wzrastal jej atak
+ *
+ * \return void
+ *
+ */
 void Unit::startOfTurnCore()
 {
     resolveEffects();
 }
 
+/** \brief Pomocnicza metoda, jakby ktos chcial aby jego jednostka robila co innego na koniec tury
+ *
+ * \return void
+ *
+ */
 void Unit::endOfTurnCore(endTurnEffects effects)
 {
 
@@ -351,22 +434,28 @@ void Unit::resolveEndOfTurn(endTurnEffects effects)
 class GenericUnit : public Unit {
 public:
     GenericUnit(glm::vec3 hexCellCords, unordered_map<glm::vec3, HexCell> *HexGrid, int factionID, int64_t objID)
-        : Unit(hexCellCords, Model("Model/GenericTest/antilionobj.obj"), HexGrid, factionID, objID, true) {
-        stats = {5, 5, 7, 1, 1, 7, 7, 0, 2, 1, true, false};
+        : Unit(hexCellCords, unitModels[GENERIC_UNIT], HexGrid, factionID, objID, false) {
+        stats = {5, 5, 7, 1, 1, 7, 7, 0, 2, 1, .isCommander = false};
         ///AbilityDec
         abilitiesList[ATTACK] = ATTACK;
-        abilitiesList[MISSILE] = MISSILE;
+        abilitiesList[CREATE] = CREATE;
 
         ///AbilityRangeSet
-        abilitiesRanges[ATTACK] = 3;
-        abilitiesRanges[MISSILE] = 4;
+        abilitiesRanges[ATTACK] = 1;
+        abilitiesRanges[CREATE] = 1;
 
         ///AbilityAOEtypes
         abilitiesAOE[ATTACK] = {1,RANGE};
-        abilitiesAOE[MISSILE] = {1,RANGE};
+        abilitiesAOE[CREATE] = {0,RANGE};
 
         ///AbilityEffectList
         (abilityEffects[ATTACK])[POISON] = effect{2,1};
+
+        ///BuildList IF CREATE ABIL IS PRESENT
+        availableToBuild[0] = GENERIC_UNIT;
+
+        ///LaMusica
+
 
         ///adjustments
         stats.properHeight = 1.50f;

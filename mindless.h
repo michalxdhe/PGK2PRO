@@ -1,6 +1,7 @@
 #ifndef MINDLESS_H_INCLUDED
 #define MINDLESS_H_INCLUDED
 
+#include "animator.h"
 #include "metaphysical.h"
 #include "model.h"
 #include "PlayerInterface.h"
@@ -19,13 +20,13 @@ using namespace std;
 struct UnitFactory{
         inline static deque<unique_ptr<Unit>> toBeCreated;
         inline static unordered_map<glm::vec3, HexCell> *HexGridRef;
-        inline static unordered_map<UnitType, function<unique_ptr<Unit>(glm::vec3, unordered_map<glm::vec3, HexCell>*, int)>> unitCreationMap;
+        inline static unordered_map<UnitType, function<unique_ptr<Unit>(glm::vec3, unordered_map<glm::vec3, HexCell>*, int, int)>> unitCreationMap;
 
         static void initialize(unordered_map<glm::vec3, HexCell> *HexGrid) {
             HexGridRef = HexGrid;
 
-            unitCreationMap[GENERIC_UNIT] = [](glm::vec3 hexCellCords, unordered_map<glm::vec3, HexCell>* HexGrid, int factionID) {
-                return std::make_unique<GenericUnit>(hexCellCords, HexGrid, factionID, 0);
+            unitCreationMap[GENERIC_UNIT] = [](glm::vec3 hexCellCords, unordered_map<glm::vec3, HexCell>* HexGrid, int factionID, int objID) {
+                return std::make_unique<GenericUnit>(hexCellCords, HexGrid, factionID, objID);
             };
 
         }
@@ -33,65 +34,101 @@ struct UnitFactory{
         static void createUnit(UnitType unitType, glm::vec3 hexCellCords, int factionID){
             auto it = unitCreationMap.find(unitType);
             if (it != unitCreationMap.end()) {
-                toBeCreated.push_back(it->second(hexCellCords, HexGridRef, factionID));
+                toBeCreated.push_back(it->second(hexCellCords, HexGridRef, factionID,Globals::numberOfEntities++));
             } else {
                 std::cerr << "Error: Unknown unit type." << std::endl;
             }
         }
 
-        static void resolveCreation(unordered_map<int, unique_ptr<Object>> *obiekty){
+        static void resolveCreation(unordered_map<int, unique_ptr<Object>> *obiekty, deque<Unit> *initiativeQueue){
             while(!toBeCreated.empty()){
-                int ID = Globals::numberOfEntities++;
-                toBeCreated.front().get()->ID = ID;
-                (*obiekty)[ID] = move(toBeCreated.front());
+                //(*initiativeQueue).push_back(*toBeCreated.front());
+                (*obiekty)[toBeCreated.front()->ID] = move(toBeCreated.front());
                 toBeCreated.pop_front();
             }
         }
 };
 
+/** \brief  Taka tam pomocna funkcja co zwraca znak -1,0,1 dla double'a
+ *
+ * \param x double
+ * \return double
+ *
+ */
 inline double sign(double x)
 {
     return x<0.0?-1.0:(x > 0.0 ? 1.0 : 0.0);
 }
 
+/** \brief Taka tam pomocna funkcja co zwraca znak -1,0,1 dla int'a
+ *
+ * \param x int
+ * \return int
+ *
+ */
 inline int sign(int x)
 {
     return x<0.0?-1.0:(x > 0.0 ? 1.0 : 0.0);
 }
 
+/** \brief Klasa definiujaca instancje gry/symulacji.
+ *  https://youtu.be/mhoRxWGh1z4?si=J4lUP3Y92_supNFK
+ *
+ */
 class Game
 {
 
 public:
+    /// Obiekt eventów SDL'a
     SDL_Event event;
+    /// Obiekt okna SDL'a
     SDL_Window *window;
-
+    /// Flaga uzywana do okreslenia czy ImGui aktualnie obsluguje input czy nie
     bool ImguiIOflag = false;
 
     SDL_GLContext gContext;
 
-    Model testhex;
+    AudioPlayer audioJungle;
 
+    /// Aha
+    Model testhex;
+    /// IRRklang dla dzwieku
+
+    /// Ray dla MousePick'era
     optimizedRay ray;
 
+    /// Integer'y przechowywujace pozycje myszy, w Globals:: namespace jest te¿ globalna wersja chyba
     int mousePosx, mousePosy;
 
     int boardSize;
 
+    /// Obiekt mousepicker'a
     MousePicker mouseTrack;
+
+    /// Info o ID gracza ktorego aktualnie jest tura
     int currentPlayersTurn;
+
+    /// Info o liczbie graczy
     int numOfPlayers;
+
+    /// Jakis hack z tego co pamietam zeby podswietlic unit'a na initiative trackerze
     int64_t initiativeHighlightID = -1;
     bool initiativeHighlightFlag = false;
 
+    ///Mapa interfejsow grajacych graczy
     unordered_map<int, unique_ptr<PlayerInterface>> playerIntes;
+    ///GUI inicjatywy
     unique_ptr<InitiativeTrackerGui> initiativeGui;
 
+    ///Map'a grida, nwm to wpadl na to zeby uzywac float glm::vec3 jako key
     unordered_map<glm::vec3, HexCell> HexGrid;
 
     int windowH, windowW;
     vector<unsigned int> shaderPrograms;
+    ///wektor uzywany do seperacji usuwania obiektow od aktywnego programu
     vector<int> autoGraveyard;
+
+    ///Kamera wpatrzona w punkt
     RevoltingCamera kamera;
 
     Cube skyBox;
@@ -101,10 +138,13 @@ public:
     ///FoV oraz AspectRatio dla kamery
     glm::mat4 projection = glm::mat4(1.0f);;
 
+    ///Kolejka inicjatywy
     deque<Unit> initiativeQueue;
     deque<Unit> initiativeQueueTemp;
 
+    ///Glowna map'a swiatel
     unordered_map<int, unique_ptr<LightSource>> lights;
+    ///Glowna mapa obiektow
     unordered_map<int, unique_ptr<Object>> obiekty;
 
     ///Flaga stanowiaca czy pora isc spac
@@ -112,11 +152,20 @@ public:
 
     bool holdRotate = 0;
 
+    /** \brief Metoda do dekonstruowania Game'a
+     *
+     * \return void
+     *
+     */
     void cleanup();
 
+    /** \brief Konstruktor gry domyœlny
+     *
+     *
+     */
     Game()
     {
-        SDL_Init(SDL_INIT_VIDEO);
+        SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO);
 
         SDL_GL_SetAttribute(SDL_GL_STENCIL_SIZE, 8);
         SDL_GL_SetAttribute( SDL_GL_CONTEXT_MAJOR_VERSION, 3 );
@@ -155,9 +204,16 @@ public:
         boardSize = 5;
     }
 
+    /** \brief Konstruktor gry z parametrami
+     *
+     * \param w int Szerokosc okna
+     * \param h int Wysokosc okna
+     * \param vsync int Vsync: x < 1 = off else on
+     *
+     */
     Game(int w, int h, int vsync)
     {
-        SDL_Init(SDL_INIT_VIDEO);
+        SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO);
 
         SDL_GL_SetAttribute(SDL_GL_STENCIL_SIZE, 8);
         SDL_GL_SetAttribute( SDL_GL_CONTEXT_MAJOR_VERSION, 3 );
@@ -205,13 +261,59 @@ public:
         cleanup();
     }
 
+    /** \brief Rdzenny input, w ramach organizacji
+     *
+     * \param deltaTime double deltatime pobrany z main'a
+     * \return bool czy udala sie klatka
+     *
+     */
     bool inputCore(double deltaTime);
+
+    /** \brief Rdzenny input, w ramach organizacji
+     *
+     * \param deltaTime double deltatime pobrany z main'a
+     * \return bool czy udala sie klatka
+     *
+     */
     bool updateCore(double deltaTime);
+
+    /** \brief Rdzenny update, w ramach organizacji
+     *
+     * \param deltaTime double deltatime pobrany z main'a
+     * \return bool czy udala sie klatka
+     *
+     */
     bool renderCore(double deltaTime);
 
+    /** \brief Metoda do inicjalizacji rzeczy
+     *
+     * \return void
+     *
+     */
     void init();
+
+    /** \brief Input
+     *
+     * \param deltaTime double deltatime pobrany z main'a
+     * \return bool czy udala sie klatka
+     *
+     */
     void input(double deltaTime);
+
+    /** \brief Update
+     *
+     * \param deltaTime double deltatime pobrany z main'a
+     * \return bool czy udala sie klatka
+     *
+     */
     void update(double deltaTime);
+
+    /** \brief Render
+     *
+     * \param deltaTime double deltatime pobrany z main'a
+     * \return bool czy udala sie klatka
+     *
+     */
     void render(double deltaTime);
 
 private:
@@ -342,7 +444,30 @@ void doAttack(abilityCall info, Game *gameRef)
             }
         }
     }
-    //info.culprit->updateMovRange();
+}
+
+void doCreate(abilityCall info, Game *gameRef)
+{
+    Unit offspringTemp;
+    if(info.offSpring != -1 && info.offSpring < UNIT_TYPE_COUNT){
+        offspringTemp = *(UnitFactory::unitCreationMap[info.offSpring](glm::vec3(100.f),info.culprit->hexGrid,info.culprit->owner,-1));
+        for(auto it : info.target)
+        {
+            if(offspringTemp.stats.flying){
+                if(it->airID == -1 && !it->occupiedAir)
+                {
+                    UnitFactory::createUnit(info.offSpring,it->LogicPos,info.culprit->owner);
+                }
+            }else{
+                if(it->groundID == -1 && !it->occupiedGround)
+                {
+                    UnitFactory::createUnit(info.offSpring,it->LogicPos,info.culprit->owner);
+                }
+            }
+        }
+    }
+
+    UnitFactory::resolveCreation(&gameRef->obiekty,&gameRef->initiativeQueue);
 }
 
 void doMissile(abilityCall info, Game *gameRef)
@@ -365,7 +490,6 @@ void doMissile(abilityCall info, Game *gameRef)
         }
         it->presentResource = ORE;
     }
-    //info.culprit->updateMovRange();
 }
 
 bool handleAbility(abilityCall info, Game *gameRef)
@@ -381,7 +505,11 @@ bool handleAbility(abilityCall info, Game *gameRef)
         return false;
         break;
     case CREATE:
-
+        if(info.culprit->stats.actionTokens >= 1 && info.offSpring != UNIT_TYPE_COUNT){
+            doCreate(info,gameRef);
+            info.culprit->stats.actionTokens -= 1;
+            return true;
+        }else
         return false;
         break;
     case MISSILE:

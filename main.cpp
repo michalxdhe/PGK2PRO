@@ -1,7 +1,6 @@
 #include "common.h"
 #include "mindless.h"
 
-
 using namespace std;
 
 void GLAPIENTRY MessageCallback(GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, const GLchar* message, const void* userParam)
@@ -14,6 +13,8 @@ void GLAPIENTRY MessageCallback(GLenum source, GLenum type, GLuint id, GLenum se
 
 void Game::init()
 {
+    audioJungle.loadAudio("audioStuff/grunt1.wav");
+    audioJungle.play();
     for(int i = 1; i <= numOfPlayers; i++)
     {
         playerIntes[i] = make_unique<PlayerInterface>();
@@ -81,8 +82,13 @@ void Game::init()
         glm::vec3(0.2f, 0.8f, 0.2f)
     };
 
+    ///inicjalizowanie modeli, we to w funkcje jakas walnij
+    ///MISC
     resModels[ORE] = Model("Model/Res/Ore.obj");
-    resModels[GAS] = Model("Model/Res/Gas.obj");
+    resModels[GAS] = Model("Model/Res/Ore.obj");
+
+    ///UNIT'Y
+    unitModels[GENERIC_UNIT] = {"Model/GenericTest/larve.gltf", Model("Model/GenericTest/larve.gltf")};
 
     glUseProgram(shaderPrograms[0]);
     glUniform3fv(glGetUniformLocation(shaderPrograms[0], "factionColors"), 10, glm::value_ptr(factionColors[0]));
@@ -95,23 +101,25 @@ void Game::init()
     HexGrid[glm::vec3(0.f,0.f,0.f) + cube_direction_vectors[0]].passable = 0;
     HexGrid[glm::vec3(0.f,0.f,0.f) + cube_direction_vectors[3]].passable = 0;
 
-    for(int i = 0; i < 5; i++){//zmien to potem na ile surowcuw ma byc wygenerowanych
+    for(int i = 0; i < 5; i++)
+        {//zmien to potem na ile surowcuw ma byc wygenerowanych
         glm::vec3 randomHex = getRandomHex(boardSize);
         if(HexGrid[randomHex].passable && HexGrid[randomHex].presentResource == -1)
             HexGrid[randomHex].presentResource = ORE; //zmien to potem na losowy surowiec
         else{
             i--;
         }
-    }
+        }
 
-        for(int i = 0; i < 5; i++){
+        for(int i = 0; i < 5; i++)
+        {
         glm::vec3 randomHex = getRandomHex(boardSize);
         if(HexGrid[randomHex].passable && HexGrid[randomHex].presentResource == -1)
             HexGrid[randomHex].presentResource = GAS; //zmien to potem na losowy surowiec
         else{
             i--;
         }
-    }
+        }
 
     skyBox = Cube(50.f,50.f,50.f);
 
@@ -119,6 +127,12 @@ void Game::init()
     {
         obiekty[Globals::numberOfEntities++] = make_unique<Hexagon>(testhex, pair.second);
     }
+
+            for(int i = 0; i < 100; i++)
+        {
+        glm::vec3 randomHex = getRandomHex(boardSize);
+       // obiekty[Globals::numberOfEntities++] = make_unique<GenericUnit>(randomHex, &HexGrid, 1, Globals::numberOfEntities);
+        }
 
     obiekty[Globals::numberOfEntities++] = make_unique<GenericUnit>(glm::vec3(2.f,0.f,-2.f), &HexGrid, 1, Globals::numberOfEntities);
     obiekty[Globals::numberOfEntities++] = make_unique<GenericUnit>(glm::vec3(3.f,0.f,-3.f), &HexGrid, 2,Globals::numberOfEntities);
@@ -285,9 +299,13 @@ void Game::input(const double deltaTime)
 
 void Game::update(const double deltaTime)
 {
+    //auto start = std::chrono::high_resolution_clock::now();
     ImGui_ImplOpenGL3_NewFrame();
     ImGui_ImplSDL2_NewFrame();
     ImGui::NewFrame();
+
+    audioJungle.stop();
+
 
     vector<int> deadPlayers;
 /*
@@ -425,12 +443,16 @@ void Game::update(const double deltaTime)
         obiekty.erase(it);
         autoGraveyard.pop_back();
     }
+
+    //auto end = std::chrono::high_resolution_clock::now();
+    //std::chrono::duration<double> duration = end - start;
+    //std::cout << "Update zajal" << duration.count() << " seconds" << std::endl;
 }
 
 
 void Game::render(double deltaTime)
 {
-
+    //auto start = std::chrono::high_resolution_clock::now();
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 
     //tutaj update kamery
@@ -502,6 +524,10 @@ void Game::render(double deltaTime)
 
     ImGui::Render();
     ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+
+    //auto end = std::chrono::high_resolution_clock::now();
+    //std::chrono::duration<double> duration = end - start;
+    //std::cout << "Render zajal" << duration.count() << " seconds" << std::endl;
 }
 
 void Game::cleanup()

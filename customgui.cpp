@@ -54,8 +54,8 @@ void TextParticle::render(unsigned int shaderProgram, std::vector<unsigned int> 
     ImGui::End();
 }
 
-UnitGui::UnitGui(ImVec2 windowSize, UnitStats *stats,  std::array<int, ABILITIES_COUNT> *abilityList,int* selectedAbil)
-    : stats(stats), abilityList(abilityList), selectedAbil(selectedAbil)
+UnitGui::UnitGui(ImVec2 windowSize, UnitStats *stats,  std::array<int, ABILITIES_COUNT> *abilityList,int* selectedAbil, array<UnitType, 10> *buildMenu)
+    : stats(stats), abilityList(abilityList), selectedAbil(selectedAbil), buildMenu(buildMenu)
 {
     windowSpan = windowSize;
     windowHe = 45;
@@ -116,12 +116,35 @@ void UnitGui::render(unsigned int shaderProgram, std::vector<unsigned int> shade
     ImGui::Begin("hotBar", nullptr, invisPreset);
     for(const auto& it : *abilityList)
     {
-        if(it >= 0)
-            if(ImGui::Button(abilityNames[it].c_str(),ImVec2(25.f,25.f))){
+        if(it >= 0){
+            if(ImGui::Button(abilityNames[it].c_str(),ImVec2(25.f,25.f)))
                 *selectedAbil = it;
-
             }
+
         ImGui::SameLine();
+    }
+
+    if(*selectedAbil == CREATE){
+        int countOfButtons = 0;
+        for(auto itt : *buildMenu){
+            if(itt != UNIT_TYPE_COUNT){
+                countOfButtons += 1;
+            }
+        }
+
+        ImGui::SetNextWindowSize(ImVec2((countOfButtons * 27.f) + padding*2, windowHe), ImGuiCond_Always);
+        ImGui::SetNextWindowPos(ImVec2(windowX, windowY - 45.f), ImGuiCond_Always);
+        ImGui::Begin("BuildSelect", nullptr, invisPreset);
+
+        for(auto itt : *buildMenu){
+            if(itt != UNIT_TYPE_COUNT){
+                if(ImGui::Button(std::to_string(itt).c_str(),ImVec2(25.f,25.f))){
+                    stats->selectedToBuild = itt;
+                }
+                ImGui::SameLine();
+            }
+        }
+        ImGui::End();
     }
     ImGui::End();
     ImGui::PopStyleVar();
@@ -266,7 +289,7 @@ UnitBar::UnitBar(ImVec2 windowSize, UnitStats *stats, glm::vec3 *unitPos, int64_
 {
     windowSpan = windowSize;
     windowHe = 10.f;
-    windowWi = 10.f;
+    windowWi = 15.f;
     createAndLoadTexture(marker_text,"resTextures/turnMarker.png");
 
     createAndLoadTexture(effectText[POISON] ,"resTextures/poison.png", false);
@@ -287,7 +310,7 @@ void UnitBar::render(unsigned int shaderProgram, std::vector<unsigned int> shade
 {
     if(windowX > 0 && windowY > 0)
     {
-        float padding = 10.0f;
+        float padding = 7.0f;
 
         ImGui::SetNextWindowSize(ImVec2(43, 10), ImGuiCond_Always);
         ImGui::SetNextWindowPos(ImVec2(windowX, windowY - 13.f), ImGuiCond_Always);

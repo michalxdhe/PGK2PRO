@@ -22,4 +22,9 @@ struct effect{
     int duration = 0;
 };
 
+enum UnitType : int{
+    GENERIC_UNIT,
+    UNIT_TYPE_COUNT
+};
+
 #endif // ABILITIES_H_INCLUDED

@@ -3,29 +3,29 @@
 
 using namespace std;
 
+/// Statycznie zaladowane modele surowcow, aby nie ladowac wiecej niz 1 unikatowy model
 static Model resModels[RESOURCE_COUNT];
 
-struct abilityCall
-{
-    Unit *culprit;
-    int abilityID;
-    effect effects[EFFECTS_COUNT];
-    vector<HexCell*> target;
-    Unit *offSpring;
-};
-
+/** \brief Struktura uzywana do realizacji efektow konca tury na jednostkach
+ */
 struct endTurnEffects
 {
     vector<effect> effects;
 };
 
+/// Kazdy kierunek na plaszczyznie z HexGrid'em, dla pomocy w innych funkcjach
 static glm::vec3 cube_direction_vectors[] =
 {
     glm::vec3(1,0,-1), glm::vec3(1,-1,0), glm::vec3(0,-1,1),
     glm::vec3(-1,0,1), glm::vec3(-1,1,0), glm::vec3(0,1,-1)
 };
 
-///zwraca ci znormalizowany cube coordinate do hexow
+/** \brief zwraca ci znormalizowany cube coordinate do hexow
+ *
+ * \param cube glm::vec3 Koordynat hex'a w postaci logicznej Cube
+ * \return glm::vec3 Koordynat znormalizowany
+ *
+ */
 glm::vec3 cube_round(glm::vec3 cube) {
     int rx = round(cube.x);
     int ry = round(cube.y);
@@ -45,6 +45,13 @@ glm::vec3 cube_round(glm::vec3 cube) {
     return glm::vec3(rx, ry, rz);
 }
 
+/** \brief oddaje kierunek logiczny hex cube koordynatow miedzy 2 punktami
+ *
+ * \param target glm::vec3 Punkt docelowy
+ * \param origin glm::vec3 Punkt zrodlowy
+ * \return glm::vec3 Kierunek
+ *
+ */
 glm::vec3 get_direction(glm::vec3 target, glm::vec3 origin) {
     glm::vec3 direction = origin - target;
     direction = cube_round(direction);
@@ -117,6 +124,9 @@ vector<glm::vec3> getNeighbors(glm::vec3 cellPos)
     return neighbors;
 }
 
+/** \brief Obiekt Hexagonu, trzyma Ref do komorki i mozna na niego kliknac, essential do targetowania ziemi
+ *  mozna rozwinac o typ terrain'a na danym hexie, affectujacy jednostke na komorce
+ */
 class Hexagon : public Object, public Selectable
 {
 

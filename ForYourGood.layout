@@ -2,46 +2,178 @@
 <CodeBlocks_layout_file>
 	<FileVersion major="1" minor="0" />
 	<ActiveTarget name="Debug" />
-	<File name="metaphysical.h" open="1" top="0" tabpos="3" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+	<File name="weird.cpp" open="1" top="0" tabpos="17" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
 		<Cursor>
-			<Cursor1 position="5109" topLine="39" />
+			<Cursor1 position="56" topLine="0" />
+		</Cursor>
+	</File>
+	<File name="mousepick.h" open="1" top="0" tabpos="12" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="163" topLine="61" />
+		</Cursor>
+	</File>
+	<File name="main.cpp" open="1" top="0" tabpos="1" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="3807" topLine="4" />
 		</Cursor>
 		<Folding>
-			<Collapse line="6" />
-			<Collapse line="44" />
-			<Collapse line="143" />
-			<Collapse line="182" />
-			<Collapse line="355" />
+			<Collapse line="7" />
+			<Collapse line="15" />
+			<Collapse line="147" />
+			<Collapse line="299" />
+			<Collapse line="449" />
+			<Collapse line="529" />
+			<Collapse line="534" />
 		</Folding>
 	</File>
-	<File name="dijkstra.h" open="1" top="0" tabpos="11" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+	<File name="units.cpp" open="1" top="0" tabpos="10" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
 		<Cursor>
-			<Cursor1 position="1917" topLine="73" />
+			<Cursor1 position="13367" topLine="0" />
 		</Cursor>
+		<Folding>
+			<Collapse line="3" />
+			<Collapse line="59" />
+			<Collapse line="77" />
+			<Collapse line="120" />
+			<Collapse line="147" />
+			<Collapse line="157" />
+			<Collapse line="164" />
+			<Collapse line="169" />
+			<Collapse line="182" />
+			<Collapse line="247" />
+			<Collapse line="255" />
+			<Collapse line="279" />
+			<Collapse line="293" />
+			<Collapse line="317" />
+			<Collapse line="339" />
+			<Collapse line="364" />
+			<Collapse line="376" />
+			<Collapse line="409" />
+			<Collapse line="419" />
+			<Collapse line="424" />
+			<Collapse line="429" />
+			<Collapse line="433" />
+		</Folding>
 	</File>
-	<File name="customgui.h" open="1" top="0" tabpos="7" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+	<File name="customgui.cpp" open="1" top="1" tabpos="8" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
 		<Cursor>
-			<Cursor1 position="200" topLine="9" />
+			<Cursor1 position="10429" topLine="59" />
 		</Cursor>
+		<Folding>
+			<Collapse line="11" />
+			<Collapse line="17" />
+			<Collapse line="27" />
+			<Collapse line="38" />
+			<Collapse line="45" />
+			<Collapse line="58" />
+			<Collapse line="86" />
+			<Collapse line="91" />
+			<Collapse line="187" />
+			<Collapse line="202" />
+			<Collapse line="207" />
+			<Collapse line="244" />
+			<Collapse line="253" />
+			<Collapse line="257" />
+			<Collapse line="301" />
+		</Folding>
 	</File>
-	<File name="customgui.cpp" open="1" top="0" tabpos="8" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+	<File name="cameraworks.h" open="0" top="0" tabpos="6" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
 		<Cursor>
-			<Cursor1 position="10366" topLine="183" />
-		</Cursor>
-	</File>
-	<File name="abilities.h" open="1" top="0" tabpos="6" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="102" topLine="3" />
-		</Cursor>
-	</File>
-	<File name="units.h" open="1" top="0" tabpos="9" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="663" topLine="0" />
+			<Cursor1 position="332" topLine="21" />
 		</Cursor>
 	</File>
 	<File name="PlayerInterface.h" open="1" top="0" tabpos="5" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
 		<Cursor>
-			<Cursor1 position="229" topLine="0" />
+			<Cursor1 position="163" topLine="15" />
+		</Cursor>
+	</File>
+	<File name="model.h" open="1" top="0" tabpos="14" split="0" active="1" splitpos="0" zoom_1="-1" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="2958" topLine="0" />
+		</Cursor>
+	</File>
+	<File name="dijkstra.h" open="1" top="0" tabpos="11" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="1377" topLine="19" />
+		</Cursor>
+		<Folding>
+			<Collapse line="15" />
+			<Collapse line="56" />
+			<Collapse line="97" />
+		</Folding>
+	</File>
+	<File name="customgui.h" open="1" top="0" tabpos="7" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="2745" topLine="26" />
+		</Cursor>
+		<Folding>
+			<Collapse line="9" />
+			<Collapse line="30" />
+			<Collapse line="38" />
+			<Collapse line="54" />
+			<Collapse line="81" />
+			<Collapse line="97" />
+			<Collapse line="114" />
+		</Folding>
+	</File>
+	<File name="abilities.h" open="1" top="0" tabpos="6" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="349" topLine="11" />
+		</Cursor>
+	</File>
+	<File name="units.h" open="1" top="0" tabpos="9" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="1430" topLine="26" />
+		</Cursor>
+		<Folding>
+			<Collapse line="9" />
+			<Collapse line="16" />
+			<Collapse line="38" />
+			<Collapse line="51" />
+			<Collapse line="61" />
+			<Collapse line="68" />
+		</Folding>
+	</File>
+	<File name="mesh.h" open="1" top="0" tabpos="13" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="47" topLine="0" />
+		</Cursor>
+		<Folding>
+			<Collapse line="8" />
+			<Collapse line="26" />
+			<Collapse line="33" />
+		</Folding>
+	</File>
+	<File name="mindless.h" open="1" top="0" tabpos="2" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="8504" topLine="267" />
+		</Cursor>
+		<Folding>
+			<Collapse line="19" />
+			<Collapse line="58" />
+			<Collapse line="69" />
+			<Collapse line="397" />
+			<Collapse line="406" />
+			<Collapse line="413" />
+			<Collapse line="421" />
+			<Collapse line="446" />
+			<Collapse line="470" />
+			<Collapse line="492" />
+		</Folding>
+	</File>
+	<File name="globals.h" open="1" top="0" tabpos="16" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="124" topLine="0" />
+		</Cursor>
+	</File>
+	<File name="common.h" open="1" top="0" tabpos="18" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="295" topLine="21" />
+		</Cursor>
+	</File>
+	<File name="shaders.h" open="1" top="0" tabpos="15" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="4071" topLine="42" />
 		</Cursor>
 	</File>
 	<File name="camerarevolting.h" open="0" top="0" tabpos="12" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
@@ -49,69 +181,37 @@
 			<Cursor1 position="61" topLine="0" />
 		</Cursor>
 	</File>
-	<File name="mindless.h" open="1" top="0" tabpos="2" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+	<File name="metaphysical.h" open="1" top="0" tabpos="3" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
 		<Cursor>
-			<Cursor1 position="2938" topLine="105" />
+			<Cursor1 position="11965" topLine="187" />
 		</Cursor>
 		<Folding>
-			<Collapse line="298" />
-			<Collapse line="307" />
-			<Collapse line="314" />
+			<Collapse line="13" />
+			<Collapse line="56" />
+			<Collapse line="210" />
+			<Collapse line="224" />
+			<Collapse line="247" />
+			<Collapse line="257" />
 		</Folding>
-	</File>
-	<File name="mesh.h" open="1" top="0" tabpos="13" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="47" topLine="78" />
-		</Cursor>
-	</File>
-	<File name="cameraworks.h" open="0" top="0" tabpos="6" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="332" topLine="21" />
-		</Cursor>
-	</File>
-	<File name="common.h" open="1" top="0" tabpos="18" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="502" topLine="19" />
-		</Cursor>
 	</File>
 	<File name="boardlogic.h" open="1" top="0" tabpos="4" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
 		<Cursor>
-			<Cursor1 position="578" topLine="138" />
+			<Cursor1 position="3536" topLine="111" />
 		</Cursor>
+		<Folding>
+			<Collapse line="11" />
+			<Collapse line="17" />
+			<Collapse line="28" />
+			<Collapse line="54" />
+			<Collapse line="60" />
+			<Collapse line="73" />
+			<Collapse line="78" />
+			<Collapse line="117" />
+		</Folding>
 	</File>
-	<File name="units.cpp" open="1" top="0" tabpos="10" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+	<File name="animator.h" open="1" top="0" tabpos="19" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
 		<Cursor>
-			<Cursor1 position="12103" topLine="348" />
-		</Cursor>
-	</File>
-	<File name="main.cpp" open="1" top="1" tabpos="1" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="14959" topLine="503" />
-		</Cursor>
-	</File>
-	<File name="weird.cpp" open="1" top="0" tabpos="17" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="56" topLine="0" />
-		</Cursor>
-	</File>
-	<File name="shaders.h" open="1" top="0" tabpos="15" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="423" topLine="11" />
-		</Cursor>
-	</File>
-	<File name="globals.h" open="1" top="0" tabpos="16" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="156" topLine="0" />
-		</Cursor>
-	</File>
-	<File name="mousepick.h" open="1" top="0" tabpos="12" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="57" topLine="0" />
-		</Cursor>
-	</File>
-	<File name="model.h" open="1" top="0" tabpos="14" split="0" active="1" splitpos="0" zoom_1="-1" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="6750" topLine="18" />
+			<Cursor1 position="122" topLine="0" />
 		</Cursor>
 	</File>
 </CodeBlocks_layout_file>

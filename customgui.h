@@ -25,12 +25,16 @@ struct UnitStats;
 
 class Unit;
 
+/** \brief Bazowa Klasa elementow tworzonych z Imgui
+ */
 class GuiElement : public Object
 {
 public:
     ImVec2 windowSpan;
 };
 
+/** \brief Gui Obiekt tekstu ktory przeznaczony jest aby pokazac wartosc a nastepenie zniknac po pewnym czasie
+ */
 class TextParticle : public GuiElement
 {
 public:
@@ -45,6 +49,8 @@ public:
     void render(unsigned int shaderProgram, std::vector<unsigned int> shaderPrograms);
 };
 
+/** \brief Gui wyswietlony przy wybranym unit'cie
+ */
 class UnitGui : public GuiElement
 {
 public:
@@ -55,6 +61,7 @@ public:
     UnitStats *stats;
     std::array<int, ABILITIES_COUNT> *abilityList;
     int* selectedAbil;
+    array<UnitType, 10> *buildMenu;
 
     GLuint activeTokenTexture;
     GLuint inactiveTokenTexture;
@@ -64,11 +71,13 @@ public:
     GLuint effectText[EFFECTS_COUNT];
 
     UnitGui();
-    UnitGui(ImVec2 windowSize, UnitStats *stats,  std::array<int, ABILITIES_COUNT> *abilityList, int* selectedAbil);
+    UnitGui(ImVec2 windowSize, UnitStats *stats,  std::array<int, ABILITIES_COUNT> *abilityList, int* selectedAbil, array<UnitType, 10> *buildMenu);
     void update(double deltaTime);
     void render(unsigned int shaderProgram, std::vector<unsigned int> shaderPrograms);
 };
 
+/** \brief Gui aktywnego gracza
+ */
 class PlayerGui : public GuiElement
 {
 public:
@@ -83,6 +92,8 @@ public:
     void render(unsigned int shaderProgram, std::vector<unsigned int> shaderPrograms);
 };
 
+/** \brief Gui inicjatywy
+ */
 class InitiativeTrackerGui : public GuiElement
 {
 public:
@@ -98,6 +109,8 @@ public:
     void render(unsigned int shaderProgram, std::vector<unsigned int> shaderPrograms);
 };
 
+/** \brief Gui nad Jednostka
+ */
 class UnitBar : public GuiElement
 {
 public:
