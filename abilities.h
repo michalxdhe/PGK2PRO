@@ -23,7 +23,14 @@ struct effect{
 };
 
 enum UnitType : int{
-    GENERIC_UNIT,
+    LARVE,
+    EGG,
+    CENTI,
+    BIRD,
+    MORTARBUG,
+    COLLECTOR,
+    BALLER,
+    COMM,
     UNIT_TYPE_COUNT
 };
 

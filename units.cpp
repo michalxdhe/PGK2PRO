@@ -91,6 +91,10 @@ Unit::Unit(glm::vec3 hexCellCords, ModelWithPath mod, unordered_map<glm::vec3, H
     animations = Animation(mod.path,&model);
     animator = Animator(&animations);
 
+    for(int i = 0; i < ABILITIES_COUNT; i++){
+        abilitiesList[i] = ABILITIES_COUNT;
+    }
+
     for(int i = 0; i < 10; i++){
         availableToBuild[i] = UNIT_TYPE_COUNT;
     }
@@ -220,8 +224,9 @@ void Unit::render(unsigned int shaderProgram, std::vector<unsigned int> shaderPr
     if(shaderProgram != shaderPrograms[2])
         guiHealthBar.render(shaderProgram, shaderPrograms);
 
+    glUniform1i(glGetUniformLocation(shaderProgram, "factionID"), owner-1);
+
     if((hovering || isSelected) && shaderProgram != shaderPrograms[2]){
-        glUniform1i(glGetUniformLocation(shaderProgram, "factionID"), owner-1);
         glStencilFunc(GL_ALWAYS, 1, 0xFF);
         glStencilMask(0xFF);
     }
@@ -230,8 +235,10 @@ void Unit::render(unsigned int shaderProgram, std::vector<unsigned int> shaderPr
 
     glUniformMatrix4fv(glGetUniformLocation(shaderProgram, "model"), 1, GL_FALSE, glm::value_ptr(transformMat));
 
+    glUniform1i(glGetUniformLocation(shaderProgram, "unitRender"), true);
     model.Draw(shaderProgram,true);
     //boundingBox.Draw(shaderProgram, hovering || isSelected);
+    glUniform1i(glGetUniformLocation(shaderProgram, "unitRender"), false);
 
     if((hovering || isSelected) && shaderProgram != shaderPrograms[2]){
         glUniform1i(glGetUniformLocation(shaderProgram, "factionHighlight"), true);
@@ -440,31 +447,30 @@ void Unit::resolveEndOfTurn(endTurnEffects effects)
     endOfTurnCore(effects);
 }
 
-class GenericUnit : public Unit {
+class Larve : public Unit {
 public:
-    GenericUnit(glm::vec3 hexCellCords, unordered_map<glm::vec3, HexCell> *HexGrid, int factionID, int64_t objID)
-        : Unit(hexCellCords, unitModels[GENERIC_UNIT], HexGrid, factionID, objID, false) {
-        stats = {5, 5, 7, 1, 1, 7, 7, 0, 2, 1, .isCommander = false};
+    Larve(glm::vec3 hexCellCords, unordered_map<glm::vec3, HexCell> *HexGrid, int factionID, int64_t objID)
+        : Unit(hexCellCords, unitModels[LARVE], HexGrid, factionID, objID, false) {
+        stats = {2, 2, 8, 1, 0, 4, 4, 0, 3, 1, .isCommander = false};
         ///AbilityDec
         abilitiesList[ATTACK] = ATTACK;
         abilitiesList[MORPH] = MORPH;
 
         ///AbilityRangeSet
         abilitiesRanges[ATTACK] = 1;
-        abilitiesRanges[MORPH] = 1;
+        abilitiesRanges[MORPH] = 0;
 
         ///AbilityAOEtypes
-        abilitiesAOE[ATTACK] = {1,RANGE};
+        abilitiesAOE[ATTACK] = {0,RANGE};
 
         ///AbilityEffectList
-        (abilityEffects[ATTACK])[POISON] = effect{2,1};
+        (abilityEffects[ATTACK])[POISON] = effect{1,1};
 
         ///BuildList IF CREATE ABIL IS PRESENT
-        availableToBuild[0] = GENERIC_UNIT;
-        availableToMorph[0] = GENERIC_UNIT;
+        availableToMorph[0] = EGG;
 
         ///Cost Adjustment
-        stats.cost[ORE] = 1;
+        stats.cost[ORE] = 2;
         stats.buildActionPointCost = 1;
 
         ///adjustments
@@ -479,6 +485,227 @@ public:
 
 };
 
+class Egg : public Unit {
+public:
+    Egg(glm::vec3 hexCellCords, unordered_map<glm::vec3, HexCell> *HexGrid, int factionID, int64_t objID)
+        : Unit(hexCellCords, unitModels[EGG], HexGrid, factionID, objID, false) {
+        stats = {5, 5, 1, 0, 0, 0, 0, 0, 3, 0, .isCommander = false, .isBuilding = true};
+        ///AbilityDec
+        abilitiesList[MORPH] = MORPH;
+
+        ///AbilityRangeSet
+        abilitiesRanges[MORPH] = 0;
+
+        ///AbilityAOEtypes
+        abilitiesAOE[MORPH] = {0,RANGE};
+
+        ///AbilityEffectList
+
+        ///BuildList IF CREATE ABIL IS PRESENT
+        availableToMorph[0] = BIRD;
+        availableToMorph[1] = CENTI;
+        availableToMorph[2] = MORTARBUG;
+
+        ///Cost Adjustment
+        stats.cost[ORE] = 2;
+        stats.cost[GAS] = 1;
+        stats.buildActionPointCost = 3;
+
+        ///adjustments
+        stats.properHeight = 1.50f;
+        boundingBox = Cube(0.13f, 0.1, 0.13f, pos);
+        scaleOutline = glm::vec3(1.005);
+    }
+};
+
+class Centipede : public Unit {
+public:
+    Centipede(glm::vec3 hexCellCords, unordered_map<glm::vec3, HexCell> *HexGrid, int factionID, int64_t objID)
+        : Unit(hexCellCords, unitModels[CENTI], HexGrid, factionID, objID, false) {
+        stats = {10, 10, 3, 2, 2, 2, 2, 1, 1, 0, .isCommander = false};
+        ///AbilityDec
+        abilitiesList[ATTACK] = ATTACK;
+
+        ///AbilityRangeSet
+        abilitiesRanges[ATTACK] = 1;
+
+        ///AbilityAOEtypes
+
+        ///AbilityEffectList
+        (abilityEffects[ATTACK])[DAMAGE] = effect{3,1};
+        (abilityEffects[ATTACK])[SLOW] = effect{4,4};
+
+        ///BuildList IF CREATE ABIL IS PRESENT
+
+        ///Cost Adjustment
+        stats.cost[ORE] = 4;
+        stats.cost[GAS] = 1;
+        stats.buildActionPointCost = 3;
+
+        ///adjustments
+        stats.properHeight = 1.50f;
+        boundingBox = Cube(0.13f, 0.1, 0.13f, pos);
+        scaleOutline = glm::vec3(1.009);
+    }
+};
+
+class Birdie : public Unit {
+public:
+    Birdie(glm::vec3 hexCellCords, unordered_map<glm::vec3, HexCell> *HexGrid, int factionID, int64_t objID)
+        : Unit(hexCellCords, unitModels[BIRD], HexGrid, factionID, objID, true) {
+        stats = {3, 3, 9, 1, 0, 5, 5, 2, 2, 0, .isCommander = false};
+        ///AbilityDec
+        abilitiesList[ATTACK] = ATTACK;
+
+        ///AbilityRangeSet
+        abilitiesRanges[ATTACK] = 1;
+        ///AbilityAOEtypes
+
+        ///AbilityEffectList
+        (abilityEffects[ATTACK])[DAMAGE] = effect{2,1};
+
+        ///BuildList IF CREATE ABIL IS PRESENT
+
+        ///Cost Adjustment
+        stats.cost[ORE] = 3;
+        stats.cost[GAS] = 3;
+        stats.buildActionPointCost = 3;
+
+        ///adjustments
+        stats.properHeight = 1.50f;
+        boundingBox = Cube(0.13f, 0.1, 0.13f, pos);
+        scaleOutline = glm::vec3(1.005);
+    }
+};
+
+
+class MortarBug : public Unit {
+public:
+    MortarBug(glm::vec3 hexCellCords, unordered_map<glm::vec3, HexCell> *HexGrid, int factionID, int64_t objID)
+        : Unit(hexCellCords, unitModels[MORTARBUG], HexGrid, factionID, objID, false) {
+        stats = {4, 4, 1, 3, 1, 1, 1, 1, 1, 0, .isCommander = false};
+        ///AbilityDec
+        abilitiesList[ATTACK] = ATTACK;
+
+        ///AbilityRangeSet
+        abilitiesRanges[ATTACK] = 4;
+
+        ///AbilityAOEtypes
+        abilitiesAOE[ATTACK] = {1,RANGE};
+
+        ///AbilityEffectList
+        (abilityEffects[ATTACK])[POISON] = effect{1,3};
+
+        ///BuildList IF CREATE ABIL IS PRESENT
+
+        ///Cost Adjustment
+        stats.cost[ORE] = 2;
+        stats.cost[GAS] = 2;
+        stats.buildActionPointCost = 2;
+
+        ///adjustments
+        stats.properHeight = 1.50f;
+        boundingBox = Cube(0.13f, 0.1, 0.13f, pos);
+        scaleOutline = glm::vec3(1.008);
+    }
+};
+
+
+class Polyp : public Unit {
+public:
+    Polyp(glm::vec3 hexCellCords, unordered_map<glm::vec3, HexCell> *HexGrid, int factionID, int64_t objID)
+        : Unit(hexCellCords, unitModels[COLLECTOR], HexGrid, factionID, objID, false) {
+        stats = {6, 6, 0, 0, 2, 0, 0, 0, 6, 2, .isCommander = false, .isBuilding = true};
+        ///AbilityDec
+        abilitiesList[MORPH] = MORPH;
+
+        ///AbilityRangeSet
+        abilitiesList[MORPH] = 0;
+
+        ///AbilityAOEtypes
+
+        ///AbilityEffectList
+
+        ///BuildList IF CREATE ABIL IS PRESENT
+        availableToMorph[0] = BALLER;
+
+        ///Cost Adjustment
+        stats.cost[ORE] = 2;
+        stats.cost[GAS] = 2;
+        stats.buildActionPointCost = 1;
+
+        ///adjustments
+        stats.properHeight = 1.50f;
+        boundingBox = Cube(0.13f, 0.1, 0.13f, pos);
+        scaleOutline = glm::vec3(1.009);
+    }
+};
+
+
+class BallSpider : public Unit {
+public:
+    BallSpider(glm::vec3 hexCellCords, unordered_map<glm::vec3, HexCell> *HexGrid, int factionID, int64_t objID)
+        : Unit(hexCellCords, unitModels[BALLER], HexGrid, factionID, objID, false) {
+        stats = {15, 15, 1, 1, 0, 2, 2, 0, 5, 0, .isCommander = false};
+        ///AbilityDec
+
+        ///AbilityRangeSet
+
+        ///AbilityAOEtypes
+
+        ///AbilityEffectList
+
+        ///BuildList IF CREATE ABIL IS PRESENT
+
+        ///Cost Adjustment
+        stats.cost[ORE] = 5;
+        stats.cost[GAS] = 5;
+        stats.buildActionPointCost = 6;
+
+        ///adjustments
+        stats.properHeight = 1.50f;
+        boundingBox = Cube(0.13f, 0.1, 0.13f, pos);
+        scaleOutline = glm::vec3(1.009);
+    }
+};
+
+
+class LazyComm : public Unit {
+public:
+    LazyComm(glm::vec3 hexCellCords, unordered_map<glm::vec3, HexCell> *HexGrid, int factionID, int64_t objID)
+        : Unit(hexCellCords, unitModels[COMM], HexGrid, factionID, objID, false) {
+        stats = {25, 25, 2, 1, 2, 2, 2, 4, 4, 1, .isCommander = true};
+        ///AbilityDec
+        abilitiesList[ATTACK] = ATTACK;
+        abilitiesList[CREATE] = CREATE;
+
+        ///AbilityRangeSet
+        abilitiesRanges[ATTACK] = 1;
+        abilitiesRanges[CREATE] = 1;
+
+        ///AbilityAOEtypes
+        abilitiesAOE[ATTACK] = {3,LINE};
+
+        ///AbilityEffectList
+        (abilityEffects[ATTACK])[BURNING] = effect{1,2};
+
+        ///BuildList IF CREATE ABIL IS PRESENT
+        availableToBuild[0] = LARVE;
+        availableToBuild[1] = COLLECTOR;
+
+        ///Cost Adjustment
+        stats.cost[ORE] = 10;
+        stats.cost[GAS] = 10;
+        stats.buildActionPointCost = 30;
+
+        ///adjustments
+        stats.properHeight = 1.50f;
+        boundingBox = Cube(0.13f, 0.1, 0.13f, pos);
+        scaleOutline = glm::vec3(1.009);
+    }
+};
+
+
 
 struct UnitFactory{
         inline static deque<unique_ptr<Unit>> toBeCreated;
@@ -488,10 +715,33 @@ struct UnitFactory{
         static void initialize(unordered_map<glm::vec3, HexCell> *HexGrid) {
             HexGridRef = HexGrid;
 
-            unitCreationMap[GENERIC_UNIT] = [](glm::vec3 hexCellCords, unordered_map<glm::vec3, HexCell>* HexGrid, int factionID, int objID) {
-                return std::make_unique<GenericUnit>(hexCellCords, HexGrid, factionID, objID);
+            unitCreationMap[LARVE] = [](glm::vec3 hexCellCords, unordered_map<glm::vec3, HexCell>* HexGrid, int factionID, int objID) {
+                return std::make_unique<Larve>(hexCellCords, HexGrid, factionID, objID);
             };
 
+            unitCreationMap[CENTI] = [](glm::vec3 hexCellCords, unordered_map<glm::vec3, HexCell>* HexGrid, int factionID, int objID) {
+                return std::make_unique<Centipede>(hexCellCords, HexGrid, factionID, objID);
+            };
+
+            unitCreationMap[BIRD] = [](glm::vec3 hexCellCords, unordered_map<glm::vec3, HexCell>* HexGrid, int factionID, int objID) {
+                return std::make_unique<Birdie>(hexCellCords, HexGrid, factionID, objID);
+            };
+
+            unitCreationMap[MORTARBUG] = [](glm::vec3 hexCellCords, unordered_map<glm::vec3, HexCell>* HexGrid, int factionID, int objID) {
+                return std::make_unique<MortarBug>(hexCellCords, HexGrid, factionID, objID);
+            };
+
+            unitCreationMap[COLLECTOR] = [](glm::vec3 hexCellCords, unordered_map<glm::vec3, HexCell>* HexGrid, int factionID, int objID) {
+                return std::make_unique<Polyp>(hexCellCords, HexGrid, factionID, objID);
+            };
+
+            unitCreationMap[BALLER] = [](glm::vec3 hexCellCords, unordered_map<glm::vec3, HexCell>* HexGrid, int factionID, int objID) {
+                return std::make_unique<BallSpider>(hexCellCords, HexGrid, factionID, objID);
+            };
+
+            unitCreationMap[COMM] = [](glm::vec3 hexCellCords, unordered_map<glm::vec3, HexCell>* HexGrid, int factionID, int objID) {
+                return std::make_unique<LazyComm>(hexCellCords, HexGrid, factionID, objID);
+            };
         }
 
         static void createUnit(UnitType unitType, glm::vec3 hexCellCords, int factionID){

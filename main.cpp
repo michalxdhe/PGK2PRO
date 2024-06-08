@@ -86,10 +86,17 @@ void Game::init()
     ///inicjalizowanie modeli, we to w funkcje jakas walnij
     ///MISC
     resModels[ORE] = Model("Model/Res/Ore.obj");
-    resModels[GAS] = Model("Model/Res/Ore.obj");
+    resModels[GAS] = Model("Model/Res/Gas.obj");
 
     ///UNIT'Y
-    unitModels[GENERIC_UNIT] = {"Model/GenericTest/larve.gltf", Model("Model/GenericTest/larve.gltf")};
+    unitModels[LARVE] = {"Model/GenericTest/larve.gltf", Model("Model/GenericTest/larve.gltf")};
+    unitModels[EGG] = {"Model/GenericTest/egg.gltf", Model("Model/GenericTest/egg.gltf")};
+    unitModels[CENTI] = {"Model/GenericTest/Centi.gltf", Model("Model/GenericTest/Centi.gltf")};
+    unitModels[BIRD] = {"Model/GenericTest/birdOfPrey.gltf", Model("Model/GenericTest/birdOfPrey.gltf")};
+    unitModels[MORTARBUG] = {"Model/GenericTest/mortarBug.gltf", Model("Model/GenericTest/mortarBug.gltf")};
+    unitModels[COLLECTOR] = {"Model/GenericTest/weirdAssCollector.gltf", Model("Model/GenericTest/weirdAssCollector.gltf")};
+    unitModels[BALLER] = {"Model/GenericTest/spiderBaller.gltf", Model("Model/GenericTest/spiderBaller.gltf")};
+    unitModels[COMM] = {"Model/GenericTest/commanderLazy.gltf", Model("Model/GenericTest/commanderLazy.gltf")};
 
     glUseProgram(shaderPrograms[0]);
     glUniform3fv(glGetUniformLocation(shaderPrograms[0], "factionColors"), 10, glm::value_ptr(factionColors[0]));
@@ -98,21 +105,22 @@ void Game::init()
 
     lights.insert(make_pair<int,unique_ptr<LightSource>>(Globals::numberOfEntities++,make_unique<LightCube>(0.2f,0.2f,0.2f)));
 
-    HexGrid[glm::vec3(0.f,0.f,0.f)].passable = 0;
-    HexGrid[glm::vec3(0.f,0.f,0.f) + cube_direction_vectors[0]].passable = 0;
-    HexGrid[glm::vec3(0.f,0.f,0.f) + cube_direction_vectors[3]].passable = 0;
-
-    for(int i = 0; i < 5; i++)
-        {//zmien to potem na ile surowcuw ma byc wygenerowanych
+    for(int i = 0; i < boardSize*4; i++){
         glm::vec3 randomHex = getRandomHex(boardSize);
-        if(HexGrid[randomHex].passable && HexGrid[randomHex].presentResource == -1)
-            HexGrid[randomHex].presentResource = ORE; //zmien to potem na losowy surowiec
-        else{
-            i--;
-        }
+        HexGrid[randomHex].passable = false;
+    }
+
+    for(int i = 0; i < 15; i++)
+        {//zmien to potem na ile surowcuw ma byc wygenerowanych
+            glm::vec3 randomHex = getRandomHex(boardSize);
+            if(HexGrid[randomHex].passable && HexGrid[randomHex].presentResource == -1)
+                HexGrid[randomHex].presentResource = ORE; //zmien to potem na losowy surowiec
+            else{
+                i--;
+            }
         }
 
-        for(int i = 0; i < 5; i++)
+        for(int i = 0; i < 15; i++)
         {
         glm::vec3 randomHex = getRandomHex(boardSize);
         if(HexGrid[randomHex].passable && HexGrid[randomHex].presentResource == -1)
@@ -129,16 +137,23 @@ void Game::init()
         obiekty[Globals::numberOfEntities++] = make_unique<Hexagon>(testhex, pair.second);
     }
 
-            for(int i = 0; i < 100; i++)
-        {
+    /*for(int i = 0; i < 100; i++)
+    {
         glm::vec3 randomHex = getRandomHex(boardSize);
-       // obiekty[Globals::numberOfEntities++] = make_unique<GenericUnit>(randomHex, &HexGrid, 1, Globals::numberOfEntities);
-        }
+        obiekty[Globals::numberOfEntities++] = make_unique<GenericUnit>(randomHex, &HexGrid, 1, Globals::numberOfEntities);
+    }*/
 
-    obiekty[Globals::numberOfEntities++] = make_unique<GenericUnit>(glm::vec3(2.f,0.f,-2.f), &HexGrid, 1, Globals::numberOfEntities);
-    obiekty[Globals::numberOfEntities++] = make_unique<GenericUnit>(glm::vec3(3.f,0.f,-3.f), &HexGrid, 2,Globals::numberOfEntities);
-    obiekty[Globals::numberOfEntities++] = make_unique<GenericUnit>(glm::vec3(0.f,0.f,0.f), &HexGrid, 2,Globals::numberOfEntities);
-    obiekty[Globals::numberOfEntities++] = make_unique<GenericUnit>(glm::vec3(4.f,0.f,-4.f), &HexGrid, 1,Globals::numberOfEntities);
+    HexGrid[cube_direction_vectors[0]*(float)boardSize].passable = true;
+    HexGrid[cube_direction_vectors[2]*(float)boardSize].passable = true;
+    HexGrid[cube_direction_vectors[4]*(float)boardSize].passable = true;
+    HexGrid[cube_direction_vectors[5]*(float)boardSize].passable = true;
+
+    obiekty[Globals::numberOfEntities++] = make_unique<LazyComm>(cube_direction_vectors[0]*(float)boardSize, &HexGrid, 1, Globals::numberOfEntities);
+    obiekty[Globals::numberOfEntities++] = make_unique<LazyComm>(cube_direction_vectors[2]*(float)boardSize, &HexGrid, 2,Globals::numberOfEntities);
+    obiekty[Globals::numberOfEntities++] = make_unique<LazyComm>(cube_direction_vectors[4]*(float)boardSize, &HexGrid, 3, Globals::numberOfEntities);
+    obiekty[Globals::numberOfEntities++] = make_unique<LazyComm>(cube_direction_vectors[5]*(float)boardSize, &HexGrid, 4,Globals::numberOfEntities);
+
+
 
     glStencilFunc(GL_ALWAYS, 1, 0xFF);
     glStencilMask(0xFF);

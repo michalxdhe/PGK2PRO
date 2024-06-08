@@ -122,7 +122,7 @@ void UnitGui::render(unsigned int shaderProgram, std::vector<unsigned int> shade
             ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.4f, 0.7f, 0.0f, 1.0f));
             rainingToday = true;
         }
-        if(it >= 0){
+        if(it < ABILITIES_COUNT){
             if(ImGui::Button(abilityNames[it].c_str(),ImVec2(25.f,25.f)))
 
                 *selectedAbil = it;
@@ -169,7 +169,7 @@ void UnitGui::render(unsigned int shaderProgram, std::vector<unsigned int> shade
 
     if(*selectedAbil == MORPH){
         int countOfButtons = 0;
-        for(auto itt : *buildMenu){
+        for(auto itt : *morphMenu){
             if(itt != UNIT_TYPE_COUNT){
                 countOfButtons += 1;
             }
@@ -179,7 +179,7 @@ void UnitGui::render(unsigned int shaderProgram, std::vector<unsigned int> shade
         ImGui::SetNextWindowPos(ImVec2(windowX, windowY - 45.f), ImGuiCond_Always);
         ImGui::Begin("BuildSelect", nullptr, invisPreset);
 
-        for(auto itt : *buildMenu){
+        for(auto itt : *morphMenu){
             if(itt != UNIT_TYPE_COUNT){
                 if(itt == stats->selectedToBuild){
                     ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.4f, 0.7f, 0.0f, 1.0f));
@@ -375,8 +375,10 @@ void UnitBar::render(unsigned int shaderProgram, std::vector<unsigned int> shade
         }
         ImGui::End();
 
+        int neededChars = std::to_string(stats->maxHealth).length();
+
         ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(padding, padding));
-        ImGui::SetNextWindowSize(ImVec2(windowWi, windowHe), ImGuiCond_Always);
+        ImGui::SetNextWindowSize(ImVec2(5.f + (neededChars*2*10.f), windowHe), ImGuiCond_Always);
         ImGui::SetNextWindowPos(ImVec2(windowX, windowY), ImGuiCond_Always);
         ImGui::Begin(("##test"+ std::to_string(unitID)).c_str(), nullptr, invisPreset);
         ImGui::Text("%d/%d", stats->health, stats->maxHealth);

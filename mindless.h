@@ -166,10 +166,10 @@ public:
         Globals::windowH = windowH;
         Globals::windowW = windowW;
 
-        numOfPlayers = 2;
+        numOfPlayers = 4;
         currentPlayersTurn = (rand()%2) + 1;
 
-        boardSize = 5;
+        boardSize = 8;
     }
 
     /** \brief Konstruktor gry z parametrami
@@ -213,10 +213,10 @@ public:
         Globals::windowH = windowH;
         Globals::windowW = windowW;
 
-        numOfPlayers = 2;
+        numOfPlayers = 4;
         currentPlayersTurn = (rand()%2) + 1;
 
-        boardSize = 5;
+        boardSize = 8;
     }
 
     ~Game()

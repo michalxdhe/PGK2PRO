@@ -20,7 +20,7 @@ public:
     PlayerGui resourceOverlay;
 
     PlayerInterface()
-        : resources{0, 0, 0, 0, 0, 0, 0, 0},
+        : resources{2, 2, 0, 0, 0, 0, 0, 0},
           resourceOverlay(ImVec2(Globals::windowW, Globals::windowH), &resources)
     {
     }

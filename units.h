@@ -61,7 +61,7 @@ struct UnitStats
 
 struct AOE{
     int radius = 0;
-    AOE_TYPE type = RANGE;
+    AOE_TYPE type = LINE;
 };
 
 unordered_map<glm::vec3, int> getCellsUpToDist(unordered_map<glm::vec3, int> pathable, int dist);

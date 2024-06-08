@@ -8,6 +8,7 @@ uniform bool moveRange = false;
 uniform bool abilityRange = false;
 uniform bool factionHighlight = false;
 uniform bool hoveredHex = false;
+uniform bool unitRender = false;
 uniform int factionID;
 uniform vec3 factionColors[10];
 
@@ -17,13 +18,13 @@ uniform vec3 lightColor;
 uniform vec3 lightPos;
 uniform vec3 viewPos;
 
-float ambientStrength = 0.4;
+float ambientStrength = 0.5;
 
 
 void main()
 {
     if(factionHighlight){
-        FragColor = vec4(factionColors[factionID], 1.0);
+        FragColor = vec4(vec3(1.0), 1.0);
     }
     else{
 
@@ -61,8 +62,10 @@ void main()
 
         //vec3 lighting = (ambient + (1.0 - shadow) * (diffuse + specular)) * color;
         vec3 lighting = (ambient + (diffuse + specular)) * color;
-        FragColor = vec4(lighting, 1.0);
-
+        if(unitRender)
+            FragColor = vec4(lighting + (factionColors[factionID] * 0.5), 1.0);
+        else
+            FragColor = vec4(lighting, 1.0);
         //FragColor = vec4(vec3(shadow), 1.0);
     }
 }
