@@ -158,9 +158,14 @@ void Unit::commandRC(Selectable *target, abilityCall *orderInfo)
     transformMat[3] = glm::vec4(pos,1.0f);
 }
 
+void Unit::onSelectSound(){
+
+}
+
 void Unit::onSelect()
 {
     isSelected = 1;
+    onSelectSound();
     updateMovRange();
     updateAbilRange();
 }
@@ -405,8 +410,8 @@ void Unit::resolveEffects()
     }
 }
 
-/** \brief Pomocnicza metoda, jakby ktos chcial aby jego jednostka robila co innego na poczatku tury, np. wzrastal jej atak
- *
+/** \brief Pomocnicza metoda,
+ *  jakby ktos chcial aby jego jednostka robila co innego na poczatku tury, np. wzrastal jej atak, wystarczy zoverloadowac to
  * \return void
  *
  */
@@ -415,8 +420,8 @@ void Unit::startOfTurnCore()
     resolveEffects();
 }
 
-/** \brief Pomocnicza metoda, jakby ktos chcial aby jego jednostka robila co innego na koniec tury
- *
+/** \brief Pomocnicza metoda,
+ * jakby ktos chcial aby jego jednostka robila co innego na koniec tury, wystarczy zoverloadowac to
  * \return void
  *
  */
@@ -442,21 +447,21 @@ public:
         stats = {5, 5, 7, 1, 1, 7, 7, 0, 2, 1, .isCommander = false};
         ///AbilityDec
         abilitiesList[ATTACK] = ATTACK;
-        abilitiesList[CREATE] = CREATE;
+        abilitiesList[MORPH] = MORPH;
 
         ///AbilityRangeSet
         abilitiesRanges[ATTACK] = 1;
-        abilitiesRanges[CREATE] = 1;
+        abilitiesRanges[MORPH] = 1;
 
         ///AbilityAOEtypes
         abilitiesAOE[ATTACK] = {1,RANGE};
-        abilitiesAOE[CREATE] = {0,RANGE};
 
         ///AbilityEffectList
         (abilityEffects[ATTACK])[POISON] = effect{2,1};
 
         ///BuildList IF CREATE ABIL IS PRESENT
         availableToBuild[0] = GENERIC_UNIT;
+        availableToMorph[0] = GENERIC_UNIT;
 
         ///Cost Adjustment
         stats.cost[ORE] = 1;
@@ -467,6 +472,11 @@ public:
         boundingBox = Cube(0.15f, 0.07, 0.15f, pos);
         scaleOutline = glm::vec3(1.003);
     }
+
+    void onSelectSound(){
+        audioJungle.play(WORM_GRUNT);
+    }
+
 };
 
 

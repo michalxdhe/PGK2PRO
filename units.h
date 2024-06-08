@@ -21,6 +21,13 @@ struct ModelWithPath{
     Model model;
 };
 
+enum SOUNDS{
+    WORM_GRUNT,
+    SOUND_COUNT
+};
+
+static AudioPlayer audioJungle;
+
 static ModelWithPath unitModels[UNIT_TYPE_COUNT];
 
 /** \brief Struktura uzywana do przetwarzania umiejetnosci jednostek
@@ -108,9 +115,10 @@ public:
     void resolveEndOfTurn(endTurnEffects effects);
     void takeDamage(int damage, bool ignoreArmor = false, EFFECTS effect = DAMAGE);
     void rotateTowardsHex(glm::vec3 theHex);
+    virtual void onSelectSound();
 private:
-    void startOfTurnCore();
-    void endOfTurnCore(endTurnEffects effects);
+    virtual void startOfTurnCore();
+    virtual void endOfTurnCore(endTurnEffects effects);
     void useAbilOnUnit(Selectable *target, abilityCall *orderInfo);
     void useAbilOnHex(Selectable *target, abilityCall *orderInfo);
     void tryMoving(Selectable *target, abilityCall *orderInfo);

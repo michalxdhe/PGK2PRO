@@ -1066,7 +1066,7 @@
 
 1714991992 c:\garigette\foryourgood\playerinterface.h
 
-1717796627 source:c:\garigette\pgk2pro\main.cpp
+1717839588 source:c:\garigette\pgk2pro\main.cpp
 	"common.h"
 	"mindless.h"
 
@@ -1107,7 +1107,7 @@
 
 1717774049 c:\garigette\pgk2pro\globals.h
 
-1717800125 c:\garigette\pgk2pro\mindless.h
+1717839588 c:\garigette\pgk2pro\mindless.h
 	"animator.h"
 	"metaphysical.h"
 	"model.h"
@@ -1132,7 +1132,7 @@
 1717774049 c:\garigette\pgk2pro\dijkstra.h
 	"boardlogic.h"
 
-1717798325 c:\garigette\pgk2pro\units.h
+1717840170 c:\garigette\pgk2pro\units.h
 	"globals.h"
 	"dijkstra.h"
 	"abilities.h"
@@ -1340,7 +1340,7 @@
 	"customgui.h"
 	"units.h"
 
-1717798325 c:\garigette\pgk2pro\units.cpp
+1717840750 c:\garigette\pgk2pro\units.cpp
 	"customgui.h"
 	"units.h"
 
@@ -2070,5 +2070,11 @@
 
 1717680852 c:\garigette\pgk2pro\animdata.h
 
-1717796595 c:\garigette\pgk2pro\soundbullshit.h
+1717839344 c:\garigette\pgk2pro\soundbullshit.h
+
+1717837557 c:\garigette\pgk2pro\soundbullshit.cpp
+	"soundbullshit.h"
+
+1717837457 source:c:\garigette\pgk2pro\soundbullshit.cpp
+	"soundbullshit.h"
 

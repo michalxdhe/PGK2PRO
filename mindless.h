@@ -56,7 +56,7 @@ public:
 
     SDL_GLContext gContext;
 
-    AudioPlayer audioJungle;
+
 
     /// Aha
     Model testhex;

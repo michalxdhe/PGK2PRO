@@ -12,7 +12,9 @@ public:
                 SDL_FreeWAV(sound.wav_buffer);
             }
         }
-        SDL_CloseAudio();
+        if (device_id != 0) {
+            SDL_CloseAudioDevice(device_id);
+        }
         SDL_Quit();
     }
 
@@ -26,19 +28,26 @@ public:
 
     void play(int index) {
         if (index < 0 || index >= sounds.size()) {
-            throw std::out_of_range("Sound index out of range");
+            throw std::out_of_range("Invalid sound index");
         }
 
         SDL_AudioSpec& wav_spec = sounds[index].wav_spec;
         Uint8* wav_buffer = sounds[index].wav_buffer;
         Uint32 wav_length = sounds[index].wav_length;
 
-        if (SDL_OpenAudio(&wav_spec, NULL) < 0) {
-            throw std::runtime_error("Couldn't open audio: " + std::string(SDL_GetError()));
+        if (device_id == 0) {
+            device_id = SDL_OpenAudioDevice(NULL, 0, &wav_spec, NULL, 0);
+            if (device_id == 0) {
+                throw std::runtime_error("Failed to open audio device: " + std::string(SDL_GetError()));
+            }
         }
 
-        SDL_QueueAudio(1, wav_buffer, wav_length);
-        SDL_PauseAudio(0);
+        SDL_ClearQueuedAudio(device_id);
+        if (SDL_QueueAudio(device_id, wav_buffer, wav_length) < 0) {
+            throw std::runtime_error("Failed to queue audio: " + std::string(SDL_GetError()));
+        }
+
+        SDL_PauseAudioDevice(device_id, 0);
     }
 
 private:
@@ -49,6 +58,7 @@ private:
     };
 
     std::vector<SoundData> sounds;
+    SDL_AudioDeviceID device_id = 0;
 };
 
 #endif // SOUNDBULLSHIT_H_INCLUDED

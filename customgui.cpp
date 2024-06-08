@@ -12,7 +12,8 @@ UnitGui::UnitGui() = default;
 const std::string abilityNames[ABILITIES_COUNT] = {
     "Attack",
     "Create",
-    "Missile"
+    "Morph",
+
 };
 
 const glm::vec3 colors[EFFECTS_COUNT] = {
