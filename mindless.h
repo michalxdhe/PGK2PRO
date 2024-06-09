@@ -363,9 +363,9 @@ private:
         }
     }
 
-    void doAttack(abilityCall info, Game *gameRef)
+void doAttack(abilityCall info, Game *gameRef)
 {
-    int damage = info.culprit->stats.att;
+    int damage = max(0,info.culprit->stats.att);
     for(auto it : info.target)
     {
         int targetID = info.culprit->stats.flying ?  it->airID : it->groundID;
@@ -396,17 +396,19 @@ bool doCreate(abilityCall info, Game *gameRef)
         offspringTemp = *(UnitFactory::unitCreationMap[info.offSpring](glm::vec3(100.f),info.culprit->hexGrid,info.culprit->owner,-1));
         for(auto it : info.target)
         {
-            if(offspringTemp.stats.flying){
-                if(it->airID == -1 && !it->occupiedAir)
-                {
-                    status = true;
-                    UnitFactory::createUnit(info.offSpring,it->LogicPos,info.culprit->owner);
-                }
-            }else{
-                if(it->groundID == -1 && !it->occupiedGround)
-                {
-                    status = true;
-                    UnitFactory::createUnit(info.offSpring,it->LogicPos,info.culprit->owner);
+            if(it->passable){
+                if(offspringTemp.stats.flying){
+                    if(it->airID == -1 && !it->occupiedAir)
+                    {
+                        status = true;
+                        UnitFactory::createUnit(info.offSpring,it->LogicPos,info.culprit->owner);
+                    }
+                }else{
+                    if(it->groundID == -1 && !it->occupiedGround)
+                    {
+                        status = true;
+                        UnitFactory::createUnit(info.offSpring,it->LogicPos,info.culprit->owner);
+                    }
                 }
             }
         }
@@ -419,10 +421,10 @@ bool doCreate(abilityCall info, Game *gameRef)
 bool doMorph(abilityCall info, Game *gameRef)
 {
     bool status = false;
+    HexCell &culpritOrigin = (*info.culprit->hexGrid)[info.culprit->hexPos];
     Unit offspringTemp;
     if(info.offSpring != -1 && info.offSpring < UNIT_TYPE_COUNT){
         offspringTemp = *(UnitFactory::unitCreationMap[info.offSpring](glm::vec3(100.f),info.culprit->hexGrid,info.culprit->owner,-1));
-            HexCell &culpritOrigin = (*info.culprit->hexGrid)[info.culprit->hexPos];
 
             if(!info.culprit->stats.flying){
             culpritOrigin.groundID = -1;
@@ -433,13 +435,13 @@ bool doMorph(abilityCall info, Game *gameRef)
             }
 
             if(offspringTemp.stats.flying){
-                if(culpritOrigin.airID == -1 && !culpritOrigin.occupiedAir)
+                if(culpritOrigin.airID == -1 && !culpritOrigin.occupiedAir && culpritOrigin.passable)
                 {
                     status = true;
                     UnitFactory::createUnit(info.offSpring,info.culprit->hexPos,info.culprit->owner);
                 }
             }else{
-                if(culpritOrigin.groundID == -1 && !culpritOrigin.occupiedGround)
+                if(culpritOrigin.groundID == -1 && !culpritOrigin.occupiedGround && culpritOrigin.passable)
                 {
                     status = true;
                     UnitFactory::createUnit(info.offSpring,info.culprit->hexPos,info.culprit->owner);
@@ -448,10 +450,332 @@ bool doMorph(abilityCall info, Game *gameRef)
     }
     if(status)
         info.culprit->stats.health = 0;
+    else{
+        if(!info.culprit->stats.flying){
+            culpritOrigin.groundID = info.culprit->ID;
+            culpritOrigin.occupiedGround = true;
+        }else{
+            culpritOrigin.airID = info.culprit->ID;
+            culpritOrigin.occupiedAir = true;
+        }
+    }
 
     UnitFactory::resolveCreation(&gameRef->obiekty,&gameRef->initiativeQueue);
     return status;
 }
+
+void doSpit(abilityCall info, Game *gameRef)
+{
+    int damage = 1;
+    for(auto it : info.target)
+    {
+        if(it->airID != -1)
+        {
+            Unit* inZone = dynamic_cast<Unit*>(gameRef->obiekty[it->airID].get());
+            if(inZone != nullptr)
+            {
+                    inZone->takeDamage(damage);
+                    for(int i = 0; i < EFFECTS_COUNT; i++)
+                    {
+                        inZone->stats.effects[i].duration += info.effects[i].duration;
+                        inZone->stats.effects[i].intensity += info.effects[i].intensity;
+                    }
+            }
+        }
+        if(it->groundID != -1)
+        {
+            Unit* inZone = dynamic_cast<Unit*>(gameRef->obiekty[it->groundID].get());
+            if(inZone != nullptr)
+            {
+                    inZone->takeDamage(damage);
+                    for(int i = 0; i < EFFECTS_COUNT; i++)
+                    {
+                        inZone->stats.effects[i].duration += info.effects[i].duration;
+                        inZone->stats.effects[i].intensity += info.effects[i].intensity;
+                    }
+            }
+        }
+    }
+}
+
+void doHex(abilityCall info, Game *gameRef)
+{
+    for(auto it : info.target)
+    {
+        if(it->airID != -1)
+        {
+            Unit* inZone = dynamic_cast<Unit*>(gameRef->obiekty[it->airID].get());
+            if(inZone != nullptr)
+            {
+                    inZone->stats.health -= 1;
+                    inZone->stats.maxHealth -= 1;
+                    inZone->stats.speed -= 1;
+                    inZone->stats.att -= 1;
+                    inZone->stats.def -= 1;
+                    inZone->stats.maxMovRange -= 1;
+                    inZone->stats. movRange -= 1;
+                    for(int i = 0; i < EFFECTS_COUNT; i++)
+                    {
+                        inZone->stats.effects[i].duration += info.effects[i].duration;
+                        inZone->stats.effects[i].intensity += info.effects[i].intensity;
+                    }
+            }
+        }
+        if(it->groundID != -1)
+        {
+            Unit* inZone = dynamic_cast<Unit*>(gameRef->obiekty[it->groundID].get());
+            if(inZone != nullptr)
+            {
+                    inZone->stats.health -= 1;
+                    inZone->stats.maxHealth -= 1;
+                    inZone->stats.speed -= 1;
+                    inZone->stats.att -= 1;
+                    inZone->stats.def -= 1;
+                    inZone->stats.maxMovRange -= 1;
+                    inZone->stats. movRange -= 1;
+                    for(int i = 0; i < EFFECTS_COUNT; i++)
+                    {
+                        inZone->stats.effects[i].duration += info.effects[i].duration;
+                        inZone->stats.effects[i].intensity += info.effects[i].intensity;
+                    }
+            }
+        }
+    }
+}
+
+void doDecimate(abilityCall info, Game *gameRef)
+{
+    for(auto it : info.target)
+    {
+        if(it->airID != -1)
+        {
+            Unit* inZone = dynamic_cast<Unit*>(gameRef->obiekty[it->airID].get());
+            if(inZone != nullptr)
+            {
+                    inZone->stats.def -= 6;
+                    inZone->takeDamage(6);
+                    for(int i = 0; i < EFFECTS_COUNT; i++)
+                    {
+                        inZone->stats.effects[i].duration += info.effects[i].duration;
+                        inZone->stats.effects[i].intensity += info.effects[i].intensity;
+                    }
+            }
+        }
+        if(it->groundID != -1)
+        {
+            Unit* inZone = dynamic_cast<Unit*>(gameRef->obiekty[it->groundID].get());
+            if(inZone != nullptr)
+            {
+                    inZone->stats.def -= 6;
+                    inZone->takeDamage(2);
+                    for(int i = 0; i < EFFECTS_COUNT; i++)
+                    {
+                        inZone->stats.effects[i].duration += info.effects[i].duration;
+                        inZone->stats.effects[i].intensity += info.effects[i].intensity;
+                    }
+            }
+        }
+    }
+}
+
+void doCleanse(abilityCall info, Game *gameRef)
+{
+    for(auto it : info.target)
+    {
+        if(it->airID != -1)
+        {
+            Unit* inZone = dynamic_cast<Unit*>(gameRef->obiekty[it->airID].get());
+            if(inZone != nullptr)
+            {
+                    for(int i = 0; i < EFFECTS_COUNT; i++)
+                    {
+                        if(i == HEAL)
+                            continue;
+                        inZone->stats.effects[i].duration = max(0,inZone->stats.effects[i].duration - 2);
+                        inZone->stats.effects[i].intensity = max(0,inZone->stats.effects[i].intensity - 2);
+                    }
+                    for(int i = 0; i < EFFECTS_COUNT; i++)
+                    {
+                        inZone->stats.effects[i].duration += info.effects[i].duration;
+                        inZone->stats.effects[i].intensity += info.effects[i].intensity;
+                    }
+            }
+        }
+        if(it->groundID != -1)
+        {
+            Unit* inZone = dynamic_cast<Unit*>(gameRef->obiekty[it->groundID].get());
+            if(inZone != nullptr)
+            {
+                    for(int i = 0; i < EFFECTS_COUNT; i++)
+                    {
+                        if(i == HEAL)
+                            continue;
+                        inZone->stats.effects[i].duration = max(0,inZone->stats.effects[i].duration - 2);
+                        inZone->stats.effects[i].intensity = max(0,inZone->stats.effects[i].intensity - 2);
+                    }
+                    for(int i = 0; i < EFFECTS_COUNT; i++)
+                    {
+                        inZone->stats.effects[i].duration += info.effects[i].duration;
+                        inZone->stats.effects[i].intensity += info.effects[i].intensity;
+                    }
+            }
+        }
+    }
+}
+
+void doRally(abilityCall info, Game *gameRef)
+{
+    for(auto it : info.target)
+    {
+        if(it->airID != -1)
+        {
+            Unit* inZone = dynamic_cast<Unit*>(gameRef->obiekty[it->airID].get());
+            if(inZone != nullptr)
+            {
+                    if(inZone->owner == info.culprit->owner){
+                        inZone->stats.att += 2;
+                        for(int i = 0; i < EFFECTS_COUNT; i++)
+                        {
+                            inZone->stats.effects[i].duration += info.effects[i].duration;
+                            inZone->stats.effects[i].intensity += info.effects[i].intensity;
+                        }
+                    }
+            }
+        }
+        if(it->groundID != -1)
+        {
+            Unit* inZone = dynamic_cast<Unit*>(gameRef->obiekty[it->groundID].get());
+            if(inZone != nullptr)
+            {
+                    if(inZone->owner == info.culprit->owner){
+                        inZone->stats.att += 2;
+                        for(int i = 0; i < EFFECTS_COUNT; i++)
+                        {
+                            inZone->stats.effects[i].duration += info.effects[i].duration;
+                            inZone->stats.effects[i].intensity += info.effects[i].intensity;
+                        }
+                    }
+            }
+        }
+    }
+}
+
+void doFortify(abilityCall info, Game *gameRef)
+{
+    for(auto it : info.target)
+    {
+        if(it->airID != -1)
+        {
+            Unit* inZone = dynamic_cast<Unit*>(gameRef->obiekty[it->airID].get());
+            if(inZone != nullptr)
+            {
+                    if(inZone->owner == info.culprit->owner){
+                        inZone->stats.def += 2;
+                        for(int i = 0; i < EFFECTS_COUNT; i++)
+                        {
+                            inZone->stats.effects[i].duration += info.effects[i].duration;
+                            inZone->stats.effects[i].intensity += info.effects[i].intensity;
+                        }
+                    }
+            }
+        }
+        if(it->groundID != -1)
+        {
+            Unit* inZone = dynamic_cast<Unit*>(gameRef->obiekty[it->groundID].get());
+            if(inZone != nullptr)
+            {
+                    if(inZone->owner == info.culprit->owner){
+                        inZone->stats.def += 2;
+                        for(int i = 0; i < EFFECTS_COUNT; i++)
+                        {
+                            inZone->stats.effects[i].duration += info.effects[i].duration;
+                            inZone->stats.effects[i].intensity += info.effects[i].intensity;
+                        }
+                    }
+            }
+        }
+    }
+}
+
+void doSpeedBoon(abilityCall info, Game *gameRef)
+{
+    for(auto it : info.target)
+    {
+        if(it->airID != -1)
+        {
+            Unit* inZone = dynamic_cast<Unit*>(gameRef->obiekty[it->airID].get());
+            if(inZone != nullptr)
+            {
+                    if(inZone->owner == info.culprit->owner){
+                        inZone->stats.speed += 3;
+                        inZone->stats.movRange += 1;
+
+                        for(int i = 0; i < EFFECTS_COUNT; i++)
+                        {
+                            inZone->stats.effects[i].duration += info.effects[i].duration;
+                            inZone->stats.effects[i].intensity += info.effects[i].intensity;
+                        }
+                    }
+            }
+        }
+        if(it->groundID != -1)
+        {
+            Unit* inZone = dynamic_cast<Unit*>(gameRef->obiekty[it->groundID].get());
+            if(inZone != nullptr)
+            {
+                    if(inZone->owner == info.culprit->owner){
+                        inZone->stats.speed += 3;
+                        inZone->stats.movRange += 1;
+
+                        for(int i = 0; i < EFFECTS_COUNT; i++)
+                        {
+                            inZone->stats.effects[i].duration += info.effects[i].duration;
+                            inZone->stats.effects[i].intensity += info.effects[i].intensity;
+                        }
+                    }
+            }
+        }
+    }
+}
+
+void doHealthBoon(abilityCall info, Game *gameRef)
+{
+    for(auto it : info.target)
+    {
+        if(it->airID != -1)
+        {
+            Unit* inZone = dynamic_cast<Unit*>(gameRef->obiekty[it->airID].get());
+            if(inZone != nullptr)
+            {
+                    if(inZone->owner == info.culprit->owner){
+                        inZone->stats.maxHealth += 2;
+
+                        for(int i = 0; i < EFFECTS_COUNT; i++)
+                        {
+                            inZone->stats.effects[i].duration += info.effects[i].duration;
+                            inZone->stats.effects[i].intensity += info.effects[i].intensity;
+                        }
+                }
+            }
+        }
+        if(it->groundID != -1)
+        {
+            Unit* inZone = dynamic_cast<Unit*>(gameRef->obiekty[it->groundID].get());
+            if(inZone != nullptr)
+            {
+                    if(inZone->owner == info.culprit->owner){
+                        inZone->stats.maxHealth += 2;
+                        for(int i = 0; i < EFFECTS_COUNT; i++)
+                        {
+                            inZone->stats.effects[i].duration += info.effects[i].duration;
+                            inZone->stats.effects[i].intensity += info.effects[i].intensity;
+                        }
+                    }
+            }
+        }
+    }
+}
+
 
 bool handleAbility(abilityCall info, Game *gameRef)
 {
@@ -485,8 +809,8 @@ bool handleAbility(abilityCall info, Game *gameRef)
                 for(int i = 0; i < RESOURCE_COUNT; i++){
                     playerIntes[info.culprit->owner]->resources[i] = max(0,playerIntes[info.culprit->owner]->resources[i] - offspringTemp.stats.cost[i]);
                 }
-            }
-            return true;
+                 return true;
+                }
             }
         }
         return false;
@@ -516,6 +840,78 @@ bool handleAbility(abilityCall info, Game *gameRef)
             return true;
             }
         }
+        return false;
+        break;
+        }
+        case SPIT:{
+            if(info.culprit->stats.actionTokens >= 2){
+            doSpit(info,gameRef);
+            info.culprit->stats.actionTokens -= 2;
+            return true;
+        }else
+        return false;
+        break;
+        }
+        case HEX:{
+            if(info.culprit->stats.actionTokens >= 4){
+            doHex(info,gameRef);
+            info.culprit->stats.actionTokens -= 4;
+            return true;
+        }else
+        return false;
+        break;
+        }
+        case DECIMATE:{
+            if(info.culprit->stats.actionTokens >= 3){
+            doDecimate(info,gameRef);
+            info.culprit->stats.actionTokens -= 3;
+            return true;
+        }else
+        return false;
+        break;
+        }
+        case CLEANSE:{
+            if(info.culprit->stats.actionTokens >= 2){
+            doCleanse(info,gameRef);
+            info.culprit->stats.actionTokens -= 2;
+            return true;
+        }else
+        return false;
+        break;
+        }
+        case RALLY:{
+            if(info.culprit->stats.actionTokens >= 3){
+            doRally(info,gameRef);
+            info.culprit->stats.actionTokens -= 3;
+            return true;
+        }else
+        return false;
+        break;
+        }
+        case FORTIFY:{
+            if(info.culprit->stats.actionTokens >= 3){
+            doFortify(info,gameRef);
+            info.culprit->stats.actionTokens -= 3;
+            return true;
+        }else
+        return false;
+        break;
+        }
+        case SPEEDBOON:{
+            if(info.culprit->stats.actionTokens >= 2){
+            doSpeedBoon(info,gameRef);
+            info.culprit->stats.actionTokens -= 2;
+            return true;
+        }else
+        return false;
+        break;
+        }
+        case HEALTHBOON:{
+            if(info.culprit->stats.actionTokens >= 2){
+            doHealthBoon(info,gameRef);
+            info.culprit->stats.actionTokens -= 2;
+            return true;
+        }else
         return false;
         break;
         }

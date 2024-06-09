@@ -13,14 +13,22 @@ const std::string abilityNames[ABILITIES_COUNT] = {
     "Attack",
     "Create",
     "Morph",
-
+    "Spit",
+    "Hex",
+    "Decimate",
+    "Cleanse",
+    "Rally",
+    "Fortify",
+    "SpeedBoon",
+    "HealthBoon"
 };
 
 const glm::vec3 colors[EFFECTS_COUNT] = {
     glm::vec3(1.f,0.f,0.f),
     glm::vec3(0.f,1.f,0.f),
     glm::vec3(1.f,0.5f,0.f),
-    glm::vec3(1.f,1.f,0.f)
+    glm::vec3(1.f,1.f,0.f),
+    glm::vec3(0.f,1.f,0.f)
 };
 
 TextParticle::TextParticle() = default;
@@ -29,7 +37,7 @@ TextParticle::TextParticle(ImVec2 windowSize, int damage, EFFECTS type, glm::vec
 {
     this->ID = objID;
     this->worldPos = worldPos;
-    lifeTimer = 25 + damage/10;
+    lifeTimer = 25 + damage;
     windowSpan = windowSize;
     message = std::to_string(damage);
 
@@ -77,6 +85,7 @@ UnitGui::UnitGui(ImVec2 windowSize, UnitStats *stats,  std::array<int, ABILITIES
     createAndLoadTexture(effectText[BURNING] ,"resTextures/fire.png", false);
     createAndLoadTexture(effectText[DAMAGE] ,"resTextures/skull.png", false);
     createAndLoadTexture(effectText[SLOW] ,"resTextures/slow.png", false);
+    createAndLoadTexture(effectText[HEAL] ,"resTextures/heal.png", false);
 
     statswindowHe = 90;
     statswindowWi = 0.2f * windowSpan.x;
@@ -360,6 +369,7 @@ UnitBar::UnitBar(ImVec2 windowSize, UnitStats *stats, glm::vec3 *unitPos, int64_
     createAndLoadTexture(effectText[BURNING] ,"resTextures/fire.png", false);
     createAndLoadTexture(effectText[DAMAGE] ,"resTextures/skull.png", false);
     createAndLoadTexture(effectText[SLOW] ,"resTextures/slow.png", false);
+    createAndLoadTexture(effectText[HEAL] ,"resTextures/heal.png", false);
 }
 
 void UnitBar::update(double deltaTime)

@@ -169,7 +169,6 @@ void Unit::onSelectSound(){
 
 void Unit::onSelect()
 {
-    cout << ID << endl;
     isSelected = 1;
     onSelectSound();
     updateMovRange();
@@ -256,10 +255,10 @@ void Unit::render(unsigned int shaderProgram, std::vector<unsigned int> shaderPr
         glm::mat4 modelScaled = glm::scale(transformMat,scaleOutline);
         ///aha
         if(stats.flying){
-            glm::mat4 transformedMat = translate(transformMat,glm::vec3(0.f,stats.properHeight/5, 0.f));
+            glm::mat4 transformedMat = translate(modelScaled,glm::vec3(0.f,stats.properHeight/5, 0.f));
             glUniformMatrix4fv(glGetUniformLocation(shaderProgram, "model"), 1, GL_FALSE, glm::value_ptr(transformedMat));
         }else{
-          glUniformMatrix4fv(glGetUniformLocation(shaderProgram, "model"), 1, GL_FALSE, glm::value_ptr(transformMat));
+          glUniformMatrix4fv(glGetUniformLocation(shaderProgram, "model"), 1, GL_FALSE, glm::value_ptr(modelScaled));
         }
         model.Draw(shaderProgram,false);
 
@@ -391,8 +390,17 @@ void Unit::tryMoving(Selectable *target, abilityCall *orderInfo)
 }
 
 void Unit::takeDamage(int damage, bool ignoreArmor, EFFECTS effect){
-    int finaldamage = max(0,damage - (ignoreArmor ? 0 : stats.def));
-    stats.health = max(0,stats.health - finaldamage);
+    int finaldamage;
+    if(stats.def > 0 && effect != HEAL)
+        finaldamage = max(0, damage - (ignoreArmor ? 0 : stats.def));
+    else if(effect != HEAL)
+        finaldamage = damage - stats.def;
+    else
+        finaldamage = damage;
+        if(effect == HEAL)
+            stats.health = min(stats.maxHealth,stats.health - finaldamage);
+        else
+            stats.health = max(0,stats.health - finaldamage);
     (*obiektyRef)[Globals::numberOfEntities++] = make_unique<TextParticle>(ImVec2(Globals::windowW,Globals::windowH), -finaldamage ,effect, glm::vec3(pos.x,pos.y+stats.properHeight,pos.z),Globals::numberOfEntities);
 }
 
@@ -408,7 +416,7 @@ void Unit::resolveEffects()
          switch(i){
         case DAMAGE:
             takeDamage(stats.effects[i].intensity, false, DAMAGE);
-            stats.effects[i].duration = 0;
+            stats.effects[i].duration = 1;
             break;
         case POISON:
             if(!stats.isBuilding)
@@ -420,6 +428,9 @@ void Unit::resolveEffects()
             break;
         case SLOW:
             stats.effects[i].intensity /= 2;
+            break;
+        case HEAL:
+            takeDamage(-stats.effects[i].intensity,true, HEAL);
             break;
          }
          stats.effects[i].duration -= 1;
@@ -534,18 +545,24 @@ class Centipede : public Unit {
 public:
     Centipede(glm::vec3 hexCellCords, unordered_map<glm::vec3, HexCell> *HexGrid, int factionID, int64_t objID)
         : Unit(hexCellCords, unitModels[CENTI], HexGrid, factionID, objID, false) {
-        stats = {10, 10, 3, 2, 2, 2, 2, 1, 1, 0};
+        stats = {10, 10, 3, 2, 2, 2, 2, 1, 3, 0};
         ///AbilityDec
         abilitiesList[ATTACK] = ATTACK;
+        abilitiesList[DECIMATE] = DECIMATE;
+        abilitiesList[RALLY] = RALLY;
 
         ///AbilityRangeSet
         abilitiesRanges[ATTACK] = 1;
+        abilitiesRanges[DECIMATE] = 1;
+        abilitiesRanges[RALLY] = 0;
 
         ///AbilityAOEtypes
+        abilitiesAOE[RALLY] = {1,RANGE};
 
         ///AbilityEffectList
         (abilityEffects[ATTACK])[DAMAGE] = effect{3,1};
         (abilityEffects[ATTACK])[SLOW] = effect{4,4};
+        (abilityEffects[DECIMATE])[SLOW] = effect{6,4};
 
         ///BuildList IF CREATE ABIL IS PRESENT
 
@@ -570,13 +587,17 @@ public:
 
         ///AbilityDec
         abilitiesList[ATTACK] = ATTACK;
+        abilitiesList[SPIT] = SPIT;
 
         ///AbilityRangeSet
         abilitiesRanges[ATTACK] = 1;
+        abilitiesRanges[SPIT] = 4;
         ///AbilityAOEtypes
 
         ///AbilityEffectList
         (abilityEffects[ATTACK])[DAMAGE] = effect{2,1};
+        (abilityEffects[SPIT])[POISON] = effect{3,3};
+        (abilityEffects[SPIT])[BURNING] = effect{1,1};
 
         ///BuildList IF CREATE ABIL IS PRESENT
 
@@ -633,13 +654,17 @@ public:
         stats.isBuilding = true;
         ///AbilityDec
         abilitiesList[MORPH] = MORPH;
+        abilitiesList[HEALTHBOON] = HEALTHBOON;
 
         ///AbilityRangeSet
         abilitiesRanges[MORPH] = 0;
+        abilitiesRanges[HEALTHBOON] = 0;
 
         ///AbilityAOEtypes
+        abilitiesAOE[HEALTHBOON] = {1,RANGE};
 
         ///AbilityEffectList
+        (abilityEffects[HEALTHBOON])[HEAL] = effect{3,2};
 
         ///BuildList IF CREATE ABIL IS PRESENT
         availableToMorph[0] = BALLER;
@@ -663,10 +688,17 @@ public:
         : Unit(hexCellCords, unitModels[BALLER], HexGrid, factionID, objID, false) {
         stats = {15, 15, 1, 1, 0, 2, 2, 0, 5, 0};
         ///AbilityDec
-
+        abilitiesList[ATTACK] = ATTACK;
+        abilitiesList[HEX] = HEX;
+        abilitiesList[SPEEDBOON] = SPEEDBOON;
+        abilitiesList[FORTIFY] = FORTIFY;
         ///AbilityRangeSet
-
+        abilitiesRanges[ATTACK] = 3;
+        abilitiesRanges[HEX] = 5;
+        abilitiesRanges[SPEEDBOON] = 2;
+        abilitiesRanges[FORTIFY] = 3;
         ///AbilityAOEtypes
+        abilitiesAOE[FORTIFY] = {2,RANGE};
 
         ///AbilityEffectList
 
@@ -694,16 +726,24 @@ public:
         ///AbilityDec
         abilitiesList[ATTACK] = ATTACK;
         abilitiesList[CREATE] = CREATE;
+        abilitiesList[CLEANSE] = CLEANSE;
+        abilitiesList[SPIT] = SPIT;
 
         ///AbilityRangeSet
         abilitiesRanges[ATTACK] = 1;
         abilitiesRanges[CREATE] = 1;
+        abilitiesRanges[CLEANSE] = 2;
+        abilitiesRanges[SPIT] = 3;
 
         ///AbilityAOEtypes
         abilitiesAOE[ATTACK] = {3,LINE};
+        abilitiesAOE[SPIT] = {1,RANGE};
+        abilitiesAOE[CLEANSE] = {1,RANGE};
 
         ///AbilityEffectList
         (abilityEffects[ATTACK])[BURNING] = effect{1,2};
+        (abilityEffects[CLEANSE])[HEAL] = effect{1,2};
+        (abilityEffects[SPIT])[SLOW] = effect{6,2};
 
         ///BuildList IF CREATE ABIL IS PRESENT
         availableToBuild[0] = LARVE;
@@ -776,6 +816,14 @@ struct UnitFactory{
         static void resolveCreation(unordered_map<int, unique_ptr<Object>> *obiekty, deque<Unit> *initiativeQueue){
             while(!toBeCreated.empty()){
                 //(*initiativeQueue).push_back(*toBeCreated.front());
+                if(toBeCreated.front()->stats.flying){
+                    (*HexGridRef)[toBeCreated.front()->hexPos].airID = toBeCreated.front()->ID;
+                    (*HexGridRef)[toBeCreated.front()->hexPos].occupiedAir = true;
+                }
+                else{
+                    (*HexGridRef)[toBeCreated.front()->hexPos].groundID = toBeCreated.front()->ID;
+                    (*HexGridRef)[toBeCreated.front()->hexPos].occupiedGround = true;
+                }
                 (*obiekty)[toBeCreated.front()->ID] = move(toBeCreated.front());
                 toBeCreated.pop_front();
             }

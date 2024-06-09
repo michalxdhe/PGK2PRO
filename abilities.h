@@ -6,6 +6,14 @@ enum ABILITIES
     ATTACK,
     CREATE,
     MORPH,
+    SPIT,
+    HEX,
+    DECIMATE,
+    CLEANSE,
+    RALLY,
+    FORTIFY,
+    SPEEDBOON,
+    HEALTHBOON,
     ABILITIES_COUNT
 };
 
@@ -14,6 +22,7 @@ enum EFFECTS{
     POISON,
     BURNING,
     SLOW,
+    HEAL,
     EFFECTS_COUNT
 };
 
@@ -35,9 +44,17 @@ enum UnitType : int{
 };
 
 static std::string abilityDesc[ABILITIES_COUNT] = {
-    "Basic Attack of a unit",
+    "1AP - Basic Attack of a unit",
     "Build buildings or create units",
-    "Morph into something else"
+    "Morph into something else",
+    "2AP - Spit, low damage, high status effect density",
+    "4AP - Hex, lower stats of an enemy",
+    "3AP - Decimate, heavy blow, aimed at the armor of a foe",
+    "2AP - Cleanse, decrease status effects from a unit",
+    "3AP - Rally, increase att of allies",
+    "3AP - Fortify, increase armor of allies",
+    "2AP - SpeedBoon, increase speed and movRange of allies",
+    "2AP - HealthBoon, increase the maxHealth of allies"
 };
 
 static std::string unitDesc[UNIT_TYPE_COUNT] = {

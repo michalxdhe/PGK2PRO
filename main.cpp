@@ -138,17 +138,17 @@ void Game::init()
     HexGrid[cube_direction_vectors[4]*(float)boardSize].passable = true;
 
     obiekty[Globals::numberOfEntities++] = make_unique<LazyComm>(cube_direction_vectors[0]*(float)boardSize, &HexGrid, 1, Globals::numberOfEntities);
-    playerIntes[1]->commanderID = Globals::numberOfEntities -1; //-1 no bo incrementacja etc.
-    cout << "komander 1: " << playerIntes[1]->commanderID << endl;
+    playerIntes[1]->commanderID = Globals::numberOfEntities -1; //-1 no bo post incrementacja etc.
+
     obiekty[Globals::numberOfEntities++] = make_unique<LazyComm>(cube_direction_vectors[1]*(float)boardSize, &HexGrid, 2,Globals::numberOfEntities);
-    playerIntes[2]->commanderID = Globals::numberOfEntities -1; //-1 no bo incrementacja etc.
-    cout << "komander 2: " << playerIntes[2]->commanderID << endl;
+    playerIntes[2]->commanderID = Globals::numberOfEntities -1; //-1 no bo post incrementacja etc.
+
     obiekty[Globals::numberOfEntities++] = make_unique<LazyComm>(cube_direction_vectors[3]*(float)boardSize, &HexGrid, 3, Globals::numberOfEntities);
-    playerIntes[3]->commanderID = Globals::numberOfEntities -1; //-1 no bo incrementacja etc.
-    cout << "komander 3: " << playerIntes[3]->commanderID << endl;
+    playerIntes[3]->commanderID = Globals::numberOfEntities -1; //-1 no bo post incrementacja etc.
+
     obiekty[Globals::numberOfEntities++] = make_unique<LazyComm>(cube_direction_vectors[4]*(float)boardSize, &HexGrid, 4,Globals::numberOfEntities);
-    playerIntes[4]->commanderID = Globals::numberOfEntities -1; //-1 no bo incrementacja etc.
-    cout << "komander 4: " << playerIntes[4]->commanderID << endl;
+    playerIntes[4]->commanderID = Globals::numberOfEntities -1; //-1 no bo post incrementacja etc.
+
     glStencilFunc(GL_ALWAYS, 1, 0xFF);
     glStencilMask(0xFF);
 
@@ -354,13 +354,18 @@ void Game::update(const double deltaTime)
 
                 if(playerIntes[currentPlayersTurn]->selectedID == isUnit->ID)
                     playerIntes[currentPlayersTurn]->selectedID  = -1;
-                if(isUnit->stats.flying) {
-                    HexGrid[isUnit->hexPos].airID = -1;
-                    HexGrid[isUnit->hexPos].occupiedAir = false;
-                } else {
-                    HexGrid[isUnit->hexPos].groundID = -1;
-                    HexGrid[isUnit->hexPos].occupiedGround = false;
-                }
+                    if(isUnit->stats.flying) {
+                            if(isUnit->ID == HexGrid[isUnit->hexPos].airID){
+                                HexGrid[isUnit->hexPos].airID = -1;
+                                HexGrid[isUnit->hexPos].occupiedAir = false;
+                            }
+                    } else {
+                            if(isUnit->ID == HexGrid[isUnit->hexPos].groundID){
+                                HexGrid[isUnit->hexPos].groundID = -1;
+                                HexGrid[isUnit->hexPos].occupiedGround = false;
+                            }
+                    }
+
                 int64_t tempID = isUnit->ID;
 
                 //it = obiekty.erase(it);
