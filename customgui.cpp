@@ -124,9 +124,12 @@ void UnitGui::render(unsigned int shaderProgram, std::vector<unsigned int> shade
         }
         if(it < ABILITIES_COUNT){
             if(ImGui::Button(abilityNames[it].c_str(),ImVec2(25.f,25.f)))
-
                 *selectedAbil = it;
+            if (ImGui::IsItemHovered(ImGuiHoveredFlags_AllowWhenDisabled))
+            {
+            ImGui::SetTooltip(abilityDesc[it].c_str());
             }
+        }
         if(rainingToday){
             ImGui::PopStyleColor(1);
             rainingToday = false;
@@ -156,6 +159,10 @@ void UnitGui::render(unsigned int shaderProgram, std::vector<unsigned int> shade
                 }
                 if(ImGui::Button(std::to_string(itt).c_str(),ImVec2(25.f,25.f))){
                     stats->selectedToBuild = itt;
+                }
+                if (ImGui::IsItemHovered(ImGuiHoveredFlags_AllowWhenDisabled))
+                {
+                    ImGui::SetTooltip(unitDesc[itt].c_str());
                 }
                 if(rainingToday){
                     ImGui::PopStyleColor(1);
@@ -187,6 +194,10 @@ void UnitGui::render(unsigned int shaderProgram, std::vector<unsigned int> shade
                 }
                 if(ImGui::Button(std::to_string(itt).c_str(),ImVec2(25.f,25.f))){
                     stats->selectedToBuild = itt;
+                }
+                if (ImGui::IsItemHovered(ImGuiHoveredFlags_AllowWhenDisabled))
+                {
+                    ImGui::SetTooltip(unitDesc[itt].c_str());
                 }
                 if(rainingToday){
                     ImGui::PopStyleColor(1);
@@ -320,12 +331,13 @@ void InitiativeTrackerGui::render(unsigned int shaderProgram, std::vector<unsign
 
     for(auto& it : *queueRef)
     {
+        ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(factionColors[it.owner-1].x,factionColors[it.owner-1].y,factionColors[it.owner-1].z,1.f));
         ImGui::Text("%d", it.stats.speed - it.stats.effects[SLOW].intensity);
         if(ImGui::IsItemHovered()){
             *highlightRef = it.ID;
             *hoveredRef = true;
         }
-
+        ImGui::PopStyleColor();
         ImGui::SameLine();
     }
 

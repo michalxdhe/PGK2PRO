@@ -72,7 +72,7 @@ unordered_map<glm::vec3, int> getCellsUpToDist(unordered_map<glm::vec3, int> pat
 Unit::Unit() = default;
 
 Unit::Unit(glm::vec3 hexCellCords, ModelWithPath mod, unordered_map<glm::vec3, HexCell> *HexGrid, int factionID, int64_t objID, bool flying)
-    : stats{5, 5, 3, 2, 1, 0, 4, 0, 2, 0, flying},
+    : stats{5, 5, 3, 2, 1, 0, 4, 0, 2, 0},
       guiHotBar(ImVec2(Globals::windowW, Globals::windowH), &stats, &abilitiesList, &selectedAbil, &availableToBuild, &availableToMorph), hexGrid(HexGrid),
       guiHealthBar(ImVec2(Globals::windowW, Globals::windowH), &stats, &pos, objID)
 {
@@ -80,6 +80,7 @@ Unit::Unit(glm::vec3 hexCellCords, ModelWithPath mod, unordered_map<glm::vec3, H
     {
         it = -1;
     }
+    stats.flying = flying;
     abilitiesList[0] = 0;
     abilitiesRanges[0] = 1;
     this->ID = objID;
@@ -168,6 +169,7 @@ void Unit::onSelectSound(){
 
 void Unit::onSelect()
 {
+    cout << ID << endl;
     isSelected = 1;
     onSelectSound();
     updateMovRange();
@@ -230,10 +232,14 @@ void Unit::render(unsigned int shaderProgram, std::vector<unsigned int> shaderPr
         glStencilFunc(GL_ALWAYS, 1, 0xFF);
         glStencilMask(0xFF);
     }
+    ///aha
+    if(stats.flying){
+        glm::mat4 transformedMat = translate(transformMat,glm::vec3(0.f,stats.properHeight/5, 0.f));
+        glUniformMatrix4fv(glGetUniformLocation(shaderProgram, "model"), 1, GL_FALSE, glm::value_ptr(transformedMat));
+    }else{
+      glUniformMatrix4fv(glGetUniformLocation(shaderProgram, "model"), 1, GL_FALSE, glm::value_ptr(transformMat));
+    }
 
-
-
-    glUniformMatrix4fv(glGetUniformLocation(shaderProgram, "model"), 1, GL_FALSE, glm::value_ptr(transformMat));
 
     glUniform1i(glGetUniformLocation(shaderProgram, "unitRender"), true);
     model.Draw(shaderProgram,true);
@@ -248,7 +254,13 @@ void Unit::render(unsigned int shaderProgram, std::vector<unsigned int> shaderPr
         glDepthFunc(GL_LEQUAL);
 
         glm::mat4 modelScaled = glm::scale(transformMat,scaleOutline);
-        glUniformMatrix4fv(glGetUniformLocation(shaderProgram, "model"), 1, GL_FALSE, glm::value_ptr(modelScaled));
+        ///aha
+        if(stats.flying){
+            glm::mat4 transformedMat = translate(transformMat,glm::vec3(0.f,stats.properHeight/5, 0.f));
+            glUniformMatrix4fv(glGetUniformLocation(shaderProgram, "model"), 1, GL_FALSE, glm::value_ptr(transformedMat));
+        }else{
+          glUniformMatrix4fv(glGetUniformLocation(shaderProgram, "model"), 1, GL_FALSE, glm::value_ptr(transformMat));
+        }
         model.Draw(shaderProgram,false);
 
         glDepthFunc(GL_LESS);
@@ -451,7 +463,7 @@ class Larve : public Unit {
 public:
     Larve(glm::vec3 hexCellCords, unordered_map<glm::vec3, HexCell> *HexGrid, int factionID, int64_t objID)
         : Unit(hexCellCords, unitModels[LARVE], HexGrid, factionID, objID, false) {
-        stats = {2, 2, 8, 1, 0, 4, 4, 0, 3, 1, .isCommander = false};
+        stats = {2, 2, 8, 1, 0, 2, 2, 0, 3, 1};
         ///AbilityDec
         abilitiesList[ATTACK] = ATTACK;
         abilitiesList[MORPH] = MORPH;
@@ -489,7 +501,7 @@ class Egg : public Unit {
 public:
     Egg(glm::vec3 hexCellCords, unordered_map<glm::vec3, HexCell> *HexGrid, int factionID, int64_t objID)
         : Unit(hexCellCords, unitModels[EGG], HexGrid, factionID, objID, false) {
-        stats = {5, 5, 1, 0, 0, 0, 0, 0, 3, 0, .isCommander = false, .isBuilding = true};
+        stats = {5, 5, 1, 0, 2, 0, 0, 0, 3, 0};
         ///AbilityDec
         abilitiesList[MORPH] = MORPH;
 
@@ -522,7 +534,7 @@ class Centipede : public Unit {
 public:
     Centipede(glm::vec3 hexCellCords, unordered_map<glm::vec3, HexCell> *HexGrid, int factionID, int64_t objID)
         : Unit(hexCellCords, unitModels[CENTI], HexGrid, factionID, objID, false) {
-        stats = {10, 10, 3, 2, 2, 2, 2, 1, 1, 0, .isCommander = false};
+        stats = {10, 10, 3, 2, 2, 2, 2, 1, 1, 0};
         ///AbilityDec
         abilitiesList[ATTACK] = ATTACK;
 
@@ -553,7 +565,9 @@ class Birdie : public Unit {
 public:
     Birdie(glm::vec3 hexCellCords, unordered_map<glm::vec3, HexCell> *HexGrid, int factionID, int64_t objID)
         : Unit(hexCellCords, unitModels[BIRD], HexGrid, factionID, objID, true) {
-        stats = {3, 3, 9, 1, 0, 5, 5, 2, 2, 0, .isCommander = false};
+        stats = {3, 3, 9, 1, 0, 5, 5, 2, 2, 0};
+        stats.flying = true;
+
         ///AbilityDec
         abilitiesList[ATTACK] = ATTACK;
 
@@ -572,7 +586,7 @@ public:
         stats.buildActionPointCost = 3;
 
         ///adjustments
-        stats.properHeight = 1.50f;
+        stats.properHeight = 2.0f;
         boundingBox = Cube(0.13f, 0.1, 0.13f, pos);
         scaleOutline = glm::vec3(1.005);
     }
@@ -583,7 +597,7 @@ class MortarBug : public Unit {
 public:
     MortarBug(glm::vec3 hexCellCords, unordered_map<glm::vec3, HexCell> *HexGrid, int factionID, int64_t objID)
         : Unit(hexCellCords, unitModels[MORTARBUG], HexGrid, factionID, objID, false) {
-        stats = {4, 4, 1, 3, 1, 1, 1, 1, 1, 0, .isCommander = false};
+        stats = {4, 4, 1, 3, 1, 1, 1, 1, 1, 0};
         ///AbilityDec
         abilitiesList[ATTACK] = ATTACK;
 
@@ -615,12 +629,13 @@ class Polyp : public Unit {
 public:
     Polyp(glm::vec3 hexCellCords, unordered_map<glm::vec3, HexCell> *HexGrid, int factionID, int64_t objID)
         : Unit(hexCellCords, unitModels[COLLECTOR], HexGrid, factionID, objID, false) {
-        stats = {6, 6, 0, 0, 2, 0, 0, 0, 6, 2, .isCommander = false, .isBuilding = true};
+        stats = {6, 6, 0, 0, 2, 0, 0, 0, 6, 2};
+        stats.isBuilding = true;
         ///AbilityDec
         abilitiesList[MORPH] = MORPH;
 
         ///AbilityRangeSet
-        abilitiesList[MORPH] = 0;
+        abilitiesRanges[MORPH] = 0;
 
         ///AbilityAOEtypes
 
@@ -646,7 +661,7 @@ class BallSpider : public Unit {
 public:
     BallSpider(glm::vec3 hexCellCords, unordered_map<glm::vec3, HexCell> *HexGrid, int factionID, int64_t objID)
         : Unit(hexCellCords, unitModels[BALLER], HexGrid, factionID, objID, false) {
-        stats = {15, 15, 1, 1, 0, 2, 2, 0, 5, 0, .isCommander = false};
+        stats = {15, 15, 1, 1, 0, 2, 2, 0, 5, 0};
         ///AbilityDec
 
         ///AbilityRangeSet
@@ -674,7 +689,8 @@ class LazyComm : public Unit {
 public:
     LazyComm(glm::vec3 hexCellCords, unordered_map<glm::vec3, HexCell> *HexGrid, int factionID, int64_t objID)
         : Unit(hexCellCords, unitModels[COMM], HexGrid, factionID, objID, false) {
-        stats = {25, 25, 2, 1, 2, 2, 2, 4, 4, 1, .isCommander = true};
+        stats = {25, 25, 2, 1, 2, 2, 2, 4, 4, 1};
+        stats.isCommander = true;
         ///AbilityDec
         abilitiesList[ATTACK] = ATTACK;
         abilitiesList[CREATE] = CREATE;
@@ -717,6 +733,10 @@ struct UnitFactory{
 
             unitCreationMap[LARVE] = [](glm::vec3 hexCellCords, unordered_map<glm::vec3, HexCell>* HexGrid, int factionID, int objID) {
                 return std::make_unique<Larve>(hexCellCords, HexGrid, factionID, objID);
+            };
+
+            unitCreationMap[EGG] = [](glm::vec3 hexCellCords, unordered_map<glm::vec3, HexCell>* HexGrid, int factionID, int objID) {
+                return std::make_unique<Egg>(hexCellCords, HexGrid, factionID, objID);
             };
 
             unitCreationMap[CENTI] = [](glm::vec3 hexCellCords, unordered_map<glm::vec3, HexCell>* HexGrid, int factionID, int objID) {

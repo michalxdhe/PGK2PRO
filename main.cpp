@@ -70,18 +70,7 @@ void Game::init()
     ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(0, 0));
     ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(0, 0));
 
-    glm::vec3 factionColors[10] = {
-        glm::vec3(1.0f, 0.0f, 0.0f),
-        glm::vec3(0.0f, 1.0f, 0.0f),
-        glm::vec3(0.0f, 0.0f, 1.0f),
-        glm::vec3(1.0f, 1.0f, 0.0f),
-        glm::vec3(0.0f, 1.0f, 1.0f),
-        glm::vec3(1.0f, 0.0f, 1.0f),
-        glm::vec3(0.5f, 0.5f, 0.5f),
-        glm::vec3(0.9f, 0.4f, 0.1f),
-        glm::vec3(0.5f, 0.0f, 0.5f),
-        glm::vec3(0.2f, 0.8f, 0.2f)
-    };
+
 
     ///inicjalizowanie modeli, we to w funkcje jakas walnij
     ///MISC
@@ -144,17 +133,22 @@ void Game::init()
     }*/
 
     HexGrid[cube_direction_vectors[0]*(float)boardSize].passable = true;
-    HexGrid[cube_direction_vectors[2]*(float)boardSize].passable = true;
+    HexGrid[cube_direction_vectors[1]*(float)boardSize].passable = true;
+    HexGrid[cube_direction_vectors[3]*(float)boardSize].passable = true;
     HexGrid[cube_direction_vectors[4]*(float)boardSize].passable = true;
-    HexGrid[cube_direction_vectors[5]*(float)boardSize].passable = true;
 
     obiekty[Globals::numberOfEntities++] = make_unique<LazyComm>(cube_direction_vectors[0]*(float)boardSize, &HexGrid, 1, Globals::numberOfEntities);
-    obiekty[Globals::numberOfEntities++] = make_unique<LazyComm>(cube_direction_vectors[2]*(float)boardSize, &HexGrid, 2,Globals::numberOfEntities);
-    obiekty[Globals::numberOfEntities++] = make_unique<LazyComm>(cube_direction_vectors[4]*(float)boardSize, &HexGrid, 3, Globals::numberOfEntities);
-    obiekty[Globals::numberOfEntities++] = make_unique<LazyComm>(cube_direction_vectors[5]*(float)boardSize, &HexGrid, 4,Globals::numberOfEntities);
-
-
-
+    playerIntes[1]->commanderID = Globals::numberOfEntities -1; //-1 no bo incrementacja etc.
+    cout << "komander 1: " << playerIntes[1]->commanderID << endl;
+    obiekty[Globals::numberOfEntities++] = make_unique<LazyComm>(cube_direction_vectors[1]*(float)boardSize, &HexGrid, 2,Globals::numberOfEntities);
+    playerIntes[2]->commanderID = Globals::numberOfEntities -1; //-1 no bo incrementacja etc.
+    cout << "komander 2: " << playerIntes[2]->commanderID << endl;
+    obiekty[Globals::numberOfEntities++] = make_unique<LazyComm>(cube_direction_vectors[3]*(float)boardSize, &HexGrid, 3, Globals::numberOfEntities);
+    playerIntes[3]->commanderID = Globals::numberOfEntities -1; //-1 no bo incrementacja etc.
+    cout << "komander 3: " << playerIntes[3]->commanderID << endl;
+    obiekty[Globals::numberOfEntities++] = make_unique<LazyComm>(cube_direction_vectors[4]*(float)boardSize, &HexGrid, 4,Globals::numberOfEntities);
+    playerIntes[4]->commanderID = Globals::numberOfEntities -1; //-1 no bo incrementacja etc.
+    cout << "komander 4: " << playerIntes[4]->commanderID << endl;
     glStencilFunc(GL_ALWAYS, 1, 0xFF);
     glStencilMask(0xFF);
 
@@ -321,12 +315,12 @@ void Game::update(const double deltaTime)
     ImGui::NewFrame();
 
     vector<int> deadPlayers;
-/*
+
     for(const auto& pair : playerIntes){
         if(pair.second.get()->commanderID == -1)
             deadPlayers.push_back(pair.first);
     }
-*/
+
     //wtf?
     if(kamera.w)
         kamera.ProcessKeyboard(FORWARD, deltaTime);
