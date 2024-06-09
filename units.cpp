@@ -292,7 +292,14 @@ void Unit::rotateTowardsHex(glm::vec3 theHex){
     glm::vec4 perspective;
     glm::decompose(transformMat, scale, rotation, translation, skew, perspective);
 
-    glm::mat3 newRotation = glm::mat3(glm::inverse(glm::lookAt(ourPos,hexPos,glm::vec3(0.f,1.f,0.f))));
+    glm::mat3 newRotation;
+
+    if(!stats.fixRotate)
+        newRotation = glm::mat3(glm::inverse(glm::lookAt(ourPos,hexPos,glm::vec3(0.f,1.f,0.f))));
+    else
+        newRotation = glm::mat3(glm::inverse(glm::lookAt(hexPos,ourPos,glm::vec3(0.f,1.f,0.f))));
+
+
     if(ourPos != hexPos)
         this->transformMat = glm::translate(glm::mat4(1.f),translation) * glm::mat4(newRotation) * glm::scale(glm::mat4(1.f),scale);
 }
@@ -610,6 +617,8 @@ public:
         stats.properHeight = 2.0f;
         boundingBox = Cube(0.13f, 0.1, 0.13f, pos);
         scaleOutline = glm::vec3(1.005);
+
+        stats.fixRotate = true;
     }
 };
 
@@ -701,6 +710,10 @@ public:
         abilitiesAOE[FORTIFY] = {2,RANGE};
 
         ///AbilityEffectList
+        (abilityEffects[HEX])[POISON] = effect{1,2};
+        (abilityEffects[HEX])[DAMAGE] = effect{1,2};
+        (abilityEffects[HEX])[SLOW] = effect{1,2};
+        (abilityEffects[HEX])[BURNING] = effect{1,2};
 
         ///BuildList IF CREATE ABIL IS PRESENT
 

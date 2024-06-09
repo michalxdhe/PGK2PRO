@@ -56,6 +56,7 @@ struct UnitStats
     array<int,RESOURCE_COUNT> cost;
     int buildActionPointCost = 1;
     bool yourTurn = false;
+    bool fixRotate = false;
     UnitType selectedToBuild = UNIT_TYPE_COUNT;
 };
 

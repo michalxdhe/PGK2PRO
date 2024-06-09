@@ -709,6 +709,7 @@ void doSpeedBoon(abilityCall info, Game *gameRef)
                     if(inZone->owner == info.culprit->owner){
                         inZone->stats.speed += 3;
                         inZone->stats.movRange += 1;
+                        inZone->stats.maxMovRange +=1;
 
                         for(int i = 0; i < EFFECTS_COUNT; i++)
                         {
@@ -726,6 +727,7 @@ void doSpeedBoon(abilityCall info, Game *gameRef)
                     if(inZone->owner == info.culprit->owner){
                         inZone->stats.speed += 3;
                         inZone->stats.movRange += 1;
+                        inZone->stats.maxMovRange +=1;
 
                         for(int i = 0; i < EFFECTS_COUNT; i++)
                         {

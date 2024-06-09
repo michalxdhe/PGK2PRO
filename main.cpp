@@ -129,7 +129,7 @@ void Game::init()
     /*for(int i = 0; i < 100; i++)
     {
         glm::vec3 randomHex = getRandomHex(boardSize);
-        obiekty[Globals::numberOfEntities++] = make_unique<GenericUnit>(randomHex, &HexGrid, 1, Globals::numberOfEntities);
+        obiekty[Globals::numberOfEntities++] = make_unique<Larve>(randomHex, &HexGrid, 1, Globals::numberOfEntities);
     }*/
 
     HexGrid[cube_direction_vectors[0]*(float)boardSize].passable = true;
