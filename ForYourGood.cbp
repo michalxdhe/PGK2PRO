@@ -96,6 +96,30 @@
 		<Unit filename="model.h" />
 		<Unit filename="mousepick.h" />
 		<Unit filename="shaders.h" />
+		<Unit filename="shaders/fragmentS.c">
+			<Option compilerVar="CC" />
+			<Option target="Release" />
+		</Unit>
+		<Unit filename="shaders/lightfragS.c">
+			<Option compilerVar="CC" />
+			<Option target="Release" />
+		</Unit>
+		<Unit filename="shaders/lightvertexS.c">
+			<Option compilerVar="CC" />
+			<Option target="Release" />
+		</Unit>
+		<Unit filename="shaders/skyBoxFragS.c">
+			<Option compilerVar="CC" />
+			<Option target="Release" />
+		</Unit>
+		<Unit filename="shaders/skyBoxVertS.c">
+			<Option compilerVar="CC" />
+			<Option target="Release" />
+		</Unit>
+		<Unit filename="shaders/vertexS.c">
+			<Option compilerVar="CC" />
+			<Option target="Release" />
+		</Unit>
 		<Unit filename="soundbullshit.h" />
 		<Unit filename="units.cpp">
 			<Option compile="0" />

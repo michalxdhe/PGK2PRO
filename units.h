@@ -51,7 +51,7 @@ struct UnitStats
     bool isCommander = false;
     bool isBuilding = false;
     effect effects[EFFECTS_COUNT];
-    int targetFaction;
+    int ownerID;
     float properHeight = 1.607f;
     array<int,RESOURCE_COUNT> cost;
     int buildActionPointCost = 1;
@@ -59,6 +59,20 @@ struct UnitStats
     bool fixRotate = false;
     UnitType selectedToBuild = UNIT_TYPE_COUNT;
 };
+
+void setSomeStats(UnitStats* stats, int health, int maxHealth, int speed, int att, int def, int movRange, int maxMovRange, int actionTokens, int maxActionTokens, int miningCapability) {
+    stats->health = health;
+    stats->maxHealth = maxHealth;
+    stats->speed = speed;
+    stats->att = att;
+    stats->def = def;
+    stats->movRange = movRange;
+    stats->maxMovRange = maxMovRange;
+    stats->actionTokens = actionTokens;
+    stats->maxActionTokens = maxActionTokens;
+    stats->miningCapability = miningCapability;
+}
+
 
 struct AOE{
     int radius = 0;

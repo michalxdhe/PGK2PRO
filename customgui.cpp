@@ -31,6 +31,14 @@ const glm::vec3 colors[EFFECTS_COUNT] = {
     glm::vec3(0.f,1.f,0.f)
 };
 
+void GuiElement::renderOverlayTexture(GLuint textID, ImVec4 colorMult){
+    ImVec4 color_multiplier(1.0f * colorMult.x, 1.0f * colorMult.y, 1.0f * colorMult.z, 1.0f * colorMult.w);
+    ImU32 color = ImGui::GetColorU32(color_multiplier);
+    ImVec2 p_min = ImGui::GetWindowPos();
+    ImVec2 p_max = ImVec2(p_min.x + ImGui::GetWindowWidth(), p_min.y + ImGui::GetWindowHeight());
+    ImGui::GetWindowDrawList()->AddImage((void*)(intptr_t)textID, p_min, p_max, ImVec2(0.0f, 0.0f), ImVec2(1.0f, 1.0f), color);
+}
+
 TextParticle::TextParticle() = default;
 
 TextParticle::TextParticle(ImVec2 windowSize, int damage, EFFECTS type, glm::vec3 worldPos, int objID)
@@ -67,8 +75,8 @@ UnitGui::UnitGui(ImVec2 windowSize, UnitStats *stats,  std::array<int, ABILITIES
     : stats(stats), abilityList(abilityList), selectedAbil(selectedAbil), buildMenu(buildMenu), morphMenu(morphMenu)
 {
     windowSpan = windowSize;
-    windowHe = 45;
-    windowWi = 0.7f * windowSpan.x;
+    windowHe = 0.058f * windowSpan.y;
+    windowWi = 0.6f * windowSpan.x;
     windowX = (windowSpan.x - windowWi) / 2;
     windowY = 0.93f * windowSpan.y;
 
@@ -87,7 +95,7 @@ UnitGui::UnitGui(ImVec2 windowSize, UnitStats *stats,  std::array<int, ABILITIES
     createAndLoadTexture(effectText[SLOW] ,"resTextures/slow.png", false);
     createAndLoadTexture(effectText[HEAL] ,"resTextures/heal.png", false);
 
-    statswindowHe = 90;
+    statswindowHe = 0.115f * windowSpan.y;
     statswindowWi = 0.2f * windowSpan.x;
     statswindowX = (windowSpan.x - statswindowWi) / 100;
     statswindowY = 0.80f * windowSpan.y;
@@ -123,7 +131,10 @@ void UnitGui::render(unsigned int shaderProgram, std::vector<unsigned int> shade
     ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, numberImageSpacing);
     ImGui::SetNextWindowSize(ImVec2(windowWi, windowHe), ImGuiCond_Always);
     ImGui::SetNextWindowPos(ImVec2(windowX, windowY), ImGuiCond_Always);
-    ImGui::Begin("hotBar", nullptr, invisPreset);
+    ImGui::Begin("hotBar", nullptr, invisPreset | ImGuiWindowFlags_NoBackground);
+
+    renderOverlayTexture(testOverlay,ImVec4(1.0f,1.0f,1.0f,0.7f));
+
     bool rainingToday = false;
     for(const auto& it : *abilityList)
     {
@@ -223,7 +234,10 @@ void UnitGui::render(unsigned int shaderProgram, std::vector<unsigned int> shade
 
     ImGui::SetNextWindowSize(ImVec2(statswindowWi/2, statswindowHe), ImGuiCond_Always);
     ImGui::SetNextWindowPos(ImVec2(statswindowX, statswindowY), ImGuiCond_Always);
-    ImGui::Begin("unitInfo", nullptr, invisPreset);
+    ImGui::Begin("unitInfo", nullptr, invisPreset | ImGuiWindowFlags_NoBackground | ImGuiWindowFlags_NoInputs);
+
+    renderOverlayTexture(testOverlay,ImVec4(1.0f,1.0f,1.0f,0.7f));
+
     //actionTokens, maxActionTokens;
     ImGui::Text("%d/%d ", stats->health, stats->maxHealth);
     ImGui::SameLine();
@@ -250,7 +264,6 @@ void UnitGui::render(unsigned int shaderProgram, std::vector<unsigned int> shade
         ImGui::Text(" %d x %d", stats->effects[i].duration, stats->effects[i].intensity);
     }
     ImGui::End();
-
     ImGui::PopStyleVar();
 }
 
@@ -259,7 +272,7 @@ PlayerGui::PlayerGui() = default;
 PlayerGui::PlayerGui(ImVec2 windowSize, std::array<int, RESOURCE_COUNT> *resourcesRef): resources(resourcesRef)
 {
     windowSpan = windowSize;
-    windowHe = 45;
+    windowHe = 0.058 * windowSpan.y;
     windowWi = 0.2f * windowSpan.x;
     windowX = (windowSpan.x - windowWi) / 100;
     windowY = 0.02f * windowSpan.y;
@@ -288,7 +301,10 @@ void PlayerGui::render(unsigned int shaderProgram, std::vector<unsigned int> sha
     ImGui::SetNextWindowSize(ImVec2(windowWi, windowHe), ImGuiCond_Always);
     ImGui::SetNextWindowPos(ImVec2(windowX, windowY), ImGuiCond_Always);
 
-    ImGui::Begin("resources", nullptr, invisPreset);
+    ImGui::Begin("resources", nullptr, invisPreset | ImGuiWindowFlags_NoBackground);
+
+    renderOverlayTexture(testOverlay,ImVec4(1.0f,1.0f,1.0f,0.7f));
+
     for (int i = 0; i < RESOURCE_COUNT; ++i)
     {
         ImGui::Text("%d", (*resources)[i]);
@@ -316,7 +332,7 @@ InitiativeTrackerGui::InitiativeTrackerGui(ImVec2 windowSize, std::deque<Unit> *
 : queueRef(qu), highlightRef(highlight), hoveredRef(hovered)
 {
     windowSpan = windowSize;
-    windowHe = 45;
+    windowHe = 0.055f * windowSpan.y;
     windowWi = 0.4f * windowSpan.x;
     windowX = (windowSpan.x - windowWi) / 2;
     windowY = 0.001f * windowSpan.y;
@@ -336,7 +352,11 @@ void InitiativeTrackerGui::render(unsigned int shaderProgram, std::vector<unsign
 
     ImGui::SetNextWindowSize(ImVec2(windowWi, windowHe), ImGuiCond_Always);
     ImGui::SetNextWindowPos(ImVec2(windowX, windowY), ImGuiCond_Always);
-    ImGui::Begin("initiativeTracker", nullptr, invisPreset);
+    ImGui::Begin("initiativeTracker", nullptr, invisPreset | ImGuiWindowFlags_NoBackground);
+
+    Unit& nextUnit = queueRef->front();
+    glm::vec3 currentPlayerColor = factionColors[nextUnit.owner-1];
+    renderOverlayTexture(testOverlay,ImVec4(currentPlayerColor.x,currentPlayerColor.y,currentPlayerColor.z,0.7f));
 
     for(auto& it : *queueRef)
     {
@@ -361,8 +381,8 @@ UnitBar::UnitBar(ImVec2 windowSize, UnitStats *stats, glm::vec3 *unitPos, int64_
     : stats(stats), unitID(ID), unitPos(unitPos)
 {
     windowSpan = windowSize;
-    windowHe = 10.f;
-    windowWi = 15.f;
+    windowHe = 0.013f * windowSpan.y;
+    windowWi = 0.019f * windowSpan.y;
     createAndLoadTexture(marker_text,"resTextures/turnMarker.png");
 
     createAndLoadTexture(effectText[POISON] ,"resTextures/poison.png", false);
@@ -402,7 +422,11 @@ void UnitBar::render(unsigned int shaderProgram, std::vector<unsigned int> shade
         ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(padding, padding));
         ImGui::SetNextWindowSize(ImVec2(5.f + (neededChars*2*10.f), windowHe), ImGuiCond_Always);
         ImGui::SetNextWindowPos(ImVec2(windowX, windowY), ImGuiCond_Always);
-        ImGui::Begin(("##test"+ std::to_string(unitID)).c_str(), nullptr, invisPreset);
+        ImGui::Begin(("##test"+ std::to_string(unitID)).c_str(), nullptr, invisPreset | ImGuiWindowFlags_NoBackground);
+
+        glm::vec3 ownerColor = factionColors[stats->ownerID-1];
+        renderOverlayTexture(testOverlay,ImVec4(ownerColor.x,ownerColor.y,ownerColor.z,0.8f));
+
         ImGui::Text("%d/%d", stats->health, stats->maxHealth);
         ImGui::End();
         ImGui::PopStyleVar();

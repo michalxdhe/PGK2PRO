@@ -15,7 +15,6 @@ void Game::init()
 {
     audioJungle.loadAudio("audioStuff/grunt1.wav");
 
-
     for(int i = 1; i <= numOfPlayers; i++)
     {
         playerIntes[i] = make_unique<PlayerInterface>();
@@ -70,12 +69,11 @@ void Game::init()
     ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(0, 0));
     ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(0, 0));
 
-
-
     ///inicjalizowanie modeli, we to w funkcje jakas walnij
     ///MISC
     resModels[ORE] = Model("Model/Res/Ore.obj");
     resModels[GAS] = Model("Model/Res/Gas.obj");
+    createAndLoadTexture(testOverlay,"uiTextures/UnitInfo.png",false);
 
     ///UNIT'Y
     unitModels[LARVE] = {"Model/GenericTest/larve.gltf", Model("Model/GenericTest/larve.gltf")};

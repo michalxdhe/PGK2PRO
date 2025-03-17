@@ -4,6 +4,8 @@
 #include "abilities.h"
 #include "shaders.h"
 
+static GLuint testOverlay;
+
 extern ImGuiWindowFlags invisPreset;
 
 static glm::vec3 factionColors[10] = {
@@ -44,6 +46,8 @@ class GuiElement : public Object
 {
 public:
     ImVec2 windowSpan;
+
+    void renderOverlayTexture(GLuint textID, ImVec4 colorMult);
 };
 
 /** \brief Gui Obiekt tekstu ktory przeznaczony jest aby pokazac wartosc a nastepenie zniknac po pewnym czasie
@@ -79,6 +83,7 @@ public:
 
     GLuint activeTokenTexture;
     GLuint inactiveTokenTexture;
+    GLuint overlayTexture;
 
     GLuint godForgiveMe[5];
 

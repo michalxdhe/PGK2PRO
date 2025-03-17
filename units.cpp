@@ -85,6 +85,7 @@ Unit::Unit(glm::vec3 hexCellCords, ModelWithPath mod, unordered_map<glm::vec3, H
     abilitiesRanges[0] = 1;
     this->ID = objID;
     this->owner = factionID;
+    stats.ownerID = factionID;
     hexPos = hexCellCords;
 
     ///model i animacja
@@ -481,7 +482,7 @@ class Larve : public Unit {
 public:
     Larve(glm::vec3 hexCellCords, unordered_map<glm::vec3, HexCell> *HexGrid, int factionID, int64_t objID)
         : Unit(hexCellCords, unitModels[LARVE], HexGrid, factionID, objID, false) {
-        stats = {2, 2, 8, 1, 0, 2, 2, 0, 3, 1};
+        setSomeStats(&stats,2, 2, 8, 1, 0, 2, 2, 0, 3, 1);
         ///AbilityDec
         abilitiesList[ATTACK] = ATTACK;
         abilitiesList[MORPH] = MORPH;
@@ -519,7 +520,7 @@ class Egg : public Unit {
 public:
     Egg(glm::vec3 hexCellCords, unordered_map<glm::vec3, HexCell> *HexGrid, int factionID, int64_t objID)
         : Unit(hexCellCords, unitModels[EGG], HexGrid, factionID, objID, false) {
-        stats = {5, 5, 1, 0, 2, 0, 0, 0, 3, 0};
+        setSomeStats(&stats,5, 5, 1, 0, 2, 0, 0, 0, 3, 0);
         ///AbilityDec
         abilitiesList[MORPH] = MORPH;
 
@@ -552,7 +553,7 @@ class Centipede : public Unit {
 public:
     Centipede(glm::vec3 hexCellCords, unordered_map<glm::vec3, HexCell> *HexGrid, int factionID, int64_t objID)
         : Unit(hexCellCords, unitModels[CENTI], HexGrid, factionID, objID, false) {
-        stats = {10, 10, 3, 2, 2, 2, 2, 1, 3, 0};
+        setSomeStats(&stats,10, 10, 3, 2, 2, 2, 2, 1, 3, 0);
         ///AbilityDec
         abilitiesList[ATTACK] = ATTACK;
         abilitiesList[DECIMATE] = DECIMATE;
@@ -589,7 +590,7 @@ class Birdie : public Unit {
 public:
     Birdie(glm::vec3 hexCellCords, unordered_map<glm::vec3, HexCell> *HexGrid, int factionID, int64_t objID)
         : Unit(hexCellCords, unitModels[BIRD], HexGrid, factionID, objID, true) {
-        stats = {3, 3, 9, 1, 0, 5, 5, 2, 2, 0};
+        setSomeStats(&stats,3, 3, 9, 1, 0, 5, 5, 2, 2, 0);
         stats.flying = true;
 
         ///AbilityDec
@@ -627,7 +628,7 @@ class MortarBug : public Unit {
 public:
     MortarBug(glm::vec3 hexCellCords, unordered_map<glm::vec3, HexCell> *HexGrid, int factionID, int64_t objID)
         : Unit(hexCellCords, unitModels[MORTARBUG], HexGrid, factionID, objID, false) {
-        stats = {4, 4, 1, 3, 1, 1, 1, 1, 1, 0};
+        setSomeStats(&stats,4, 4, 1, 3, 1, 1, 1, 1, 1, 0);
         ///AbilityDec
         abilitiesList[ATTACK] = ATTACK;
 
@@ -659,7 +660,7 @@ class Polyp : public Unit {
 public:
     Polyp(glm::vec3 hexCellCords, unordered_map<glm::vec3, HexCell> *HexGrid, int factionID, int64_t objID)
         : Unit(hexCellCords, unitModels[COLLECTOR], HexGrid, factionID, objID, false) {
-        stats = {6, 6, 0, 0, 2, 0, 0, 0, 6, 2};
+        setSomeStats(&stats,6, 6, 0, 0, 2, 0, 0, 0, 6, 2);
         stats.isBuilding = true;
         ///AbilityDec
         abilitiesList[MORPH] = MORPH;
@@ -695,7 +696,7 @@ class BallSpider : public Unit {
 public:
     BallSpider(glm::vec3 hexCellCords, unordered_map<glm::vec3, HexCell> *HexGrid, int factionID, int64_t objID)
         : Unit(hexCellCords, unitModels[BALLER], HexGrid, factionID, objID, false) {
-        stats = {15, 15, 1, 1, 0, 2, 2, 0, 5, 0};
+        setSomeStats(&stats,15, 15, 1, 1, 0, 2, 2, 0, 5, 0);
         ///AbilityDec
         abilitiesList[ATTACK] = ATTACK;
         abilitiesList[HEX] = HEX;
@@ -734,8 +735,9 @@ class LazyComm : public Unit {
 public:
     LazyComm(glm::vec3 hexCellCords, unordered_map<glm::vec3, HexCell> *HexGrid, int factionID, int64_t objID)
         : Unit(hexCellCords, unitModels[COMM], HexGrid, factionID, objID, false) {
-        stats = {25, 25, 2, 1, 2, 2, 2, 4, 4, 1};
+        setSomeStats(&stats,25, 25, 2, 1, 2, 2, 2, 4, 4, 1);
         stats.isCommander = true;
+        stats.ownerID = factionID;
         ///AbilityDec
         abilitiesList[ATTACK] = ATTACK;
         abilitiesList[CREATE] = CREATE;
