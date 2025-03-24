@@ -1066,11 +1066,11 @@
 
 1714991992 c:\garigette\foryourgood\playerinterface.h
 
-1742226478 source:c:\garigette\pgk2pro\main.cpp
+1742833618 source:c:\garigette\pgk2pro\main.cpp
 	"common.h"
 	"mindless.h"
 
-1717676181 c:\garigette\pgk2pro\stb_image.h
+1742635281 c:\garigette\pgk2pro\stb_image.h
 	"stb_image.h"
 	<stdio.h>
 	<stdlib.h>
@@ -1087,27 +1087,27 @@
 	<intrin.h>
 	<arm_neon.h>
 
-1717676181 c:\garigette\pgk2pro\camerarevolting.h
+1742635280 c:\garigette\pgk2pro\camerarevolting.h
 
-1717770449 c:\garigette\pgk2pro\boardlogic.h
+1742662235 c:\garigette\pgk2pro\boardlogic.h
 
-1717770449 c:\garigette\pgk2pro\metaphysical.h
+1742635281 c:\garigette\pgk2pro\metaphysical.h
 	"common.h"
 
-1717699731 c:\garigette\pgk2pro\model.h
+1742635281 c:\garigette\pgk2pro\model.h
 	"common.h"
 	"mesh.h"
 	"stb_image.h"
 	"assimp_glm_helpers.h"
 	"animdata.h"
 
-1717676181 c:\garigette\pgk2pro\mesh.h
+1742635281 c:\garigette\pgk2pro\mesh.h
 
-1717770448 c:\garigette\pgk2pro\mousepick.h
+1742635281 c:\garigette\pgk2pro\mousepick.h
 
-1717770449 c:\garigette\pgk2pro\globals.h
+1742635280 c:\garigette\pgk2pro\globals.h
 
-1717948112 c:\garigette\pgk2pro\mindless.h
+1742833749 c:\garigette\pgk2pro\mindless.h
 	"animator.h"
 	"metaphysical.h"
 	"model.h"
@@ -1121,24 +1121,25 @@
 	"units.cpp"
 	"customgui.cpp"
 	"abilities.h"
+	"particles.h"
 
-1717770449 c:\garigette\pgk2pro\shaders.h
+1742635281 c:\garigette\pgk2pro\shaders.h
 	"common.h"
 	"stb_image.h"
 
-1717676181 source:c:\garigette\pgk2pro\weird.cpp
+1742635281 source:c:\garigette\pgk2pro\weird.cpp
 	"stb_image.h"
 
-1717879598 c:\garigette\pgk2pro\dijkstra.h
+1742635280 c:\garigette\pgk2pro\dijkstra.h
 	"boardlogic.h"
 
-1742234782 c:\garigette\pgk2pro\units.h
+1742635281 c:\garigette\pgk2pro\units.h
 	"globals.h"
 	"dijkstra.h"
 	"abilities.h"
 	"soundbullshit.h"
 
-1717840176 c:\garigette\pgk2pro\playerinterface.h
+1742635280 c:\garigette\pgk2pro\playerinterface.h
 	"globals.h"
 	"customgui.h"
 
@@ -1294,7 +1295,7 @@
 	<stdint.h>
 	"imstb_textedit.h"
 
-1742227346 c:\garigette\pgk2pro\customgui.h
+1742635280 c:\garigette\pgk2pro\customgui.h
 	"abilities.h"
 	"shaders.h"
 
@@ -1306,7 +1307,7 @@
 	"customgui.h"
 	"units.h"
 
-1717781936 c:\garigette\pgk2pro\common.h
+1742635280 c:\garigette\pgk2pro\common.h
 	<iostream>
 	<fstream>
 	<sstream>
@@ -1340,11 +1341,11 @@
 	"customgui.h"
 	"units.h"
 
-1742237194 c:\garigette\pgk2pro\units.cpp
+1742755741 c:\garigette\pgk2pro\units.cpp
 	"customgui.h"
 	"units.h"
 
-1742234790 c:\garigette\pgk2pro\customgui.cpp
+1742635280 c:\garigette\pgk2pro\customgui.cpp
 	"customgui.h"
 	"units.h"
 
@@ -2061,7 +2062,7 @@
 	"animdata.h"
 	"model.h"
 
-1717782770 c:\garigette\pgk2pro\bone.h
+1742635280 c:\garigette\pgk2pro\bone.h
 	"common.h"
 	"assimp_glm_helpers.h"
 
@@ -2070,11 +2071,17 @@
 
 1717677252 c:\garigette\pgk2pro\animdata.h
 
-1717835744 c:\garigette\pgk2pro\soundbullshit.h
+1742635281 c:\garigette\pgk2pro\soundbullshit.h
 
 1717837557 c:\garigette\pgk2pro\soundbullshit.cpp
 	"soundbullshit.h"
 
 1717837457 source:c:\garigette\pgk2pro\soundbullshit.cpp
 	"soundbullshit.h"
+
+1742834509 c:\garigette\pgk2pro\particles.h
+	"common.h"
+
+1742833749 source:c:\garigette\pgk2pro\particles.cpp
+	"particles.h"
 

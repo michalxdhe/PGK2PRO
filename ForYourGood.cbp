@@ -95,6 +95,8 @@
 		<Unit filename="mindless.h" />
 		<Unit filename="model.h" />
 		<Unit filename="mousepick.h" />
+		<Unit filename="particles.cpp" />
+		<Unit filename="particles.h" />
 		<Unit filename="shaders.h" />
 		<Unit filename="shaders/fragmentS.c">
 			<Option compilerVar="CC" />
@@ -105,6 +107,14 @@
 			<Option target="Release" />
 		</Unit>
 		<Unit filename="shaders/lightvertexS.c">
+			<Option compilerVar="CC" />
+			<Option target="Release" />
+		</Unit>
+		<Unit filename="shaders/particleFragS.c">
+			<Option compilerVar="CC" />
+			<Option target="Release" />
+		</Unit>
+		<Unit filename="shaders/particleVertS.c">
 			<Option compilerVar="CC" />
 			<Option target="Release" />
 		</Unit>

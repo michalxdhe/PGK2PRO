@@ -420,7 +420,7 @@ void Unit::takeDamage(int damage, bool ignoreArmor, EFFECTS effect){
 void Unit::resolveEffects()
 {
     for(int i = 0; i < EFFECTS_COUNT; i++){
-        if(stats.effects[i].duration > 0){
+        if(stats.effects[i].duration > 0 || stats.effects[i].intensity > 0){
          switch(i){
         case DAMAGE:
             takeDamage(stats.effects[i].intensity, false, DAMAGE);

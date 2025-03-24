@@ -54,9 +54,11 @@ glm::vec3 cube_round(glm::vec3 cube) {
  */
 glm::vec3 get_direction(glm::vec3 target, glm::vec3 origin) {
     glm::vec3 direction = origin - target;
-    direction = cube_round(direction);
+    //direction = cube_round(direction);
+    direction = glm::sign(direction);
     return direction;
 }
+
 
 glm::vec3 getRandomHex(int boardSize){
     int coPos = rand()% boardSize + 1;

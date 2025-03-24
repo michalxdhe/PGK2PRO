@@ -14,8 +14,11 @@
 #include "units.cpp"
 #include "customgui.cpp"
 #include "abilities.h"
+#include "particles.h"
 
 using namespace std;
+
+
 
 /** \brief  Taka tam pomocna funkcja co zwraca znak -1,0,1 dla double'a
  *
@@ -114,6 +117,8 @@ public:
     unordered_map<int, unique_ptr<LightSource>> lights;
     ///Glowna mapa obiektow
     unordered_map<int, unique_ptr<Object>> obiekty;
+    ///Partikles
+    std::vector<Particle> particles;
 
     ///Flaga stanowiaca czy pora isc spac
     bool shutdown = 0;
@@ -136,7 +141,7 @@ public:
         SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO);
 
         SDL_GL_SetAttribute(SDL_GL_STENCIL_SIZE, 8);
-        SDL_GL_SetAttribute( SDL_GL_CONTEXT_MAJOR_VERSION, 3 );
+        SDL_GL_SetAttribute( SDL_GL_CONTEXT_MAJOR_VERSION, 4 );
         SDL_GL_SetAttribute( SDL_GL_CONTEXT_MINOR_VERSION, 3 );
 
         window = SDL_CreateWindow("siema",SDL_WINDOWPOS_UNDEFINED,SDL_WINDOWPOS_UNDEFINED,640, 480, SDL_WINDOW_OPENGL | SDL_WINDOW_SHOWN);
@@ -184,7 +189,7 @@ public:
         SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO);
 
         SDL_GL_SetAttribute(SDL_GL_STENCIL_SIZE, 8);
-        SDL_GL_SetAttribute( SDL_GL_CONTEXT_MAJOR_VERSION, 3 );
+        SDL_GL_SetAttribute( SDL_GL_CONTEXT_MAJOR_VERSION, 4 );
         SDL_GL_SetAttribute( SDL_GL_CONTEXT_MINOR_VERSION, 3 );
 
         window = SDL_CreateWindow("siema",SDL_WINDOWPOS_UNDEFINED,SDL_WINDOWPOS_UNDEFINED,w, h, SDL_WINDOW_OPENGL | SDL_WINDOW_SHOWN);
