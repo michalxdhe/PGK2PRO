@@ -3,7 +3,9 @@
 
 #include "common.h"
 
-static unsigned int nr_particles = 500;
+static unsigned int nr_particles = 50000;
+
+static GLuint teksturaDymu;
 
 struct Particle {
     glm::vec3 position, velocity;

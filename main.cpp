@@ -22,6 +22,8 @@ void Game::init()
 
     initParticles();
 
+    createAndLoadTexture(teksturaDymu,"uiTextures/smok.png", false);
+
     for(int i = 1; i <= numOfPlayers; i++)
     {
         playerIntes[i] = make_unique<PlayerInterface>();
@@ -65,6 +67,9 @@ void Game::init()
     createAndCompileShader("shaders/particleVertS.c",GL_VERTEX_SHADER,vertexShader);
     createAndCompileShader("shaders/particleFragS.c",GL_FRAGMENT_SHADER,fragmentShader);
     shaderPrograms.push_back(createProgram(vertexShader,fragmentShader));
+
+    //glUseProgram(shaderPrograms[4]);
+    //glUniform1i(glGetUniformLocation(shaderPrograms[4],"dym"),teksturaDymu);
 
     glDeleteShader(vertexShader);
     glDeleteShader(fragmentShader);
@@ -471,21 +476,21 @@ void Game::update(const double deltaTime)
         if(it.life > 0.0f){
             glm::vec3 deltaVelocity = it.velocity * static_cast<float>(deltaTime);
             it.position += deltaVelocity;
-            //it.velocity.y -= it.gravity * deltaTime;
+            it.velocity.y = max(0.f,static_cast<float>(it.velocity.y - (it.gravity * deltaTime)));
             //glm::vec3 direction = glm::normalize(glm::vec3(0.f,3.f,0.f) - it.position);
             //glm::vec3 acceleration = (direction * glm::vec3(0.5f)) * static_cast<float>(deltaTime);
             //it.velocity += acceleration;
             it.life -= 1.f * deltaTime;
         }else{
-            it.position = glm::vec3((rand() % 49) - 24.5f, (rand() % 49) - 24.5f, (rand() % 49) - 24.5f);
+            /*it.position = glm::vec3((rand() % 49) - 24.5f, (rand() % 49) - 24.5f, (rand() % 49) - 24.5f);
             it.velocity = glm::vec3((rand() % 100 - 50) / 100.0f, (rand() % 100 - 50) / 100.0f, (rand() % 100 - 50) / 100.0f);
             it.life = 15.f + rand()%50;
+*/
 
-            /*
             it.position = glm::vec3(0.f,3.f,0.f);
-            it.velocity = glm::vec3((rand() % 100 - 50) / 100.0f, (rand() % 50) / 50.0f, (rand() % 100 - 50) / 100.0f);
+            it.velocity = glm::vec3((rand() % 100 - 50) / 100.0f, (rand() % 150) / 50.0f, (rand() % 100 - 50) / 100.0f);
             it.life = 10.f + rand()%50;
-            */
+
         }
     }
 
@@ -575,6 +580,8 @@ void Game::render(double deltaTime)
     }
 
     ///Particle Render
+    glUseProgram(shaderPrograms[4]);
+    glUniform3fv(glGetUniformLocation(shaderPrograms[4], "cameraPos"),1, glm::value_ptr(kamera.Position));
     DrawParticles(shaderPrograms[4],particles);
 
     ///UI Render

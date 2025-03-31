@@ -9,7 +9,7 @@
 	"globals.h"
 	"mindless.h"
 
-1680716747 c:\sdl2\include\sdl2\sdl.h
+1680720347 c:\sdl2\include\sdl2\sdl.h
 	"SDL_main.h"
 	"SDL_stdinc.h"
 	"SDL_assert.h"
@@ -47,12 +47,12 @@
 	"begin_code.h"
 	"close_code.h"
 
-1680716747 c:\sdl2\include\sdl2\sdl_main.h
+1680720347 c:\sdl2\include\sdl2\sdl_main.h
 	"SDL_stdinc.h"
 	"begin_code.h"
 	"close_code.h"
 
-1680716747 c:\sdl2\include\sdl2\sdl_stdinc.h
+1680720347 c:\sdl2\include\sdl2\sdl_stdinc.h
 	"SDL_config.h"
 	<sys/types.h>
 	<stdio.h>
@@ -81,27 +81,27 @@
 	"begin_code.h"
 	"close_code.h"
 
-1683711142 c:\sdl2\include\sdl2\sdl_config.h
+1683714742 c:\sdl2\include\sdl2\sdl_config.h
 	"SDL_platform.h"
 
-1680716747 c:\sdl2\include\sdl2\sdl_platform.h
+1680720347 c:\sdl2\include\sdl2\sdl_platform.h
 	<AvailabilityMacros.h>
 	<TargetConditionals.h>
 	<winapifamily.h>
 	"begin_code.h"
 	"close_code.h"
 
-1680716747 c:\sdl2\include\sdl2\begin_code.h
+1680720347 c:\sdl2\include\sdl2\begin_code.h
 
-1680716747 c:\sdl2\include\sdl2\close_code.h
+1680720347 c:\sdl2\include\sdl2\close_code.h
 
-1680716747 c:\sdl2\include\sdl2\sdl_assert.h
+1680720347 c:\sdl2\include\sdl2\sdl_assert.h
 	"SDL_stdinc.h"
 	"begin_code.h"
 	<signal.h>
 	"close_code.h"
 
-1680716747 c:\sdl2\include\sdl2\sdl_atomic.h
+1680720347 c:\sdl2\include\sdl2\sdl_atomic.h
 	"SDL_stdinc.h"
 	"SDL_platform.h"
 	"begin_code.h"
@@ -109,7 +109,7 @@
 	<mbarrier.h>
 	"close_code.h"
 
-1680716747 c:\sdl2\include\sdl2\sdl_audio.h
+1680720347 c:\sdl2\include\sdl2\sdl_audio.h
 	"SDL_stdinc.h"
 	"SDL_error.h"
 	"SDL_endian.h"
@@ -119,12 +119,12 @@
 	"begin_code.h"
 	"close_code.h"
 
-1680716747 c:\sdl2\include\sdl2\sdl_error.h
+1680720347 c:\sdl2\include\sdl2\sdl_error.h
 	"SDL_stdinc.h"
 	"begin_code.h"
 	"close_code.h"
 
-1680716747 c:\sdl2\include\sdl2\sdl_endian.h
+1680720347 c:\sdl2\include\sdl2\sdl_endian.h
 	"SDL_stdinc.h"
 	<intrin.h>
 	<endian.h>
@@ -133,13 +133,13 @@
 	"begin_code.h"
 	"close_code.h"
 
-1680716747 c:\sdl2\include\sdl2\sdl_mutex.h
+1680720347 c:\sdl2\include\sdl2\sdl_mutex.h
 	"SDL_stdinc.h"
 	"SDL_error.h"
 	"begin_code.h"
 	"close_code.h"
 
-1680716747 c:\sdl2\include\sdl2\sdl_thread.h
+1680720347 c:\sdl2\include\sdl2\sdl_thread.h
 	"SDL_stdinc.h"
 	"SDL_error.h"
 	"SDL_atomic.h"
@@ -150,18 +150,18 @@
 	"begin_code.h"
 	"close_code.h"
 
-1680716747 c:\sdl2\include\sdl2\sdl_rwops.h
+1680720347 c:\sdl2\include\sdl2\sdl_rwops.h
 	"SDL_stdinc.h"
 	"SDL_error.h"
 	"begin_code.h"
 	"close_code.h"
 
-1680716747 c:\sdl2\include\sdl2\sdl_clipboard.h
+1680720347 c:\sdl2\include\sdl2\sdl_clipboard.h
 	"SDL_stdinc.h"
 	"begin_code.h"
 	"close_code.h"
 
-1680716747 c:\sdl2\include\sdl2\sdl_cpuinfo.h
+1680720347 c:\sdl2\include\sdl2\sdl_cpuinfo.h
 	"SDL_stdinc.h"
 	<intrin.h>
 	<intrin.h>
@@ -183,7 +183,7 @@
 	"begin_code.h"
 	"close_code.h"
 
-1680716747 c:\sdl2\include\sdl2\sdl_events.h
+1680720347 c:\sdl2\include\sdl2\sdl_events.h
 	"SDL_stdinc.h"
 	"SDL_error.h"
 	"SDL_video.h"
@@ -197,7 +197,7 @@
 	"begin_code.h"
 	"close_code.h"
 
-1680716747 c:\sdl2\include\sdl2\sdl_video.h
+1680720347 c:\sdl2\include\sdl2\sdl_video.h
 	"SDL_stdinc.h"
 	"SDL_pixels.h"
 	"SDL_rect.h"
@@ -205,13 +205,13 @@
 	"begin_code.h"
 	"close_code.h"
 
-1680716747 c:\sdl2\include\sdl2\sdl_pixels.h
+1680720347 c:\sdl2\include\sdl2\sdl_pixels.h
 	"SDL_stdinc.h"
 	"SDL_endian.h"
 	"begin_code.h"
 	"close_code.h"
 
-1680716747 c:\sdl2\include\sdl2\sdl_rect.h
+1680720347 c:\sdl2\include\sdl2\sdl_rect.h
 	"SDL_stdinc.h"
 	"SDL_error.h"
 	"SDL_pixels.h"
@@ -219,7 +219,7 @@
 	"begin_code.h"
 	"close_code.h"
 
-1680716747 c:\sdl2\include\sdl2\sdl_surface.h
+1680720347 c:\sdl2\include\sdl2\sdl_surface.h
 	"SDL_stdinc.h"
 	"SDL_pixels.h"
 	"SDL_rect.h"
@@ -228,11 +228,11 @@
 	"begin_code.h"
 	"close_code.h"
 
-1680716747 c:\sdl2\include\sdl2\sdl_blendmode.h
+1680720347 c:\sdl2\include\sdl2\sdl_blendmode.h
 	"begin_code.h"
 	"close_code.h"
 
-1680716747 c:\sdl2\include\sdl2\sdl_keyboard.h
+1680720347 c:\sdl2\include\sdl2\sdl_keyboard.h
 	"SDL_stdinc.h"
 	"SDL_error.h"
 	"SDL_keycode.h"
@@ -240,34 +240,34 @@
 	"begin_code.h"
 	"close_code.h"
 
-1680716747 c:\sdl2\include\sdl2\sdl_keycode.h
+1680720347 c:\sdl2\include\sdl2\sdl_keycode.h
 	"SDL_stdinc.h"
 	"SDL_scancode.h"
 
-1680716747 c:\sdl2\include\sdl2\sdl_scancode.h
+1680720347 c:\sdl2\include\sdl2\sdl_scancode.h
 	"SDL_stdinc.h"
 
-1680716747 c:\sdl2\include\sdl2\sdl_mouse.h
+1680720347 c:\sdl2\include\sdl2\sdl_mouse.h
 	"SDL_stdinc.h"
 	"SDL_error.h"
 	"SDL_video.h"
 	"begin_code.h"
 	"close_code.h"
 
-1680716747 c:\sdl2\include\sdl2\sdl_joystick.h
+1680720347 c:\sdl2\include\sdl2\sdl_joystick.h
 	"SDL_stdinc.h"
 	"SDL_error.h"
 	"SDL_guid.h"
 	"begin_code.h"
 	"close_code.h"
 
-1680716747 c:\sdl2\include\sdl2\sdl_guid.h
+1680720347 c:\sdl2\include\sdl2\sdl_guid.h
 	"SDL_stdinc.h"
 	"SDL_error.h"
 	"begin_code.h"
 	"close_code.h"
 
-1680716747 c:\sdl2\include\sdl2\sdl_gamecontroller.h
+1680720347 c:\sdl2\include\sdl2\sdl_gamecontroller.h
 	"SDL_stdinc.h"
 	"SDL_error.h"
 	"SDL_rwops.h"
@@ -276,17 +276,17 @@
 	"begin_code.h"
 	"close_code.h"
 
-1680716747 c:\sdl2\include\sdl2\sdl_sensor.h
+1680720347 c:\sdl2\include\sdl2\sdl_sensor.h
 	"SDL_stdinc.h"
 	"SDL_error.h"
 	"begin_code.h"
 	"close_code.h"
 
-1680716747 c:\sdl2\include\sdl2\sdl_quit.h
+1680720347 c:\sdl2\include\sdl2\sdl_quit.h
 	"SDL_stdinc.h"
 	"SDL_error.h"
 
-1680716747 c:\sdl2\include\sdl2\sdl_gesture.h
+1680720347 c:\sdl2\include\sdl2\sdl_gesture.h
 	"SDL_stdinc.h"
 	"SDL_error.h"
 	"SDL_video.h"
@@ -294,70 +294,70 @@
 	"begin_code.h"
 	"close_code.h"
 
-1680716747 c:\sdl2\include\sdl2\sdl_touch.h
+1680720347 c:\sdl2\include\sdl2\sdl_touch.h
 	"SDL_stdinc.h"
 	"SDL_error.h"
 	"SDL_video.h"
 	"begin_code.h"
 	"close_code.h"
 
-1680716747 c:\sdl2\include\sdl2\sdl_filesystem.h
+1680720347 c:\sdl2\include\sdl2\sdl_filesystem.h
 	"SDL_stdinc.h"
 	"begin_code.h"
 	"close_code.h"
 
-1680716747 c:\sdl2\include\sdl2\sdl_haptic.h
+1680720347 c:\sdl2\include\sdl2\sdl_haptic.h
 	"SDL_stdinc.h"
 	"SDL_error.h"
 	"SDL_joystick.h"
 	"begin_code.h"
 	"close_code.h"
 
-1680716747 c:\sdl2\include\sdl2\sdl_hidapi.h
+1680720347 c:\sdl2\include\sdl2\sdl_hidapi.h
 	"SDL_stdinc.h"
 	"begin_code.h"
 	"close_code.h"
 
-1680716747 c:\sdl2\include\sdl2\sdl_hints.h
+1680720347 c:\sdl2\include\sdl2\sdl_hints.h
 	"SDL_stdinc.h"
 	"begin_code.h"
 	"close_code.h"
 
-1680716747 c:\sdl2\include\sdl2\sdl_loadso.h
+1680720347 c:\sdl2\include\sdl2\sdl_loadso.h
 	"SDL_stdinc.h"
 	"SDL_error.h"
 	"begin_code.h"
 	"close_code.h"
 
-1680716747 c:\sdl2\include\sdl2\sdl_log.h
+1680720347 c:\sdl2\include\sdl2\sdl_log.h
 	"SDL_stdinc.h"
 	"begin_code.h"
 	"close_code.h"
 
-1680716747 c:\sdl2\include\sdl2\sdl_messagebox.h
+1680720347 c:\sdl2\include\sdl2\sdl_messagebox.h
 	"SDL_stdinc.h"
 	"SDL_video.h"
 	"begin_code.h"
 	"close_code.h"
 
-1680716747 c:\sdl2\include\sdl2\sdl_metal.h
+1680720347 c:\sdl2\include\sdl2\sdl_metal.h
 	"SDL_video.h"
 	"begin_code.h"
 	"close_code.h"
 
-1680716747 c:\sdl2\include\sdl2\sdl_power.h
+1680720347 c:\sdl2\include\sdl2\sdl_power.h
 	"SDL_stdinc.h"
 	"begin_code.h"
 	"close_code.h"
 
-1680716747 c:\sdl2\include\sdl2\sdl_render.h
+1680720347 c:\sdl2\include\sdl2\sdl_render.h
 	"SDL_stdinc.h"
 	"SDL_rect.h"
 	"SDL_video.h"
 	"begin_code.h"
 	"close_code.h"
 
-1680716747 c:\sdl2\include\sdl2\sdl_shape.h
+1680720347 c:\sdl2\include\sdl2\sdl_shape.h
 	"SDL_stdinc.h"
 	"SDL_pixels.h"
 	"SDL_rect.h"
@@ -366,7 +366,7 @@
 	"begin_code.h"
 	"close_code.h"
 
-1680716747 c:\sdl2\include\sdl2\sdl_system.h
+1680720347 c:\sdl2\include\sdl2\sdl_system.h
 	"SDL_stdinc.h"
 	"SDL_keyboard.h"
 	"SDL_render.h"
@@ -374,24 +374,24 @@
 	"begin_code.h"
 	"close_code.h"
 
-1680716747 c:\sdl2\include\sdl2\sdl_timer.h
+1680720347 c:\sdl2\include\sdl2\sdl_timer.h
 	"SDL_stdinc.h"
 	"SDL_error.h"
 	"begin_code.h"
 	"close_code.h"
 
-1680716747 c:\sdl2\include\sdl2\sdl_version.h
+1680720347 c:\sdl2\include\sdl2\sdl_version.h
 	"SDL_stdinc.h"
 	"begin_code.h"
 	"close_code.h"
 
-1680716747 c:\sdl2\include\sdl2\sdl_locale.h
+1680720347 c:\sdl2\include\sdl2\sdl_locale.h
 	"SDL_stdinc.h"
 	"SDL_error.h"
 	"begin_code.h"
 	"close_code.h"
 
-1680716747 c:\sdl2\include\sdl2\sdl_misc.h
+1680720347 c:\sdl2\include\sdl2\sdl_misc.h
 	"SDL_stdinc.h"
 	"begin_code.h"
 	"close_code.h"
@@ -401,13 +401,13 @@
 1702025423 c:\users\micha\onedrive\pulpit\blagam\pkgpro3d\mindless.h
 	"metaphysical.h"
 
-1680716747 c:\sdl2\include\sdl2\sdl_opengl.h
+1680720347 c:\sdl2\include\sdl2\sdl_opengl.h
 	"SDL_config.h"
 	"gl_mangle.h"
 	<windows.h>
 	"SDL_opengl_glext.h"
 
-1680716747 c:\sdl2\include\sdl2\sdl_opengl_glext.h
+1680720347 c:\sdl2\include\sdl2\sdl_opengl_glext.h
 	<windows.h>
 	<stdint.h>
 	<inttypes.h>
@@ -783,11 +783,11 @@
 	<string>
 	<vector>
 
-1696678579 c:\assimp\assimp-master\bolid\include\assimp\importer.hpp
+1696682179 c:\assimp\assimp-master\bolid\include\assimp\importer.hpp
 	<assimp/types.h>
 	<exception>
 
-1696678579 c:\assimp\assimp-master\bolid\include\assimp\types.h
+1696682179 c:\assimp\assimp-master\bolid\include\assimp\types.h
 	<limits.h>
 	<stddef.h>
 	<stdint.h>
@@ -810,53 +810,53 @@
 	"matrix4x4.inl"
 	"quaternion.inl"
 
-1696678579 c:\assimp\assimp-master\bolid\include\assimp\defs.h
+1696682179 c:\assimp\assimp-master\bolid\include\assimp\defs.h
 	<assimp/config.h>
 
-1709122048 c:\assimp\assimp-master\bolid\include\assimp\config.h
+1709125648 c:\assimp\assimp-master\bolid\include\assimp\config.h
 
-1696678579 c:\assimp\assimp-master\bolid\include\assimp\vector2.h
+1696682179 c:\assimp\assimp-master\bolid\include\assimp\vector2.h
 	<cmath>
 	<math.h>
 	"defs.h"
 
-1696678579 c:\assimp\assimp-master\bolid\include\assimp\vector3.h
+1696682179 c:\assimp\assimp-master\bolid\include\assimp\vector3.h
 	<cmath>
 	<math.h>
 	<assimp/defs.h>
 
-1696678579 c:\assimp\assimp-master\bolid\include\assimp\color4.h
+1696682179 c:\assimp\assimp-master\bolid\include\assimp\color4.h
 	<assimp/defs.h>
 
-1696678579 c:\assimp\assimp-master\bolid\include\assimp\matrix3x3.h
+1696682179 c:\assimp\assimp-master\bolid\include\assimp\matrix3x3.h
 	<assimp/defs.h>
 
-1696678579 c:\assimp\assimp-master\bolid\include\assimp\matrix4x4.h
+1696682179 c:\assimp\assimp-master\bolid\include\assimp\matrix4x4.h
 	<assimp/vector3.h>
 	<assimp/defs.h>
 
-1696678579 c:\assimp\assimp-master\bolid\include\assimp\quaternion.h
+1696682179 c:\assimp\assimp-master\bolid\include\assimp\quaternion.h
 	<assimp/defs.h>
 
-1696678579 c:\assimp\assimp-master\bolid\include\assimp\vector2.inl
+1696682179 c:\assimp\assimp-master\bolid\include\assimp\vector2.inl
 	<assimp/vector2.h>
 	<cmath>
 
-1696678579 c:\assimp\assimp-master\bolid\include\assimp\vector3.inl
+1696682179 c:\assimp\assimp-master\bolid\include\assimp\vector3.inl
 	<assimp/vector3.h>
 	<cmath>
 
-1696678579 c:\assimp\assimp-master\bolid\include\assimp\color4.inl
+1696682179 c:\assimp\assimp-master\bolid\include\assimp\color4.inl
 	<assimp/color4.h>
 
-1696678579 c:\assimp\assimp-master\bolid\include\assimp\matrix3x3.inl
+1696682179 c:\assimp\assimp-master\bolid\include\assimp\matrix3x3.inl
 	<assimp/matrix3x3.h>
 	<assimp/matrix4x4.h>
 	<algorithm>
 	<cmath>
 	<limits>
 
-1696678579 c:\assimp\assimp-master\bolid\include\assimp\matrix4x4.inl
+1696682179 c:\assimp\assimp-master\bolid\include\assimp\matrix4x4.inl
 	"matrix4x4.h"
 	"matrix3x3.h"
 	"quaternion.h"
@@ -865,14 +865,14 @@
 	<limits>
 	<cmath>
 
-1696678579 c:\assimp\assimp-master\bolid\include\assimp\mathfunctions.h
+1696682179 c:\assimp\assimp-master\bolid\include\assimp\mathfunctions.h
 	<limits>
 
-1696678579 c:\assimp\assimp-master\bolid\include\assimp\quaternion.inl
+1696682179 c:\assimp\assimp-master\bolid\include\assimp\quaternion.inl
 	<assimp/quaternion.h>
 	<cmath>
 
-1696678579 c:\assimp\assimp-master\bolid\include\assimp\scene.h
+1696682179 c:\assimp\assimp-master\bolid\include\assimp\scene.h
 	<assimp/types.h>
 	<assimp/texture.h>
 	<assimp/mesh.h>
@@ -883,47 +883,47 @@
 	<assimp/metadata.h>
 	<cstdlib>
 
-1696678579 c:\assimp\assimp-master\bolid\include\assimp\texture.h
+1696682179 c:\assimp\assimp-master\bolid\include\assimp\texture.h
 	<assimp/types.h>
 	"./Compiler/pushpack1.h"
 	"./Compiler/poppack1.h"
 
-1696678579 c:\assimp\assimp-master\bolid\include\assimp\compiler\pushpack1.h
+1696682179 c:\assimp\assimp-master\bolid\include\assimp\compiler\pushpack1.h
 
-1696678579 c:\assimp\assimp-master\bolid\include\assimp\compiler\poppack1.h
+1696682179 c:\assimp\assimp-master\bolid\include\assimp\compiler\poppack1.h
 
-1696678579 c:\assimp\assimp-master\bolid\include\assimp\mesh.h
+1696682179 c:\assimp\assimp-master\bolid\include\assimp\mesh.h
 	<assimp/aabb.h>
 	<assimp/types.h>
 
-1696678579 c:\assimp\assimp-master\bolid\include\assimp\aabb.h
+1696682179 c:\assimp\assimp-master\bolid\include\assimp\aabb.h
 	<assimp/vector3.h>
 
-1696678579 c:\assimp\assimp-master\bolid\include\assimp\light.h
+1696682179 c:\assimp\assimp-master\bolid\include\assimp\light.h
 	<assimp/types.h>
 
-1696678579 c:\assimp\assimp-master\bolid\include\assimp\camera.h
+1696682179 c:\assimp\assimp-master\bolid\include\assimp\camera.h
 	"types.h"
 
-1696678579 c:\assimp\assimp-master\bolid\include\assimp\material.h
+1696682179 c:\assimp\assimp-master\bolid\include\assimp\material.h
 	<assimp/types.h>
 	"./Compiler/pushpack1.h"
 	"./Compiler/poppack1.h"
 	"material.inl"
 
-1696678579 c:\assimp\assimp-master\bolid\include\assimp\material.inl
+1696682179 c:\assimp\assimp-master\bolid\include\assimp\material.inl
 
-1696678579 c:\assimp\assimp-master\bolid\include\assimp\anim.h
+1696682179 c:\assimp\assimp-master\bolid\include\assimp\anim.h
 	<assimp/quaternion.h>
 	<assimp/types.h>
 
-1696678579 c:\assimp\assimp-master\bolid\include\assimp\metadata.h
+1696682179 c:\assimp\assimp-master\bolid\include\assimp\metadata.h
 	"Compiler/pstdint.h"
 	<stdint.h>
 	<assimp/quaternion.h>
 	<string>
 
-1696678579 c:\assimp\assimp-master\bolid\include\assimp\compiler\pstdint.h
+1696682179 c:\assimp\assimp-master\bolid\include\assimp\compiler\pstdint.h
 	<stddef.h>
 	<limits.h>
 	<signal.h>
@@ -934,7 +934,7 @@
 	<stdio.h>
 	<string.h>
 
-1696678579 c:\assimp\assimp-master\bolid\include\assimp\postprocess.h
+1696682179 c:\assimp\assimp-master\bolid\include\assimp\postprocess.h
 	<assimp/types.h>
 
 1715196336 c:\garigette\foryourgood\camerarevolting.h
@@ -1066,11 +1066,11 @@
 
 1714991992 c:\garigette\foryourgood\playerinterface.h
 
-1742833618 source:c:\garigette\pgk2pro\main.cpp
+1743443475 source:c:\garigette\pgk2pro\main.cpp
 	"common.h"
 	"mindless.h"
 
-1742635281 c:\garigette\pgk2pro\stb_image.h
+1742638881 c:\garigette\pgk2pro\stb_image.h
 	"stb_image.h"
 	<stdio.h>
 	<stdlib.h>
@@ -1087,27 +1087,27 @@
 	<intrin.h>
 	<arm_neon.h>
 
-1742635280 c:\garigette\pgk2pro\camerarevolting.h
+1742638880 c:\garigette\pgk2pro\camerarevolting.h
 
-1742662235 c:\garigette\pgk2pro\boardlogic.h
+1742665835 c:\garigette\pgk2pro\boardlogic.h
 
-1742635281 c:\garigette\pgk2pro\metaphysical.h
+1742638881 c:\garigette\pgk2pro\metaphysical.h
 	"common.h"
 
-1742635281 c:\garigette\pgk2pro\model.h
+1742638881 c:\garigette\pgk2pro\model.h
 	"common.h"
 	"mesh.h"
 	"stb_image.h"
 	"assimp_glm_helpers.h"
 	"animdata.h"
 
-1742635281 c:\garigette\pgk2pro\mesh.h
+1742638881 c:\garigette\pgk2pro\mesh.h
 
-1742635281 c:\garigette\pgk2pro\mousepick.h
+1742638881 c:\garigette\pgk2pro\mousepick.h
 
-1742635280 c:\garigette\pgk2pro\globals.h
+1742638880 c:\garigette\pgk2pro\globals.h
 
-1742833749 c:\garigette\pgk2pro\mindless.h
+1742837349 c:\garigette\pgk2pro\mindless.h
 	"animator.h"
 	"metaphysical.h"
 	"model.h"
@@ -1123,29 +1123,29 @@
 	"abilities.h"
 	"particles.h"
 
-1742635281 c:\garigette\pgk2pro\shaders.h
+1742638881 c:\garigette\pgk2pro\shaders.h
 	"common.h"
 	"stb_image.h"
 
-1742635281 source:c:\garigette\pgk2pro\weird.cpp
+1742638881 source:c:\garigette\pgk2pro\weird.cpp
 	"stb_image.h"
 
-1742635280 c:\garigette\pgk2pro\dijkstra.h
+1742638880 c:\garigette\pgk2pro\dijkstra.h
 	"boardlogic.h"
 
-1742635281 c:\garigette\pgk2pro\units.h
+1742638881 c:\garigette\pgk2pro\units.h
 	"globals.h"
 	"dijkstra.h"
 	"abilities.h"
 	"soundbullshit.h"
 
-1742635280 c:\garigette\pgk2pro\playerinterface.h
+1742638880 c:\garigette\pgk2pro\playerinterface.h
 	"globals.h"
 	"customgui.h"
 
 1715449405 c:\garigette\pgk2pro\cameraworks.h
 
-1717676181 c:\garigette\pgk2pro\imgui\imgui.h
+1717679781 c:\garigette\pgk2pro\imgui\imgui.h
 	"imconfig.h"
 	<float.h>
 	<stdarg.h>
@@ -1154,16 +1154,16 @@
 	<assert.h>
 	"imgui_user.h"
 
-1717676181 c:\garigette\pgk2pro\imgui\imconfig.h
+1717679781 c:\garigette\pgk2pro\imgui\imconfig.h
 
-1717676181 c:\garigette\pgk2pro\imgui\imgui_impl_sdl2.h
+1717679781 c:\garigette\pgk2pro\imgui\imgui_impl_sdl2.h
 	"imgui.h"
 
-1717676181 c:\garigette\pgk2pro\imgui\imgui_impl_opengl3.h
+1717679781 c:\garigette\pgk2pro\imgui\imgui_impl_opengl3.h
 	"imgui.h"
 	<TargetConditionals.h>
 
-1717676181 source:c:\garigette\pgk2pro\imgui\imgui_impl_opengl3.cpp
+1717679781 source:c:\garigette\pgk2pro\imgui\imgui_impl_opengl3.cpp
 	"imgui.h"
 	"imgui_impl_opengl3.h"
 	<stdio.h>
@@ -1177,7 +1177,7 @@
 	"imgui_impl_opengl3_loader.h"
 	<stdio.h>
 
-1717676181 c:\garigette\pgk2pro\imgui\imgui_impl_opengl3_loader.h
+1717679781 c:\garigette\pgk2pro\imgui\imgui_impl_opengl3_loader.h
 	<stdint.h>
 	<windows.h>
 	<stdlib.h>
@@ -1185,14 +1185,14 @@
 	<dlfcn.h>
 	<dlfcn.h>
 
-1717676181 source:c:\garigette\pgk2pro\imgui\imgui_impl_sdl2.cpp
+1717679781 source:c:\garigette\pgk2pro\imgui\imgui_impl_sdl2.cpp
 	"imgui.h"
 	"imgui_impl_sdl2.h"
 	<SDL2/SDL.h>
 	<SDL2/SDL_syswm.h>
 	<TargetConditionals.h>
 
-1680716747 c:\sdl2\include\sdl2\sdl_syswm.h
+1680720347 c:\sdl2\include\sdl2\sdl_syswm.h
 	"SDL_stdinc.h"
 	"SDL_error.h"
 	"SDL_video.h"
@@ -1208,7 +1208,7 @@
 	"begin_code.h"
 	"close_code.h"
 
-1680716747 c:\sdl2\include\sdl2\sdl_egl.h
+1680720347 c:\sdl2\include\sdl2\sdl_egl.h
 	<psp2/types.h>
 	<EGL/egl.h>
 	<EGL/eglext.h>
@@ -1220,7 +1220,7 @@
 	<X11/Xutil.h>
 	<kernel/image.h>
 
-1717676181 source:c:\garigette\pgk2pro\imgui\imgui.cpp
+1717679781 source:c:\garigette\pgk2pro\imgui\imgui.cpp
 	"imgui.h"
 	"imgui_internal.h"
 	<stdio.h>
@@ -1233,7 +1233,7 @@
 	<imm.h>
 	"imgui_user.inl"
 
-1717676181 c:\garigette\pgk2pro\imgui\imgui_internal.h
+1717679781 c:\garigette\pgk2pro\imgui\imgui_internal.h
 	"imgui.h"
 	<stdio.h>
 	<stdlib.h>
@@ -1242,10 +1242,10 @@
 	<immintrin.h>
 	"imstb_textedit.h"
 
-1717676181 c:\garigette\pgk2pro\imgui\imstb_textedit.h
+1717679781 c:\garigette\pgk2pro\imgui\imstb_textedit.h
 	<string.h>
 
-1717676181 source:c:\garigette\pgk2pro\imgui\imgui_demo.cpp
+1717679781 source:c:\garigette\pgk2pro\imgui\imgui_demo.cpp
 	"imgui.h"
 	<ctype.h>
 	<limits.h>
@@ -1255,7 +1255,7 @@
 	<stdint.h>
 	<inttypes.h>
 
-1717676181 source:c:\garigette\pgk2pro\imgui\imgui_draw.cpp
+1717679781 source:c:\garigette\pgk2pro\imgui\imgui_draw.cpp
 	"imgui.h"
 	"imgui_internal.h"
 	"misc/freetype/imgui_freetype.h"
@@ -1263,14 +1263,14 @@
 	"imstb_rectpack.h"
 	"imstb_truetype.h"
 
-1717676181 c:\garigette\pgk2pro\imgui\misc\freetype\imgui_freetype.h
+1717679781 c:\garigette\pgk2pro\imgui\misc\freetype\imgui_freetype.h
 	"imgui.h"
 
-1717676181 c:\garigette\pgk2pro\imgui\imstb_rectpack.h
+1717679781 c:\garigette\pgk2pro\imgui\imstb_rectpack.h
 	<stdlib.h>
 	<assert.h>
 
-1717676181 c:\garigette\pgk2pro\imgui\imstb_truetype.h
+1717679781 c:\garigette\pgk2pro\imgui\imstb_truetype.h
 	"stb_truetype.h"
 	<stdio.h>
 	"stb_truetype.h"
@@ -1284,18 +1284,18 @@
 	<string.h>
 	<string.h>
 
-1717676181 source:c:\garigette\pgk2pro\imgui\imgui_tables.cpp
+1717679781 source:c:\garigette\pgk2pro\imgui\imgui_tables.cpp
 	"imgui.h"
 	"imgui_internal.h"
 	<stdint.h>
 
-1717676181 source:c:\garigette\pgk2pro\imgui\imgui_widgets.cpp
+1717679781 source:c:\garigette\pgk2pro\imgui\imgui_widgets.cpp
 	"imgui.h"
 	"imgui_internal.h"
 	<stdint.h>
 	"imstb_textedit.h"
 
-1742635280 c:\garigette\pgk2pro\customgui.h
+1742638880 c:\garigette\pgk2pro\customgui.h
 	"abilities.h"
 	"shaders.h"
 
@@ -1307,7 +1307,7 @@
 	"customgui.h"
 	"units.h"
 
-1742635280 c:\garigette\pgk2pro\common.h
+1742638880 c:\garigette\pgk2pro\common.h
 	<iostream>
 	<fstream>
 	<sstream>
@@ -1341,11 +1341,11 @@
 	"customgui.h"
 	"units.h"
 
-1742755741 c:\garigette\pgk2pro\units.cpp
+1742759341 c:\garigette\pgk2pro\units.cpp
 	"customgui.h"
 	"units.h"
 
-1742635280 c:\garigette\pgk2pro\customgui.cpp
+1742638880 c:\garigette\pgk2pro\customgui.cpp
 	"customgui.h"
 	"units.h"
 
@@ -1582,7 +1582,7 @@
 1717099255 source:c:\garigette\pgk2proold\weird.cpp
 	"stb_image.h"
 
-1717944961 c:\garigette\pgk2pro\abilities.h
+1717948561 c:\garigette\pgk2pro\abilities.h
 
 1717679781 source:c:\garigette\pgk2pro-master(1)\pgk2pro-master\imgui\imgui.cpp
 	"imgui.h"
@@ -2051,27 +2051,27 @@
 
 1717788312 c:\garigette\pgk2pro-master(1)\pgk2pro-master\soundbullshit.h
 
-1717700442 c:\garigette\pgk2pro\animator.h
+1717704042 c:\garigette\pgk2pro\animator.h
 	"common.h"
 	"animation.h"
 	"bone.h"
 
-1717689796 c:\garigette\pgk2pro\animation.h
+1717693396 c:\garigette\pgk2pro\animation.h
 	"common.h"
 	"bone.h"
 	"animdata.h"
 	"model.h"
 
-1742635280 c:\garigette\pgk2pro\bone.h
+1742638880 c:\garigette\pgk2pro\bone.h
 	"common.h"
 	"assimp_glm_helpers.h"
 
-1717677252 c:\garigette\pgk2pro\assimp_glm_helpers.h
+1717680852 c:\garigette\pgk2pro\assimp_glm_helpers.h
 	"common.h"
 
-1717677252 c:\garigette\pgk2pro\animdata.h
+1717680852 c:\garigette\pgk2pro\animdata.h
 
-1742635281 c:\garigette\pgk2pro\soundbullshit.h
+1742638881 c:\garigette\pgk2pro\soundbullshit.h
 
 1717837557 c:\garigette\pgk2pro\soundbullshit.cpp
 	"soundbullshit.h"
@@ -2079,9 +2079,9 @@
 1717837457 source:c:\garigette\pgk2pro\soundbullshit.cpp
 	"soundbullshit.h"
 
-1742834509 c:\garigette\pgk2pro\particles.h
+1743086516 c:\garigette\pgk2pro\particles.h
 	"common.h"
 
-1742833749 source:c:\garigette\pgk2pro\particles.cpp
+1743444750 source:c:\garigette\pgk2pro\particles.cpp
 	"particles.h"
 

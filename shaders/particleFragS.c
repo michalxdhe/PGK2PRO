@@ -2,6 +2,12 @@
 in vec4 ParticleColor;
 out vec4 FragColor;
 
+uniform sampler2D dym;
+
 void main() {
-    FragColor = ParticleColor;
+    vec4 texColor = texture(dym, gl_PointCoord);
+    FragColor = ParticleColor * texColor;
+
+    if (FragColor.a < 0.6)
+        discard;
 }
