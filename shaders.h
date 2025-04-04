@@ -130,6 +130,24 @@ bool createAndCompileShader(const char* filePath, int type, GLuint &destination)
         }
     }
 
+    if(type == GL_COMPUTE_SHADER)
+    {
+        destination = glCreateShader(GL_COMPUTE_SHADER);
+
+        glShaderSource(destination, 1, &source, NULL);
+        glCompileShader(destination);
+
+
+        glGetShaderiv(destination, GL_COMPILE_STATUS, &success);
+
+        if(!success)
+        {
+            glGetShaderInfoLog(destination, 512, NULL, infoLog);
+            std::cout << "ERROR::SHADER::COMPUTE::COMPILATION_FAILED\n" << infoLog << std::endl;
+            return 0;
+        }
+    }
+
     return 1;
 }
 
@@ -140,6 +158,17 @@ GLuint createProgram(unsigned int vertexShader, unsigned int fragmentShader)
     shaderProgram = glCreateProgram();
     glAttachShader(shaderProgram, vertexShader);
     glAttachShader(shaderProgram, fragmentShader);
+    glLinkProgram(shaderProgram);
+
+    return shaderProgram;
+}
+
+GLuint createProgram(unsigned int computeShader)
+{
+    unsigned int shaderProgram;
+
+    shaderProgram = glCreateProgram();
+    glAttachShader(shaderProgram, computeShader);
     glLinkProgram(shaderProgram);
 
     return shaderProgram;

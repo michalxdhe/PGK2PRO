@@ -98,6 +98,13 @@
 		<Unit filename="particles.cpp" />
 		<Unit filename="particles.h" />
 		<Unit filename="shaders.h" />
+		<Unit filename="shaders/fluid.c">
+			<Option compilerVar="CC" />
+			<Option target="Release" />
+		</Unit>
+		<Unit filename="shaders/fluid.glsl">
+			<Option target="Release" />
+		</Unit>
 		<Unit filename="shaders/fragmentS.c">
 			<Option compilerVar="CC" />
 			<Option target="Release" />

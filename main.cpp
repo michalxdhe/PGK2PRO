@@ -39,6 +39,7 @@ void Game::init()
 
     unsigned int vertexShader;
     unsigned int fragmentShader;
+    unsigned int computeShader;
 
     kamera = RevoltingCamera(glm::vec3(0.0f, 5.0f, -10.0f), glm::vec3(0.0f, 0.5f, 0.f));
 
@@ -68,11 +69,12 @@ void Game::init()
     createAndCompileShader("shaders/particleFragS.c",GL_FRAGMENT_SHADER,fragmentShader);
     shaderPrograms.push_back(createProgram(vertexShader,fragmentShader));
 
-    //glUseProgram(shaderPrograms[4]);
-    //glUniform1i(glGetUniformLocation(shaderPrograms[4],"dym"),teksturaDymu);
+    createAndCompileShader("shaders/fluid.c",GL_COMPUTE_SHADER,computeShader);
+    shaderPrograms.push_back(createProgram(computeShader));
 
     glDeleteShader(vertexShader);
     glDeleteShader(fragmentShader);
+    glDeleteShader(computeShader);
 
     view = glm::translate(view, glm::vec3(0.0f, 0.0f, -5.0f));
     projection = glm::perspective(glm::radians(45.0f),  static_cast<float>(windowW)/static_cast<float>(windowH), 0.1f, 100.0f);
@@ -469,6 +471,7 @@ void Game::update(const double deltaTime)
         obiekty.erase(it);
         autoGraveyard.pop_back();
     }
+
     ///TO:DO we no ogarnij sie, czemu particle nie jest potomkiem Object wgl?
     ///bo nie chcemy go usuwac i zawsze ma byc ich tyle ile nr_particles pokazuje klaunie
     ///Particlesy
