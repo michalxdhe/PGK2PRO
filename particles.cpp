@@ -1,6 +1,6 @@
 #include "particles.h"
 
-Particle::Particle() : position(0.0f), velocity(0.0f), color(glm::vec4(0.f,rand()%1000/1000.f,0.f,rand()%1000/1000.f)), life(0.0f), gravity(0.5f) { }
+Particle::Particle() : position(0.0f), velocity(0.0f), color(glm::vec4(1.f,1.f,1.f,rand()%1000/1000.f)), life(0.0f), gravity(0.5f) { }
 
 float smoothstep(float edge0, float edge1, float x) {
     x = glm::clamp((x - edge0) / (edge1 - edge0), 0.0f, 1.0f);
@@ -29,15 +29,20 @@ void createParticleTexture() {
     }
 
     glGenTextures(1, &teksturaDymu);
+    glActiveTexture(GL_TEXTURE1);
     glBindTexture(GL_TEXTURE_2D, teksturaDymu);
 
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
+    //glTexStorage2D(GL_TEXTURE_2D, 1, GL_RGBA32F, width, height);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA32F, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
 
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
+    glBindImageTexture(0, teksturaDymu, 0, GL_FALSE, 0, GL_WRITE_ONLY, GL_RGBA32F);
+
+    glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D, 0);
 }
 
@@ -69,16 +74,17 @@ void DrawParticles(unsigned int shaderProgram, std::vector<Particle>& particles)
     glBindBuffer(GL_ARRAY_BUFFER, VBO);
     glBufferSubData(GL_ARRAY_BUFFER, 0, particles.size() * sizeof(Particle), particles.data());
 
-    glActiveTexture(GL_TEXTURE0);
+    glActiveTexture(GL_TEXTURE1);
     glBindTexture(GL_TEXTURE_2D, teksturaDymu);
-    glUniform1i(glGetUniformLocation(shaderProgram, "dym"), 0);
+    glUniform1i(glGetUniformLocation(shaderProgram, "dym"), 1);
 
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
     glDrawArrays(GL_POINTS, 0, particles.size());
-
+    glBindTexture(GL_TEXTURE_2D, 0);
     glBindVertexArray(0);
+    glActiveTexture(GL_TEXTURE0);
     glDisable(GL_BLEND);
 }
 

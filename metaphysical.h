@@ -3,6 +3,14 @@
 
 #include "common.h"
 
+enum EnviromentObjects
+{
+    PEDESTAL,
+    ENV_COUNT
+};
+
+static Model envModels[ENV_COUNT];
+
 /** \brief deprecated,
  *
  * \param lightPos glm::vec3

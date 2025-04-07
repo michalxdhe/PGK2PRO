@@ -72,6 +72,8 @@
 		</Unit>
 		<Unit filename="customgui.h" />
 		<Unit filename="dijkstra.h" />
+		<Unit filename="fluidSim.cpp" />
+		<Unit filename="fluidSim.h" />
 		<Unit filename="globals.h" />
 		<Unit filename="imgui/imconfig.h" />
 		<Unit filename="imgui/imgui.cpp" />
@@ -130,6 +132,18 @@
 			<Option target="Release" />
 		</Unit>
 		<Unit filename="shaders/skyBoxVertS.c">
+			<Option compilerVar="CC" />
+			<Option target="Release" />
+		</Unit>
+		<Unit filename="shaders/smokeComput.c">
+			<Option compilerVar="CC" />
+			<Option target="Release" />
+		</Unit>
+		<Unit filename="shaders/smokeFragS.c">
+			<Option compilerVar="CC" />
+			<Option target="Release" />
+		</Unit>
+		<Unit filename="shaders/smokeVertS.c">
 			<Option compilerVar="CC" />
 			<Option target="Release" />
 		</Unit>

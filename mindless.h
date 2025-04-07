@@ -15,6 +15,7 @@
 #include "customgui.cpp"
 #include "abilities.h"
 #include "particles.h"
+#include "fluidSim.h"
 
 using namespace std;
 
@@ -59,10 +60,6 @@ public:
 
     SDL_GLContext gContext;
 
-
-
-    /// Aha
-    Model testhex;
     /// IRRklang dla dzwieku
 
     /// Ray dla MousePick'era
@@ -240,7 +237,7 @@ public:
      * \return bool czy udala sie klatka
      *
      */
-    bool inputCore(double deltaTime);
+    bool inputCore(double deltaTime, uint32_t t);
 
     /** \brief Rdzenny input, w ramach organizacji
      *
@@ -248,7 +245,7 @@ public:
      * \return bool czy udala sie klatka
      *
      */
-    bool updateCore(double deltaTime);
+    bool updateCore(double deltaTime, uint32_t t);
 
     /** \brief Rdzenny update, w ramach organizacji
      *
@@ -256,7 +253,7 @@ public:
      * \return bool czy udala sie klatka
      *
      */
-    bool renderCore(double deltaTime);
+    bool renderCore(double deltaTime, uint32_t t);
 
     /** \brief Metoda do inicjalizacji rzeczy
      *
@@ -271,7 +268,7 @@ public:
      * \return bool czy udala sie klatka
      *
      */
-    void input(double deltaTime);
+    void input(double deltaTime, uint32_t t);
 
     /** \brief Update
      *
@@ -279,7 +276,7 @@ public:
      * \return bool czy udala sie klatka
      *
      */
-    void update(double deltaTime);
+    void update(double deltaTime, uint32_t t);
 
     /** \brief Render
      *
@@ -287,7 +284,7 @@ public:
      * \return bool czy udala sie klatka
      *
      */
-    void render(double deltaTime);
+    void render(double deltaTime, uint32_t t);
 
 private:
     void endGame(){
@@ -928,25 +925,25 @@ bool handleAbility(abilityCall info, Game *gameRef)
 
 };
 
-bool Game::inputCore(double deltaTime)
+bool Game::inputCore(double deltaTime, uint32_t t)
 {
     while(SDL_PollEvent(&event))
     {
-        input(deltaTime);
+        input(deltaTime, t);
     }
     return 1;
 }
 
-bool Game::updateCore(double deltaTime)
+bool Game::updateCore(double deltaTime, uint32_t t)
 {
-    update(deltaTime);
+    update(deltaTime, t);
 
     return 1;
 }
 
-bool Game::renderCore(double deltaTime)
+bool Game::renderCore(double deltaTime, uint32_t t)
 {
-    render(deltaTime);
+    render(deltaTime, t);
 
     SDL_GL_SwapWindow(window);
     return 1;

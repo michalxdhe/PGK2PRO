@@ -21,7 +21,6 @@ void Game::init()
         particles.push_back(Particle());
 
     initParticles();
-
     createAndLoadTexture(teksturaDymu,"uiTextures/smok.png", false);
 
     for(int i = 1; i <= numOfPlayers; i++)
@@ -30,7 +29,7 @@ void Game::init()
     }
     initiativeGui = make_unique<InitiativeTrackerGui>(ImVec2(Globals::windowW, Globals::windowH),&initiativeQueue,&initiativeHighlightID,&initiativeHighlightFlag);
 
-    testhex = Model("Modeldos/Wieza.obj");
+
     HexGrid = GenerateHexGrid(boardSize);
     UnitFactory::initialize(&HexGrid);
 
@@ -72,6 +71,13 @@ void Game::init()
     createAndCompileShader("shaders/fluid.c",GL_COMPUTE_SHADER,computeShader);
     shaderPrograms.push_back(createProgram(computeShader));
 
+    createAndCompileShader("shaders/smokeVertS.c",GL_VERTEX_SHADER,vertexShader);
+    createAndCompileShader("shaders/smokeFragS.c",GL_FRAGMENT_SHADER,fragmentShader);
+    shaderPrograms.push_back(createProgram(vertexShader,fragmentShader));
+
+    createAndCompileShader("shaders/smokeComput.c",GL_COMPUTE_SHADER,computeShader);
+    shaderPrograms.push_back(createProgram(computeShader));
+
     glDeleteShader(vertexShader);
     glDeleteShader(fragmentShader);
     glDeleteShader(computeShader);
@@ -103,6 +109,9 @@ void Game::init()
     unitModels[BALLER] = {"Model/GenericTest/spiderBaller.gltf", Model("Model/GenericTest/spiderBaller.gltf")};
     unitModels[COMM] = {"Model/GenericTest/commanderLazy.gltf", Model("Model/GenericTest/commanderLazy.gltf")};
 
+    ///ENV
+    envModels[PEDESTAL] = Model("Modeldos/Wieza.obj");
+
     glUseProgram(shaderPrograms[0]);
     glUniform3fv(glGetUniformLocation(shaderPrograms[0], "factionColors"), 10, glm::value_ptr(factionColors[0]));
 
@@ -116,7 +125,7 @@ void Game::init()
     }
 
     for(int i = 0; i < 15; i++)
-        {//zmien to potem na ile surowcuw ma byc wygenerowanych
+        {//zmien to potem na ile surowcuw ma byc wygenerowanych TO:DO
             glm::vec3 randomHex = getRandomHex(boardSize);
             if(HexGrid[randomHex].passable && HexGrid[randomHex].presentResource == -1)
                 HexGrid[randomHex].presentResource = ORE; //zmien to potem na losowy surowiec
@@ -137,10 +146,7 @@ void Game::init()
 
     skyBox = Cube(50.f,50.f,50.f);
 
-    for(auto& pair : HexGrid)
-    {
-        obiekty[Globals::numberOfEntities++] = make_unique<Hexagon>(testhex, pair.second);
-    }
+
 
     /*for(int i = 0; i < 100; i++)
     {
@@ -168,10 +174,15 @@ void Game::init()
     glStencilFunc(GL_ALWAYS, 1, 0xFF);
     glStencilMask(0xFF);
 
+    for(auto& pair : HexGrid)
+    {
+        obiekty[Globals::numberOfEntities++] = make_unique<Hexagon>(envModels[PEDESTAL], pair.second);
+    }
+
     endTurn();
 }
 
-void Game::input(const double deltaTime)
+void Game::input(const double deltaTime, uint32_t t)
 {
     ImGui_ImplSDL2_ProcessEvent(&event);
     ImguiIOflag = ImGui::GetIO().WantCaptureMouse;
@@ -323,7 +334,7 @@ void Game::input(const double deltaTime)
     }
 }
 
-void Game::update(const double deltaTime)
+void Game::update(const double deltaTime, uint32_t t)
 {
     //auto start = std::chrono::high_resolution_clock::now();
     ImGui_ImplOpenGL3_NewFrame();
@@ -503,7 +514,7 @@ void Game::update(const double deltaTime)
 }
 
 
-void Game::render(double deltaTime)
+void Game::render(double deltaTime, uint32_t t)
 {
     //auto start = std::chrono::high_resolution_clock::now();
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
@@ -554,7 +565,7 @@ void Game::render(double deltaTime)
     glGetIntegerv(GL_CULL_FACE_MODE, &OldCullFaceMode);
     glGetIntegerv(GL_DEPTH_FUNC, &OldDepthFuncMode);
 
-    glUniform1f(glGetUniformLocation(shaderPrograms[3],"u_time"), (float)SDL_GetTicks()/1500.f);
+    glUniform1f(glGetUniformLocation(shaderPrograms[3],"u_time"), (float)t/1500.f);
 
     glDepthFunc(GL_LEQUAL);
     glCullFace(GL_FRONT);
@@ -583,6 +594,12 @@ void Game::render(double deltaTime)
     }
 
     ///Particle Render
+    glUseProgram(shaderPrograms[5]);
+    glUniform1f(glGetUniformLocation(shaderPrograms[5],"t"), (float)t/1500.f);
+
+    glDispatchCompute((unsigned int)64/16, (unsigned int)64/16, 1);
+    glMemoryBarrier(GL_SHADER_IMAGE_ACCESS_BARRIER_BIT | GL_TEXTURE_FETCH_BARRIER_BIT);
+
     glUseProgram(shaderPrograms[4]);
     glUniform3fv(glGetUniformLocation(shaderPrograms[4], "cameraPos"),1, glm::value_ptr(kamera.Position));
     DrawParticles(shaderPrograms[4],particles);
@@ -622,9 +639,9 @@ int main(int argc, char *argv[])
 
     while(!(game->shutdown))
     {
-        game->inputCore(deltaTime);
-        game->updateCore(deltaTime);
-        game->renderCore(deltaTime);
+        game->inputCore(deltaTime, currTime);
+        game->updateCore(deltaTime, currTime);
+        game->renderCore(deltaTime, currTime);
         currTime = SDL_GetTicks();
         deltaTime = (currTime - prevTime)/1000.0f;
         prevTime = currTime;
