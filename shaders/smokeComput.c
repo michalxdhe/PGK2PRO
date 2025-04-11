@@ -1,32 +1,46 @@
 #version 430
 
-layout (local_size_x = 8, local_size_y = 8) in;
+layout(local_size_x = 8, local_size_y = 8, local_size_z = 8) in;
 
-layout (binding = 0, rgba32f) readonly uniform image2D velocity;
-layout (binding = 1, r32f) readonly uniform image2D densityIn;
-layout (binding = 2, r32f) writeonly uniform image2D densityOut;
+uniform sampler3D velocity;       // velocity field
+uniform sampler3D quantity;       // scalar/vector field to advect
+uniform sampler3D quantityPrev;   // previous step for backward trace
 
+uniform float timeStep;
+uniform float dissipation;
+uniform vec3 gridSize;
+uniform vec3 gridSpacing; // 1.0 / gridSize
 
-uniform float dt = 0.1;
-uniform float gridScale = 1.0;
-uniform ivec2 simResolution;
+layout(rgba32f, binding = 0) uniform image3D outputQuantity;
 
-vec2 getVelocity(ivec2 pos) {
-    return imageLoad(velocity, pos).xy;
+vec3 getVelocity(vec3 pos) {
+    return texture(velocity, pos).xyz;
 }
 
-float sampleDensity(ivec2 pos) {
-    return imageLoad(densityIn, pos).r;
+vec4 sampleQuantity(vec3 pos) {
+    return texture(quantity, pos);
+}
+
+vec4 macCormackAdvect(vec3 uvw) {
+    vec3 vel = getVelocity(uvw);
+    vec3 pos = uvw - timeStep * vel * gridSpacing;
+    vec4 forward = sampleQuantity(pos);
+
+    // backward trace
+    vec3 pos_back = pos + timeStep * getVelocity(pos) * gridSpacing;
+    vec4 backward = texture(quantityPrev, pos_back);
+
+    // corrected MacCormack
+    vec4 corrected = forward + 0.5 * (sampleQuantity(uvw) - backward);
+    return mix(forward, corrected, 0.9); // blending factor to reduce overshoots
 }
 
 void main() {
-    ivec2 id = ivec2(gl_GlobalInvocationID.xy);
-    vec2 vel = getVelocity(id);
+    ivec3 gid = ivec3(gl_GlobalInvocationID.xyz);
+    vec3 uvw = (vec3(gid) + 0.5) / gridSize;
 
-    vec2 prevPos = vec2(id) - vel * dt / gridScale;
+    vec4 advected = macCormackAdvect(uvw);
+    advected *= dissipation;
 
-    ivec2 samplePos = ivec2(clamp(prevPos, vec2(0.0), vec2(simResolution - 1)));
-    float newDensity = sampleDensity(samplePos);
-
-    imageStore(densityOut, id, vec4(newDensity, 0.0, 0.0, 0.0));
+    imageStore(outputQuantity, gid, advected);
 }

@@ -3,17 +3,19 @@
 
 #include "common.h"
 
-const int width = 50;
-const int height = 50;
-const int depth = 50;
+const static int width = 50;
+const static int height = 50;
+const static int depth = 50;
 
-static GLuint velocityTex, densityTex;
+static GLuint velocityTex, quantTex, quantTexPrev, outputTex;
 
 static std::vector<float> data(width * height * depth * 4);
 
+GLuint createVolumeTexture();
+
 void createTextures();
 
-void simulateFluid();
+void simulateFluid(unsigned int shaderProgram, float dt);
 
 
 
