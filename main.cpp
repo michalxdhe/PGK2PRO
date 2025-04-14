@@ -179,6 +179,10 @@ void Game::init()
         obiekty[Globals::numberOfEntities++] = make_unique<Hexagon>(envModels[PEDESTAL], pair.second);
     }
 
+    createTextures();
+    initializeQuantTexCPU();
+    initializeVelocityTexCPU();
+
     endTurn();
 }
 
@@ -202,8 +206,10 @@ void Game::input(const double deltaTime, uint32_t t)
             kamera.d=1;
         if(event.key.keysym.sym == SDLK_ESCAPE)
             shutdown = 1;
-        if(event.key.keysym.sym == SDLK_SPACE)
+        if(event.key.keysym.sym == SDLK_SPACE){
+            simulateFluid(shaderPrograms[7],clamp(deltaTime,0.6,1.0));
             endTurn();
+        }
 
         break;
     case SDL_KEYUP:
@@ -527,6 +533,9 @@ void Game::render(double deltaTime, uint32_t t)
     unsigned int viewLoc = glGetUniformLocation(shaderPrograms[0], "view");;
     unsigned int projectionLoc = glGetUniformLocation(shaderPrograms[0], "projection");
 
+    glm::mat4 invProjection = glm::inverse(projection);
+    glm::mat4 invView = glm::inverse(view);
+
     //view jest dla perspektywy
     ///TO:DO ok wtf typie, wez to w jakas petle wsadz bo bedziesz to kopiowac dla kazdego nowego shadera
     glUniform3fv(glGetUniformLocation(shaderPrograms[0],"viewPos"),1, glm::value_ptr(kamera.Position));
@@ -557,6 +566,19 @@ void Game::render(double deltaTime, uint32_t t)
 
     glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(view));
     glUniformMatrix4fv(projectionLoc, 1, GL_FALSE, glm::value_ptr(projection));
+
+    glUseProgram(shaderPrograms[6]);
+
+    glUniform3fv(glGetUniformLocation(shaderPrograms[6],"cameraPos"),1, glm::value_ptr(kamera.Position));
+
+    viewLoc = glGetUniformLocation(shaderPrograms[6], "view");
+    projectionLoc = glGetUniformLocation(shaderPrograms[6], "projection");
+
+    glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(view));
+    glUniformMatrix4fv(projectionLoc, 1, GL_FALSE, glm::value_ptr(projection));
+
+    //glUniformMatrix4fv(glGetUniformLocation(shaderPrograms[6], "invView"), 1, GL_FALSE, glm::value_ptr(invView));
+    //glUniformMatrix4fv(glGetUniformLocation(shaderPrograms[6], "invProjection"), 1, GL_FALSE, glm::value_ptr(invProjection));
 
     ///skybox Render
     glUseProgram(shaderPrograms[3]);
@@ -597,12 +619,15 @@ void Game::render(double deltaTime, uint32_t t)
     glUseProgram(shaderPrograms[5]);
     glUniform1f(glGetUniformLocation(shaderPrograms[5],"t"), (float)t/1500.f);
 
-    glDispatchCompute((unsigned int)64/16, (unsigned int)64/16, 1);
-    glMemoryBarrier(GL_SHADER_IMAGE_ACCESS_BARRIER_BIT | GL_TEXTURE_FETCH_BARRIER_BIT);
+    //glDispatchCompute((unsigned int)64/16, (unsigned int)64/16, 1);
+    //glMemoryBarrier(GL_SHADER_IMAGE_ACCESS_BARRIER_BIT | GL_TEXTURE_FETCH_BARRIER_BIT);
 
     glUseProgram(shaderPrograms[4]);
     glUniform3fv(glGetUniformLocation(shaderPrograms[4], "cameraPos"),1, glm::value_ptr(kamera.Position));
-    DrawParticles(shaderPrograms[4],particles);
+    //DrawParticles(shaderPrograms[4],particles);
+
+    ///Fluid Render Test
+    renderFluid(shaderPrograms[6]);
 
     ///UI Render
     playerIntes[currentPlayersTurn]->renderGui(shaderPrograms[0],shaderPrograms);

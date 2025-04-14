@@ -3,20 +3,70 @@
 
 #include "common.h"
 
-const static int width = 50;
-const static int height = 50;
-const static int depth = 50;
+const static int width = 35;
+const static int height = 35;
+const static int depth = 35;
 
-static GLuint velocityTex, quantTex, quantTexPrev, outputTex;
+static float cubeVertices[] = {
+    -0.5f, -0.5f, -0.5f,
+     0.5f, -0.5f, -0.5f,
+     0.5f,  0.5f, -0.5f,
+     0.5f,  0.5f, -0.5f,
+    -0.5f,  0.5f, -0.5f,
+    -0.5f, -0.5f, -0.5f,
+
+    -0.5f, -0.5f,  0.5f,
+     0.5f, -0.5f,  0.5f,
+     0.5f,  0.5f,  0.5f,
+     0.5f,  0.5f,  0.5f,
+    -0.5f,  0.5f,  0.5f,
+    -0.5f, -0.5f,  0.5f,
+
+    -0.5f,  0.5f,  0.5f,
+    -0.5f,  0.5f, -0.5f,
+    -0.5f, -0.5f, -0.5f,
+    -0.5f, -0.5f, -0.5f,
+    -0.5f, -0.5f,  0.5f,
+    -0.5f,  0.5f,  0.5f,
+
+     0.5f,  0.5f,  0.5f,
+     0.5f,  0.5f, -0.5f,
+     0.5f, -0.5f, -0.5f,
+     0.5f, -0.5f, -0.5f,
+     0.5f, -0.5f,  0.5f,
+     0.5f,  0.5f,  0.5f,
+
+    -0.5f, -0.5f, -0.5f,
+     0.5f, -0.5f, -0.5f,
+     0.5f, -0.5f,  0.5f,
+     0.5f, -0.5f,  0.5f,
+    -0.5f, -0.5f,  0.5f,
+    -0.5f, -0.5f, -0.5f,
+
+    -0.5f,  0.5f, -0.5f,
+     0.5f,  0.5f, -0.5f,
+     0.5f,  0.5f,  0.5f,
+     0.5f,  0.5f,  0.5f,
+    -0.5f,  0.5f,  0.5f,
+    -0.5f,  0.5f, -0.5f,
+};
+
+
+static GLuint velocityTex, quantTex, quantTexPrev, outputTex, cubeVAO, cubeVBO;
 
 static std::vector<float> data(width * height * depth * 4);
 
 GLuint createVolumeTexture();
 
+void initializeQuantTexCPU();
+
+void initializeVelocityTexCPU();
+
 void createTextures();
 
 void simulateFluid(unsigned int shaderProgram, float dt);
 
+void renderFluid(unsigned int volumeShader);
 
 
 #endif // FLUIDSIM_H_INCLUDED
