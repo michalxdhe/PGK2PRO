@@ -5,8 +5,8 @@ in vec3 FragPos;
 in vec3 vLocalPos;
 
 uniform sampler3D volumeTex;
-uniform float intensity = 3.0;
-uniform float stepSize = 0.01;
+uniform float intensity = 1.0;
+uniform float stepSize = 0.05;
 uniform int maxSteps = 256;
 
 uniform vec3 cameraPos;
@@ -25,14 +25,14 @@ vec2 intersectBox(vec3 ro, vec3 rd, vec3 boxMin, vec3 boxMax) {
 
 void main() {
     vec3 rayDir = normalize(FragPos - cameraPos);
-    vec3 ro = vec3(invModel * vec4(cameraPos, 1.0));
-    vec3 rd = normalize(vec3(invModel * vec4(rayDir, 0.0)));
+    vec3 ro = vec3(invModel * vec4(cameraPos, 1.0)); //rayorigin
+    vec3 rd = normalize(vec3(invModel * vec4(rayDir, 0.0))); //raydest
 
     vec3 boxMin = vec3(-0.5);
     vec3 boxMax = vec3(0.5);
 
     vec2 bounds = intersectBox(ro, rd, boxMin, boxMax);
-    if (bounds.x > bounds.y || bounds.y < 0.0) discard;
+    if (bounds.x > bounds.y || bounds.y < 0.0) discard; //sprawdza czy ray intersectuje z AABB
 
     float t = max(bounds.x, 0.0);
     float tEnd = bounds.y;
@@ -53,6 +53,10 @@ void main() {
         accum.a += localAlpha;
 
         t += stepSize;
+    }
+
+    if(accum.r < 0.2 && accum.g < 0.2 && accum.b < 0.2){
+        accum.a = 0;
     }
 
     FragColor = accum;

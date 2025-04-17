@@ -3,9 +3,9 @@
 
 #include "common.h"
 
-const static int width = 35;
-const static int height = 35;
-const static int depth = 35;
+const static int width = 85;
+const static int height = 85;
+const static int depth = 85;
 
 static float cubeVertices[] = {
     -0.5f, -0.5f, -0.5f,

@@ -51,9 +51,12 @@ void initializeVelocityTexCPU() {
                 float dy = y - center.y;
                 float dz = z - center.z;
 
-                data[i + 0] = (rand()%20-10) * 0.1f; // X component
-                data[i + 1] = (rand()%20-10) * 0.1f;  // Y component
-                data[i + 2] = 0.f * 0.1f;  // Z component
+                glm::vec3 d = glm::vec3(x, y, z) - center;
+                glm::vec3 dir = glm::normalize(glm::cross(d, glm::vec3(0, 1, 0))); // swirl around Y
+
+                data[i + 0] = dir.x * 0.2f;
+                data[i + 1] = dir.y * 0.2f;
+                data[i + 2] = dir.z * 0.2f;
                 data[i + 3] = 1.0f;
             }
         }

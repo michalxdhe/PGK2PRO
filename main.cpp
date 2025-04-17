@@ -20,7 +20,7 @@ void Game::init()
     for (unsigned int i = 0; i < nr_particles; ++i)
         particles.push_back(Particle());
 
-    initParticles();
+
     createAndLoadTexture(teksturaDymu,"uiTextures/smok.png", false);
 
     for(int i = 1; i <= numOfPlayers; i++)
@@ -67,6 +67,10 @@ void Game::init()
     createAndCompileShader("shaders/particleVertS.c",GL_VERTEX_SHADER,vertexShader);
     createAndCompileShader("shaders/particleFragS.c",GL_FRAGMENT_SHADER,fragmentShader);
     shaderPrograms.push_back(createProgram(vertexShader,fragmentShader));
+
+    glUseProgram(shaderPrograms[6]);
+
+    initParticles();
 
     createAndCompileShader("shaders/fluid.c",GL_COMPUTE_SHADER,computeShader);
     shaderPrograms.push_back(createProgram(computeShader));
@@ -346,6 +350,8 @@ void Game::update(const double deltaTime, uint32_t t)
     ImGui_ImplOpenGL3_NewFrame();
     ImGui_ImplSDL2_NewFrame();
     ImGui::NewFrame();
+
+    //simulateFluid(shaderPrograms[7],clamp(deltaTime,0.6,1.0));
 
     vector<int> deadPlayers;
 
