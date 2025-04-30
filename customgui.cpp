@@ -32,11 +32,56 @@ const glm::vec3 colors[EFFECTS_COUNT] = {
 };
 
 void GuiElement::renderOverlayTexture(GLuint textID, ImVec4 colorMult){
-    ImVec4 color_multiplier(1.0f * colorMult.x, 1.0f * colorMult.y, 1.0f * colorMult.z, 1.0f * colorMult.w);
-    ImU32 color = ImGui::GetColorU32(color_multiplier);
+    ImU32 color = ImGui::GetColorU32(colorMult);
     ImVec2 p_min = ImGui::GetWindowPos();
     ImVec2 p_max = ImVec2(p_min.x + ImGui::GetWindowWidth(), p_min.y + ImGui::GetWindowHeight());
     ImGui::GetWindowDrawList()->AddImage((void*)(intptr_t)textID, p_min, p_max, ImVec2(0.0f, 0.0f), ImVec2(1.0f, 1.0f), color);
+}
+
+PauseMenu::PauseMenu() = default;
+
+PauseMenu::PauseMenu(ImVec2 windowSize, int *sRef)
+{
+    soundRef = sRef;
+    this->screenSize = windowSize;
+    windowSpan = windowSize;
+}
+
+void PauseMenu::update(double deltaTime)
+{
+}
+
+void PauseMenu::render(unsigned int shaderProgram, std::vector<unsigned int> shaderPrograms)
+{
+    ImGui::SetNextWindowSize(ImVec2(screenSize.x, screenSize.y), ImGuiCond_Always);
+    ImGui::SetNextWindowPos(ImVec2(0.f,0.f), ImGuiCond_Always);
+    ImGui::Begin("PauseChamp", nullptr, invisPreset | ImGuiWindowFlags_NoBackground );
+    ImGui::SetWindowFocus();
+    renderOverlayTexture(testOverlay,ImVec4(1.0f,1.0f,1.0f,0.8f));
+
+    ImGui::SetCursorPosY(80.0f);
+
+    ImGui::PushFont(ImGui::GetIO().Fonts->Fonts[0]);
+    ImGui::SetWindowFontScale(2.0f);
+
+    const char* pauseText = "Pause";
+    float textWidth = ImGui::CalcTextSize(pauseText).x;
+    ImGui::SetCursorPosX((screenSize.x - textWidth) * 0.5f);
+
+    ImGui::Text("%s", pauseText);
+
+    ImGui::SetWindowFontScale(1.0f);
+    ImGui::PopFont();
+
+    float sliderWidth = screenSize.x * 0.5f;
+    ImGui::SetCursorPosX((screenSize.x - sliderWidth) * 0.5f);
+    ImGui::SetCursorPosY(50.0f);
+
+    ImGui::PushItemWidth(sliderWidth);
+    ImGui::SliderInt("Volume", soundRef, 0, 100);
+
+
+    ImGui::End();
 }
 
 TextParticle::TextParticle() = default;

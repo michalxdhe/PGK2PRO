@@ -50,6 +50,19 @@ public:
     void renderOverlayTexture(GLuint textID, ImVec4 colorMult);
 };
 
+class PauseMenu : public GuiElement
+{
+public:
+    ImVec2 screenSize;
+
+    int *soundRef;
+
+    PauseMenu();
+    PauseMenu(ImVec2 windowSize, int *sRef);
+    void update(double deltaTime);
+    void render(unsigned int shaderProgram, std::vector<unsigned int> shaderPrograms);
+};
+
 /** \brief Gui Obiekt tekstu ktory przeznaczony jest aby pokazac wartosc a nastepenie zniknac po pewnym czasie
  */
 class TextParticle : public GuiElement

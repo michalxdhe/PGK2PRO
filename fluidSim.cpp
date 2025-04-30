@@ -23,7 +23,7 @@ void initializeQuantTexCPU() {
                 int i = 4 * (x + y * width + z * width * height);
                 data[i + 0] = 1.0f; // R
                 data[i + 1] = 0.2f; // G
-                data[i + 2] = 0.0f; // B
+                data[i + 2] = 0.1f; // B
                 data[i + 3] = 1.0f; // A
             }
         }
@@ -40,32 +40,32 @@ void initializeVelocityTexCPU() {
     int size = width * height * depth * 4;
     std::vector<float> data(size, 0.0f);
 
-    glm::vec3 center = glm::vec3(width, height, depth) * 0.5f;
-
     for (int z = 0; z < depth; ++z) {
         for (int y = 0; y < height; ++y) {
             for (int x = 0; x < width; ++x) {
                 int i = 4 * (x + y * width + z * width * height);
 
-                float dx = x - center.x;
-                float dy = y - center.y;
-                float dz = z - center.z;
-
-                glm::vec3 d = glm::vec3(x, y, z) - center;
-                glm::vec3 dir = glm::normalize(glm::cross(d, glm::vec3(0, 1, 0))); // swirl around Y
-
-                data[i + 0] = dir.x * 0.2f;
-                data[i + 1] = dir.y * 0.2f;
-                data[i + 2] = dir.z * 0.2f;
-                data[i + 3] = 1.0f;
+                if(x > width/2){
+                    data[i + 0] = 2.6f;
+                    data[i + 1] = 2.6f;
+                    data[i + 2] = -2.6f;
+                    data[i + 3] = 1.0f;
+                }else{
+                    data[i + 0] = 2.6f;
+                    data[i + 1] = -2.6f;
+                    data[i + 2] = -2.6f;
+                    data[i + 3] = 1.0f;
+                }
             }
         }
     }
 
     glBindTexture(GL_TEXTURE_3D, velocityTex);
     glTexSubImage3D(GL_TEXTURE_3D, 0, 0, 0, 0, width, height, depth, GL_RGBA, GL_FLOAT, data.data());
-}
 
+    glBindTexture(GL_TEXTURE_3D, velocityTexTmp);
+    glTexSubImage3D(GL_TEXTURE_3D, 0, 0, 0, 0, width, height, depth, GL_RGBA, GL_FLOAT, data.data());
+}
 
 
 void createTextures(){
@@ -73,6 +73,8 @@ void createTextures(){
     quantTex = createVolumeTexture();
     quantTexPrev = createVolumeTexture();
     outputTex = createVolumeTexture();
+    velocityTexOut = createVolumeTexture();
+    velocityTexTmp = createVolumeTexture();
 
     glGenVertexArrays(1, &cubeVAO);
     glGenBuffers(1, &cubeVBO);
@@ -97,7 +99,10 @@ void simulateFluid(unsigned int shaderProgram, float dt){
     glUniform3f(glGetUniformLocation(shaderProgram, "gridSpacing"),
                 1.0f / gridSize.x, 1.0f / gridSize.y, 1.0f / gridSize.z);
 
+    glUniform1f(glGetUniformLocation(shaderProgram, "vorticityStrength"), 20.0f);
+
     glBindImageTexture(0, outputTex, 0, GL_TRUE, 0, GL_WRITE_ONLY, GL_RGBA32F);
+    glBindImageTexture(1, velocityTex, 0, GL_TRUE, 0, GL_READ_WRITE, GL_RGBA32F);
 
     glActiveTexture(GL_TEXTURE1);
     glBindTexture(GL_TEXTURE_3D, velocityTex);
@@ -111,9 +116,19 @@ void simulateFluid(unsigned int shaderProgram, float dt){
     glBindTexture(GL_TEXTURE_3D, quantTexPrev);
     glUniform1i(glGetUniformLocation(shaderProgram, "quantityPrev"), 3);
 
+    glActiveTexture(GL_TEXTURE4);
+    glBindTexture(GL_TEXTURE_3D, velocityTexTmp);
+    glUniform1i(glGetUniformLocation(shaderProgram, "velocityTemp"), 4);
+
     glDispatchCompute((gridSize.x + 7) / 8, (gridSize.y + 7) / 8, (gridSize.z + 7) / 8);
     glMemoryBarrier(GL_SHADER_IMAGE_ACCESS_BARRIER_BIT);
+
+    //glCopyImageSubData(quantTex, GL_TEXTURE_3D, 0, 0, 0, 0, quantTexPrev, GL_TEXTURE_3D, 0, 0, 0, 0, width, height, depth);
     std::swap(quantTex, outputTex);
+
+    //glCopyImageSubData(velocityTex, GL_TEXTURE_3D, 0, 0, 0, 0, velocityTexTmp, GL_TEXTURE_3D, 0, 0, 0, 0, width, height, depth);
+    //std::swap(velocityTex, velocityTexOut);
+
 }
 
 void renderFluid(unsigned int volumeShader){

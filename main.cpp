@@ -28,7 +28,7 @@ void Game::init()
         playerIntes[i] = make_unique<PlayerInterface>();
     }
     initiativeGui = make_unique<InitiativeTrackerGui>(ImVec2(Globals::windowW, Globals::windowH),&initiativeQueue,&initiativeHighlightID,&initiativeHighlightFlag);
-
+    pauseMenuChamp = make_unique<PauseMenu>(ImVec2(Globals::windowW, Globals::windowH), &soundVolume);
 
     HexGrid = GenerateHexGrid(boardSize);
     UnitFactory::initialize(&HexGrid);
@@ -200,21 +200,32 @@ void Game::input(const double deltaTime, uint32_t t)
         this->shutdown = 1;
         break;
     case SDL_KEYDOWN:
-        if(event.key.keysym.sym == SDLK_w)
-            kamera.w=1;
-        if(event.key.keysym.sym == SDLK_a)
-            kamera.a=1;
-        if(event.key.keysym.sym == SDLK_s)
-            kamera.s=1;
-        if(event.key.keysym.sym == SDLK_d)
-            kamera.d=1;
-        if(event.key.keysym.sym == SDLK_ESCAPE)
-            shutdown = 1;
-        if(event.key.keysym.sym == SDLK_SPACE){
-            simulateFluid(shaderPrograms[7],clamp(deltaTime,0.6,1.0));
-            endTurn();
+        if(event.key.keysym.sym == SDLK_p){
+            if(pause)
+            {
+                pause = 0;
+            }
+            else{
+                pause = 1;
+            }
         }
+        if(!pause){
+            if(event.key.keysym.sym == SDLK_w)
+                kamera.w=1;
+            if(event.key.keysym.sym == SDLK_a)
+                kamera.a=1;
+            if(event.key.keysym.sym == SDLK_s)
+                kamera.s=1;
+            if(event.key.keysym.sym == SDLK_d)
+                kamera.d=1;
+            if(event.key.keysym.sym == SDLK_ESCAPE)
+                shutdown = 1;
 
+            if(event.key.keysym.sym == SDLK_SPACE){
+                simulateFluid(shaderPrograms[7],clamp(deltaTime,0.6,1.0));
+                endTurn();
+            }
+        }
         break;
     case SDL_KEYUP:
         if(event.key.keysym.sym == SDLK_w)
@@ -228,6 +239,7 @@ void Game::input(const double deltaTime, uint32_t t)
         break;
     case SDL_MOUSEBUTTONDOWN:
     {
+        if(!pause){
         if(event.button.button == SDL_BUTTON_LEFT && !ImguiIOflag)
         {
             //LightCube* testlightcube = dynamic_cast<LightCube*>(lights[0].get());
@@ -316,30 +328,37 @@ void Game::input(const double deltaTime, uint32_t t)
             SDL_SetRelativeMouseMode(SDL_TRUE);
         }
         break;
+        }
     }
     case SDL_MOUSEBUTTONUP:
     {
-        if(event.button.button == SDL_BUTTON_MIDDLE)
-        {
-            holdRotate = 0;
-            SDL_SetRelativeMouseMode(SDL_FALSE);
+        if(!pause){
+            if(event.button.button == SDL_BUTTON_MIDDLE)
+            {
+                holdRotate = 0;
+                SDL_SetRelativeMouseMode(SDL_FALSE);
+            }
+            break;
         }
-        break;
     }
     case SDL_MOUSEMOTION:
     {
-        SDL_GetRelativeMouseState(&mousePosx, &mousePosy);
-        if(holdRotate)
-        {
-            kamera.ProcessMouseMovement(mousePosx, mousePosy);
-            SDL_WarpMouseInWindow(window, windowW/2,windowH/2);
+        if(!pause){
+            SDL_GetRelativeMouseState(&mousePosx, &mousePosy);
+            if(holdRotate)
+            {
+                kamera.ProcessMouseMovement(mousePosx, mousePosy);
+                SDL_WarpMouseInWindow(window, windowW/2,windowH/2);
+            }
+            break;
         }
-        break;
     }
     case SDL_MOUSEWHEEL:
     {
-        kamera.doZoom((float)(event.wheel.y));
-        break;
+        if(!pause){
+            kamera.doZoom((float)(event.wheel.y));
+            break;
+        }
     }
     }
 }
@@ -347,9 +366,7 @@ void Game::input(const double deltaTime, uint32_t t)
 void Game::update(const double deltaTime, uint32_t t)
 {
     //auto start = std::chrono::high_resolution_clock::now();
-    ImGui_ImplOpenGL3_NewFrame();
-    ImGui_ImplSDL2_NewFrame();
-    ImGui::NewFrame();
+
 
     //simulateFluid(shaderPrograms[7],clamp(deltaTime,0.6,1.0));
 
@@ -605,8 +622,6 @@ void Game::render(double deltaTime, uint32_t t)
 
     ///Glowny rendering
 
-    initiativeGui->render(shaderPrograms[0],shaderPrograms);
-
     glStencilMask(0x00);
 
     glUseProgram(shaderPrograms[0]);
@@ -636,7 +651,11 @@ void Game::render(double deltaTime, uint32_t t)
     renderFluid(shaderPrograms[6]);
 
     ///UI Render
+    initiativeGui->render(shaderPrograms[0],shaderPrograms);
     playerIntes[currentPlayersTurn]->renderGui(shaderPrograms[0],shaderPrograms);
+
+    if(pause)
+        pauseMenuChamp->render(shaderPrograms[0],shaderPrograms);
 
     ImGui::Render();
     ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
@@ -653,29 +672,48 @@ void Game::cleanup()
 
 int main(int argc, char *argv[])
 {
-    //                          inicjalizacje podstawowych zmiennych
     srand(time(NULL));
-    Game *game = new Game(1366,768,1);
 
-    //                           deltatajm
+    int width = 1366;
+    int height = 768;
+    int vsync = 1;
+
+    if (argc >= 4)
+    {
+        width = std::atoi(argv[1]);
+        height = std::atoi(argv[2]);
+        vsync = std::atoi(argv[3]);
+    }
+    else
+    {
+        std::cout << "Ni ma argumentow na tyle\n";
+    }
+
+    Game *game = new Game(width, height, vsync);
+
+    // DeltaTime setup
     uint32_t prevTime = 0;
     uint32_t currTime = 0;
     double deltaTime = (currTime - prevTime)/1000.0f;
 
-    //                           glowna petla gry
-
-    double klatki = 1.0 / 60.0; //dzielnik = FPS
+    double klatki = 1.0 / 60.0; //FPS divider
 
     game->init();
 
     while(!(game->shutdown))
     {
         game->inputCore(deltaTime, currTime);
-        game->updateCore(deltaTime, currTime);
+        ImGui_ImplOpenGL3_NewFrame();
+        ImGui_ImplSDL2_NewFrame();
+        ImGui::NewFrame();
+        if(!game->pause)
+            game->updateCore(deltaTime, currTime);
         game->renderCore(deltaTime, currTime);
+
         currTime = SDL_GetTicks();
         deltaTime = (currTime - prevTime)/1000.0f;
         prevTime = currTime;
+
         if (deltaTime < klatki)
         {
             SDL_Delay((klatki-deltaTime)*1000.0);

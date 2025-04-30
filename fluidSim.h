@@ -52,7 +52,7 @@ static float cubeVertices[] = {
 };
 
 
-static GLuint velocityTex, quantTex, quantTexPrev, outputTex, cubeVAO, cubeVBO;
+static GLuint velocityTex, velocityTexTmp, velocityTexOut, quantTex, quantTexPrev, outputTex, cubeVAO, cubeVBO;
 
 static std::vector<float> data(width * height * depth * 4);
 

@@ -1,0 +1,21 @@
+# depslib dependency file v1.0
+1745671967 source:c:\users\ja\desktop\pgk2pro\launcher\launcher\main.cpp
+	<windows.h>
+	<string>
+
+1745673199 source:c:\users\ja\desktop\nowy folder\launcher\main.cpp
+	<windows.h>
+	<string>
+
+1745673199 source:c:\users\ja\desktop\pgk2pro\launcher\main.cpp
+	<windows.h>
+	<string>
+
+1745674486 source:c:\garigette\pgk2prorepl\pgk2pro\launcher\main.cpp
+	<windows.h>
+	<string>
+
+1745867449 source:c:\garigette\pgk2pro\launcher\main.cpp
+	<windows.h>
+	<string>
+

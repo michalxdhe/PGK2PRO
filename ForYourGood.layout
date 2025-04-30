@@ -2,14 +2,222 @@
 <CodeBlocks_layout_file>
 	<FileVersion major="1" minor="0" />
 	<ActiveTarget name="Debug" />
-	<File name="shaders\smokeVertS.c" open="1" top="0" tabpos="8" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+	<File name="shaders\skyBoxFragS.c" open="1" top="0" tabpos="33" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="1163" topLine="33" />
+		</Cursor>
+	</File>
+	<File name="globals.h" open="1" top="0" tabpos="26" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="124" topLine="0" />
+		</Cursor>
+	</File>
+	<File name="mesh.h" open="1" top="0" tabpos="25" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="495" topLine="0" />
+		</Cursor>
+		<Folding>
+			<Collapse line="8" />
+			<Collapse line="26" />
+			<Collapse line="33" />
+		</Folding>
+	</File>
+	<File name="customgui.cpp" open="1" top="0" tabpos="16" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="505" topLine="36" />
+		</Cursor>
+		<Folding>
+			<Collapse line="100" />
+			<Collapse line="107" />
+			<Collapse line="253" />
+			<Collapse line="332" />
+			<Collapse line="377" />
+		</Folding>
+	</File>
+	<File name="shaders\fragmentS.c" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="416" topLine="30" />
+		</Cursor>
+	</File>
+	<File name="abilities.h" open="1" top="0" tabpos="14" split="0" active="1" splitpos="397" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="159" topLine="0" />
+		</Cursor>
+	</File>
+	<File name="shaders\particleFragS.c" open="1" top="0" tabpos="19" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="178" topLine="0" />
+		</Cursor>
+	</File>
+	<File name="particles.h" open="1" top="0" tabpos="10" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="281" topLine="0" />
+		</Cursor>
+	</File>
+	<File name="shaders\fluid.glsl" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="218" topLine="3" />
+		</Cursor>
+	</File>
+	<File name="animation.h" open="1" top="0" tabpos="30" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="288" topLine="67" />
+		</Cursor>
+	</File>
+	<File name="mindless.h" open="1" top="0" tabpos="2" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="1264" topLine="44" />
+		</Cursor>
+		<Folding>
+			<Collapse line="50" />
+			<Collapse line="344" />
+			<Collapse line="479" />
+			<Collapse line="512" />
+			<Collapse line="557" />
+			<Collapse line="592" />
+			<Collapse line="635" />
+			<Collapse line="709" />
+		</Folding>
+	</File>
+	<File name="imgui\imgui.cpp" open="0" top="0" tabpos="21" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="197834" topLine="3114" />
+		</Cursor>
+	</File>
+	<File name="cameraworks.h" open="0" top="0" tabpos="6" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="332" topLine="21" />
+		</Cursor>
+	</File>
+	<File name="metaphysical.h" open="1" top="0" tabpos="3" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="11380" topLine="258" />
+		</Cursor>
+		<Folding>
+			<Collapse line="21" />
+			<Collapse line="173" />
+			<Collapse line="218" />
+			<Collapse line="232" />
+			<Collapse line="255" />
+			<Collapse line="354" />
+		</Folding>
+	</File>
+	<File name="bone.h" open="1" top="0" tabpos="31" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="2370" topLine="72" />
+		</Cursor>
+	</File>
+	<File name="shaders\smokeComput.c" open="1" top="0" tabpos="8" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="1974" topLine="55" />
+		</Cursor>
+	</File>
+	<File name="shaders\vertexS.c" open="1" top="0" tabpos="20" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="521" topLine="23" />
+		</Cursor>
+	</File>
+	<File name="animator.h" open="1" top="0" tabpos="29" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="122" topLine="0" />
+		</Cursor>
+	</File>
+	<File name="shaders\smokeVertS.c" open="1" top="0" tabpos="7" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
 		<Cursor>
 			<Cursor1 position="144" topLine="0" />
 		</Cursor>
 	</File>
-	<File name="particles.cpp" open="1" top="0" tabpos="6" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+	<File name="shaders\smokeFragS.c" open="1" top="0" tabpos="6" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
 		<Cursor>
-			<Cursor1 position="633" topLine="9" />
+			<Cursor1 position="1735" topLine="50" />
+		</Cursor>
+	</File>
+	<File name="customgui.h" open="1" top="0" tabpos="15" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="2466" topLine="0" />
+		</Cursor>
+	</File>
+	<File name="particles.cpp" open="1" top="0" tabpos="11" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="633" topLine="56" />
+		</Cursor>
+	</File>
+	<File name="boardlogic.h" open="1" top="0" tabpos="13" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="2345" topLine="54" />
+		</Cursor>
+		<Folding>
+			<Collapse line="11" />
+			<Collapse line="28" />
+			<Collapse line="54" />
+		</Folding>
+	</File>
+	<File name="shaders\particleVertS.c" open="1" top="0" tabpos="18" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="155" topLine="5" />
+		</Cursor>
+	</File>
+	<File name="shaders\fluid.c" open="1" top="0" tabpos="9" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="460" topLine="0" />
+		</Cursor>
+	</File>
+	<File name="mousepick.h" open="1" top="0" tabpos="24" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="268" topLine="46" />
+		</Cursor>
+	</File>
+	<File name="fluidSim.cpp" open="1" top="0" tabpos="5" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="1948" topLine="139" />
+		</Cursor>
+	</File>
+	<File name="units.h" open="1" top="0" tabpos="21" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="1221" topLine="81" />
+		</Cursor>
+		<Folding>
+			<Collapse line="11" />
+		</Folding>
+	</File>
+	<File name="common.h" open="1" top="0" tabpos="28" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="165" topLine="6" />
+		</Cursor>
+	</File>
+	<File name="PlayerInterface.h" open="1" top="0" tabpos="12" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="277" topLine="0" />
+		</Cursor>
+	</File>
+	<File name="fluidSim.h" open="1" top="0" tabpos="4" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="1246" topLine="47" />
+		</Cursor>
+	</File>
+	<File name="weird.cpp" open="1" top="0" tabpos="27" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="56" topLine="0" />
+		</Cursor>
+	</File>
+	<File name="dijkstra.h" open="0" top="0" tabpos="13" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="2193" topLine="9" />
+		</Cursor>
+		<Folding>
+			<Collapse line="15" />
+			<Collapse line="56" />
+			<Collapse line="97" />
+		</Folding>
+	</File>
+	<File name="shaders.h" open="1" top="0" tabpos="17" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="4682" topLine="143" />
+		</Cursor>
+	</File>
+	<File name="camerarevolting.h" open="1" top="0" tabpos="34" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="2302" topLine="81" />
 		</Cursor>
 	</File>
 	<File name="units.cpp" open="1" top="0" tabpos="22" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
@@ -35,237 +243,25 @@
 			<Collapse line="476" />
 		</Folding>
 	</File>
-	<File name="shaders\particleFragS.c" open="1" top="0" tabpos="19" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+	<File name="soundbullshit.h" open="1" top="0" tabpos="23" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
 		<Cursor>
-			<Cursor1 position="178" topLine="0" />
+			<Cursor1 position="732" topLine="0" />
 		</Cursor>
-	</File>
-	<File name="common.h" open="1" top="0" tabpos="28" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="165" topLine="6" />
-		</Cursor>
-	</File>
-	<File name="PlayerInterface.h" open="1" top="0" tabpos="12" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="277" topLine="0" />
-		</Cursor>
-	</File>
-	<File name="main.cpp" open="1" top="0" tabpos="1" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="14138" topLine="188" />
-		</Cursor>
-		<Folding>
-			<Collapse line="193" />
-			<Collapse line="229" />
-			<Collapse line="380" />
-			<Collapse line="452" />
-		</Folding>
-	</File>
-	<File name="boardlogic.h" open="1" top="0" tabpos="13" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="3831" topLine="54" />
-		</Cursor>
-		<Folding>
-			<Collapse line="11" />
-			<Collapse line="28" />
-			<Collapse line="54" />
-		</Folding>
-	</File>
-	<File name="customgui.h" open="1" top="0" tabpos="15" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="2466" topLine="0" />
-		</Cursor>
-	</File>
-	<File name="units.h" open="1" top="0" tabpos="21" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="1221" topLine="81" />
-		</Cursor>
-		<Folding>
-			<Collapse line="11" />
-		</Folding>
-	</File>
-	<File name="shaders\fragmentS.c" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="416" topLine="30" />
-		</Cursor>
-	</File>
-	<File name="shaders\fluid.glsl" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="218" topLine="3" />
-		</Cursor>
-	</File>
-	<File name="dijkstra.h" open="0" top="0" tabpos="13" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="2193" topLine="9" />
-		</Cursor>
-		<Folding>
-			<Collapse line="15" />
-			<Collapse line="56" />
-			<Collapse line="97" />
-		</Folding>
 	</File>
 	<File name="model.h" open="1" top="0" tabpos="32" split="0" active="1" splitpos="0" zoom_1="-1" zoom_2="0">
 		<Cursor>
 			<Cursor1 position="6222" topLine="166" />
 		</Cursor>
 	</File>
-	<File name="weird.cpp" open="1" top="0" tabpos="27" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+	<File name="main.cpp" open="1" top="1" tabpos="1" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
 		<Cursor>
-			<Cursor1 position="56" topLine="0" />
-		</Cursor>
-	</File>
-	<File name="customgui.cpp" open="1" top="0" tabpos="16" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="505" topLine="36" />
+			<Cursor1 position="379" topLine="0" />
 		</Cursor>
 		<Folding>
-			<Collapse line="62" />
-			<Collapse line="75" />
-			<Collapse line="104" />
-			<Collapse line="109" />
-			<Collapse line="272" />
-			<Collapse line="332" />
-			<Collapse line="381" />
-		</Folding>
-	</File>
-	<File name="camerarevolting.h" open="1" top="0" tabpos="34" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="2386" topLine="81" />
-		</Cursor>
-	</File>
-	<File name="soundbullshit.h" open="1" top="0" tabpos="23" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="732" topLine="24" />
-		</Cursor>
-	</File>
-	<File name="shaders\particleVertS.c" open="1" top="0" tabpos="18" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="155" topLine="0" />
-		</Cursor>
-	</File>
-	<File name="shaders\smokeFragS.c" open="1" top="0" tabpos="7" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="173" topLine="21" />
-		</Cursor>
-	</File>
-	<File name="animation.h" open="1" top="0" tabpos="30" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="288" topLine="67" />
-		</Cursor>
-	</File>
-	<File name="shaders\smokeComput.c" open="1" top="1" tabpos="9" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="342" topLine="0" />
-		</Cursor>
-	</File>
-	<File name="metaphysical.h" open="1" top="0" tabpos="3" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="11380" topLine="333" />
-		</Cursor>
-		<Folding>
-			<Collapse line="21" />
-			<Collapse line="173" />
-			<Collapse line="218" />
-			<Collapse line="232" />
-			<Collapse line="255" />
-			<Collapse line="354" />
-		</Folding>
-	</File>
-	<File name="bone.h" open="1" top="0" tabpos="31" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="2370" topLine="72" />
-		</Cursor>
-	</File>
-	<File name="cameraworks.h" open="0" top="0" tabpos="6" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="332" topLine="21" />
-		</Cursor>
-	</File>
-	<File name="shaders\fluid.c" open="1" top="0" tabpos="10" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="460" topLine="0" />
-		</Cursor>
-	</File>
-	<File name="imgui\imgui.cpp" open="0" top="0" tabpos="21" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="197834" topLine="3114" />
-		</Cursor>
-	</File>
-	<File name="shaders.h" open="1" top="0" tabpos="17" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="4682" topLine="143" />
-		</Cursor>
-	</File>
-	<File name="animator.h" open="1" top="0" tabpos="29" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="122" topLine="0" />
-		</Cursor>
-	</File>
-	<File name="fluidSim.h" open="1" top="0" tabpos="4" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="1395" topLine="45" />
-		</Cursor>
-	</File>
-	<File name="particles.h" open="1" top="0" tabpos="11" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="281" topLine="0" />
-		</Cursor>
-	</File>
-	<File name="fluidSim.cpp" open="1" top="0" tabpos="5" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="1168" topLine="18" />
-		</Cursor>
-	</File>
-	<File name="mesh.h" open="1" top="0" tabpos="25" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="495" topLine="0" />
-		</Cursor>
-		<Folding>
-			<Collapse line="8" />
-			<Collapse line="26" />
-			<Collapse line="33" />
-		</Folding>
-	</File>
-	<File name="shaders\vertexS.c" open="1" top="0" tabpos="20" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="521" topLine="23" />
-		</Cursor>
-	</File>
-	<File name="globals.h" open="1" top="0" tabpos="26" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="124" topLine="0" />
-		</Cursor>
-	</File>
-	<File name="mousepick.h" open="1" top="0" tabpos="24" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="268" topLine="46" />
-		</Cursor>
-	</File>
-	<File name="shaders\skyBoxFragS.c" open="1" top="0" tabpos="33" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="51" topLine="0" />
-		</Cursor>
-	</File>
-	<File name="abilities.h" open="1" top="0" tabpos="14" split="0" active="1" splitpos="397" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="159" topLine="0" />
-		</Cursor>
-	</File>
-	<File name="mindless.h" open="1" top="0" tabpos="2" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="1264" topLine="57" />
-		</Cursor>
-		<Folding>
-			<Collapse line="350" />
-			<Collapse line="396" />
-			<Collapse line="427" />
-			<Collapse line="490" />
-			<Collapse line="529" />
-			<Collapse line="569" />
-			<Collapse line="609" />
-			<Collapse line="651" />
-			<Collapse line="728" />
-			<Collapse line="749" />
+			<Collapse line="193" />
+			<Collapse line="197" />
+			<Collapse line="366" />
+			<Collapse line="397" />
 		</Folding>
 	</File>
 </CodeBlocks_layout_file>

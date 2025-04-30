@@ -87,6 +87,9 @@ public:
     unordered_map<int, unique_ptr<PlayerInterface>> playerIntes;
     ///GUI inicjatywy
     unique_ptr<InitiativeTrackerGui> initiativeGui;
+    ///GUI PauseMenu
+    int soundVolume = 100;
+    unique_ptr<PauseMenu> pauseMenuChamp;
 
     ///Map'a grida, nwm to wpadl na to zeby uzywac float glm::vec3 jako key
     unordered_map<glm::vec3, HexCell> HexGrid;
@@ -119,6 +122,8 @@ public:
 
     ///Flaga stanowiaca czy pora isc spac
     bool shutdown = 0;
+
+    bool pause = 0;
 
     bool holdRotate = 0;
 
