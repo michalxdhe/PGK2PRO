@@ -82,6 +82,22 @@ void Game::init()
     createAndCompileShader("shaders/smokeComput.c",GL_COMPUTE_SHADER,computeShader);
     shaderPrograms.push_back(createProgram(computeShader));
 
+    createAndCompileShader("shaders/forceComput.c",GL_COMPUTE_SHADER,computeShader);
+    shaderPrograms.push_back(createProgram(computeShader));
+
+    createAndCompileShader("shaders/vortComput.c",GL_COMPUTE_SHADER,computeShader);
+    shaderPrograms.push_back(createProgram(computeShader));
+
+    createAndCompileShader("shaders/divComput.c",GL_COMPUTE_SHADER,computeShader);
+    shaderPrograms.push_back(createProgram(computeShader));
+
+    createAndCompileShader("shaders/pressureComput.c",GL_COMPUTE_SHADER,computeShader);
+    shaderPrograms.push_back(createProgram(computeShader));
+
+    createAndCompileShader("shaders/gradSubComput.c",GL_COMPUTE_SHADER,computeShader);
+    shaderPrograms.push_back(createProgram(computeShader));
+
+
     glDeleteShader(vertexShader);
     glDeleteShader(fragmentShader);
     glDeleteShader(computeShader);
@@ -123,30 +139,34 @@ void Game::init()
 
     lights.insert(make_pair<int,unique_ptr<LightSource>>(Globals::numberOfEntities++,make_unique<LightCube>(0.2f,0.2f,0.2f)));
 
-    for(int i = 0; i < boardSize*4; i++){
+    for(int i = 0; i < boardSize*4; i++)
+    {
         glm::vec3 randomHex = getRandomHex(boardSize);
         HexGrid[randomHex].passable = false;
     }
 
     for(int i = 0; i < 15; i++)
-        {//zmien to potem na ile surowcuw ma byc wygenerowanych TO:DO
-            glm::vec3 randomHex = getRandomHex(boardSize);
-            if(HexGrid[randomHex].passable && HexGrid[randomHex].presentResource == -1)
-                HexGrid[randomHex].presentResource = ORE; //zmien to potem na losowy surowiec
-            else{
-                i--;
-            }
-        }
-
-        for(int i = 0; i < 15; i++)
+    {
+        //zmien to potem na ile surowcuw ma byc wygenerowanych TO:DO
+        glm::vec3 randomHex = getRandomHex(boardSize);
+        if(HexGrid[randomHex].passable && HexGrid[randomHex].presentResource == -1)
+            HexGrid[randomHex].presentResource = ORE; //zmien to potem na losowy surowiec
+        else
         {
+            i--;
+        }
+    }
+
+    for(int i = 0; i < 15; i++)
+    {
         glm::vec3 randomHex = getRandomHex(boardSize);
         if(HexGrid[randomHex].passable && HexGrid[randomHex].presentResource == -1)
             HexGrid[randomHex].presentResource = GAS; //zmien to potem na losowy surowiec
-        else{
+        else
+        {
             i--;
         }
-        }
+    }
 
     skyBox = Cube(50.f,50.f,50.f);
 
@@ -183,9 +203,21 @@ void Game::init()
         obiekty[Globals::numberOfEntities++] = make_unique<Hexagon>(envModels[PEDESTAL], pair.second);
     }
 
-    createTextures();
-    initializeQuantTexCPU();
-    initializeVelocityTexCPU();
+    simA = new FluidSim({0,5,0}, {85,85,85}, {1.f/85,1.f/85,1.f/85});
+    simA->initialize();
+
+    ///TO:DO ogarnij dlaczego jak postawi sie cos blisko border'a to jakies permanentne rany siê robia na macierzach
+    /// divergence i velocity
+    ///TO:DO ogarnij dlaczego jak sie zrobi nie nie-cuebe'owy ksztalt simarea to wszystko sie wywala
+    ///pewnie dlatego ze zakladasz duzo razy ze pracujesz na cube coord
+    //simA->addSmokeSphere(glm::vec3(60, 42, 30), 10.0f, glm::vec4(0.0f,0.2f,1.0f,1.0f));
+    //simA->addSmokeSphere(glm::vec3(15, 42, 30), 10.0f, glm::vec4(1.0f,0.2f,0.0f,1.0f));
+    simA->addSmokeSphere(glm::vec3(40, 40, 40), 10.0f, glm::vec4(0.2f,1.0f,0.0f,1.0f));
+    //simA->addVelocityImpulse(glm::vec3(60.0f, 40.0f, 30.0f), 10.0f, glm::vec3(-22.0f, 0.0f, 0.0f));
+    //simA->addVelocityImpulse(glm::vec3(15.0f, 45.0f, 30.0f), 10.0f, glm::vec3(27.0f, 0.0f, 0.0f));
+    simA->addVelocityImpulse(glm::vec3(40.0f, 40.0f, 40.0f), 10.0f, glm::vec3(2.0f, -5.0f, 5.0f));
+
+    //simA->addVelocityImpulse(glm::vec3(60.0f, 42.0f, 30.0f), 15.0f, glm::vec3(25.0f, 25.0f, 0.0f));
 
     endTurn();
 }
@@ -200,16 +232,19 @@ void Game::input(const double deltaTime, uint32_t t)
         this->shutdown = 1;
         break;
     case SDL_KEYDOWN:
-        if(event.key.keysym.sym == SDLK_p){
+        if(event.key.keysym.sym == SDLK_p)
+        {
             if(pause)
             {
                 pause = 0;
             }
-            else{
+            else
+            {
                 pause = 1;
             }
         }
-        if(!pause){
+        if(!pause)
+        {
             if(event.key.keysym.sym == SDLK_w)
                 kamera.w=1;
             if(event.key.keysym.sym == SDLK_a)
@@ -220,9 +255,21 @@ void Game::input(const double deltaTime, uint32_t t)
                 kamera.d=1;
             if(event.key.keysym.sym == SDLK_ESCAPE)
                 shutdown = 1;
+            if(event.key.keysym.sym == SDLK_u){
+                simA->addSmokeSphere(glm::vec3(rand()%80, rand()%80, rand()%80), 10.0f, glm::vec4(0.2f,1.0f,0.0f,1.0f));
+                simA->addVelocityImpulse(glm::vec3(rand()%80, rand()%80, rand()%80), 10.0f, glm::vec3(-22.0f, 0.0f, 0.0f));
+            }
 
-            if(event.key.keysym.sym == SDLK_SPACE){
-                simulateFluid(shaderPrograms[7],clamp(deltaTime,0.6,1.0));
+            if(event.key.keysym.sym == SDLK_SPACE)
+            {
+                std::array<GLuint,6> test;
+                test[0] = shaderPrograms[7];
+                test[1] = shaderPrograms[8];
+                test[2] = shaderPrograms[9];
+                test[3] = shaderPrograms[10];
+                test[4] = shaderPrograms[11];
+                test[5] = shaderPrograms[12];
+                simA->simulate(test,clamp(deltaTime,0.5,1.0));
                 endTurn();
             }
         }
@@ -239,100 +286,102 @@ void Game::input(const double deltaTime, uint32_t t)
         break;
     case SDL_MOUSEBUTTONDOWN:
     {
-        if(!pause){
-        if(event.button.button == SDL_BUTTON_LEFT && !ImguiIOflag)
+        if(!pause)
         {
-            //LightCube* testlightcube = dynamic_cast<LightCube*>(lights[0].get());
-            //testlightcube->model = glm::translate(testlightcube->model,glm::vec3(0.f, 0.f, 0.5f));
-            //testlightcube->model = glm::rotate(testlightcube->model, 0.05f, glm::vec3(1.0f, 0.f, 0.0f));
-            //playerIntes[currentPlayersTurn]->ore++; //debug shit
-
-            ///resolving abilities if any selected
-            abilityCall tryCalling{.abilityID = -1};
-            if(!holdRotate && ray.closestID != -1 && playerIntes[currentPlayersTurn]->selectedID != -1)
+            if(event.button.button == SDL_BUTTON_LEFT && !ImguiIOflag)
             {
-                Unit* selectedBefore = dynamic_cast<Unit*>(obiekty[playerIntes[currentPlayersTurn]->selectedID].get());
-                Selectable* target = dynamic_cast<Selectable*>(obiekty[ray.closestID].get());
-                if(selectedBefore != nullptr && target != nullptr)
+                //LightCube* testlightcube = dynamic_cast<LightCube*>(lights[0].get());
+                //testlightcube->model = glm::translate(testlightcube->model,glm::vec3(0.f, 0.f, 0.5f));
+                //testlightcube->model = glm::rotate(testlightcube->model, 0.05f, glm::vec3(1.0f, 0.f, 0.0f));
+                //playerIntes[currentPlayersTurn]->ore++; //debug shit
+
+                ///resolving abilities if any selected
+                abilityCall tryCalling{.abilityID = -1};
+                if(!holdRotate && ray.closestID != -1 && playerIntes[currentPlayersTurn]->selectedID != -1)
                 {
-                    if(selectedBefore->selectedAbil != -1 && selectedBefore->ID == initiativeQueue.front().ID)
+                    Unit* selectedBefore = dynamic_cast<Unit*>(obiekty[playerIntes[currentPlayersTurn]->selectedID].get());
+                    Selectable* target = dynamic_cast<Selectable*>(obiekty[ray.closestID].get());
+                    if(selectedBefore != nullptr && target != nullptr)
                     {
-                        selectedBefore->commandLC(target, &tryCalling);
-                        handleAbility(tryCalling,this);
+                        if(selectedBefore->selectedAbil != -1 && selectedBefore->ID == initiativeQueue.front().ID)
+                        {
+                            selectedBefore->commandLC(target, &tryCalling);
+                            handleAbility(tryCalling,this);
+                        }
                     }
                 }
-            }
 
-            ///selecting and deselecting
-            if(tryCalling.abilityID == -1)
-            {
-                if(playerIntes[currentPlayersTurn]->selectedID != -1)
+                ///selecting and deselecting
+                if(tryCalling.abilityID == -1)
                 {
-                    Selectable* selectedBefore = dynamic_cast<Selectable*>(obiekty[playerIntes[currentPlayersTurn]->selectedID].get());
-                    selectedBefore->isSelected = false;
-                    playerIntes[currentPlayersTurn]->selectedID = -1;
-                }
-
-                if(!holdRotate && ray.closestID != -1)
-                {
-                    Selectable* hovered = dynamic_cast<Selectable*>(obiekty[ray.closestID].get());
-                    Unit* hasOwnership = dynamic_cast<Unit*>(obiekty[ray.closestID].get());
-                    if(hasOwnership == nullptr)
+                    if(playerIntes[currentPlayersTurn]->selectedID != -1)
                     {
-                        playerIntes[currentPlayersTurn]->selectedID = ray.closestID;
-                        hovered->onSelect();
+                        Selectable* selectedBefore = dynamic_cast<Selectable*>(obiekty[playerIntes[currentPlayersTurn]->selectedID].get());
+                        selectedBefore->isSelected = false;
+                        playerIntes[currentPlayersTurn]->selectedID = -1;
                     }
-                    else
+
+                    if(!holdRotate && ray.closestID != -1)
                     {
-                        if(hasOwnership->owner == currentPlayersTurn)
+                        Selectable* hovered = dynamic_cast<Selectable*>(obiekty[ray.closestID].get());
+                        Unit* hasOwnership = dynamic_cast<Unit*>(obiekty[ray.closestID].get());
+                        if(hasOwnership == nullptr)
                         {
                             playerIntes[currentPlayersTurn]->selectedID = ray.closestID;
                             hovered->onSelect();
                         }
+                        else
+                        {
+                            if(hasOwnership->owner == currentPlayersTurn)
+                            {
+                                playerIntes[currentPlayersTurn]->selectedID = ray.closestID;
+                                hovered->onSelect();
+                            }
+                        }
+                    }
+                }
+
+            }
+
+            if(event.button.button == SDL_BUTTON_RIGHT && !ImguiIOflag)
+            {
+                //LightCube* testlightcube = dynamic_cast<LightCube*>(lights[0].get());
+                //testlightcube->model = glm::translate(testlightcube->model,glm::vec3(0.f, 0.f, -0.5f));
+                //testlightcube->model = glm::rotate(testlightcube->model, -0.05f, glm::vec3(1.0f, 0.f, 0.0f));
+
+                if(!holdRotate && ray.closestID != -1 && playerIntes[currentPlayersTurn]->selectedID != -1)
+                {
+                    Unit* selectedBefore = dynamic_cast<Unit*>(obiekty[playerIntes[currentPlayersTurn]->selectedID].get());
+                    Selectable* target = dynamic_cast<Selectable*>(obiekty[ray.closestID].get());
+                    if(selectedBefore != nullptr && target != nullptr && selectedBefore->ID == initiativeQueue.front().ID)
+                    {
+                        abilityCall tryCalling;
+                        selectedBefore->commandRC(target, &tryCalling);
                     }
                 }
             }
 
-        }
-
-        if(event.button.button == SDL_BUTTON_RIGHT && !ImguiIOflag)
-        {
-            //LightCube* testlightcube = dynamic_cast<LightCube*>(lights[0].get());
-            //testlightcube->model = glm::translate(testlightcube->model,glm::vec3(0.f, 0.f, -0.5f));
-            //testlightcube->model = glm::rotate(testlightcube->model, -0.05f, glm::vec3(1.0f, 0.f, 0.0f));
-
-            if(!holdRotate && ray.closestID != -1 && playerIntes[currentPlayersTurn]->selectedID != -1)
+            if(event.button.button == SDL_BUTTON_MIDDLE)
             {
-                Unit* selectedBefore = dynamic_cast<Unit*>(obiekty[playerIntes[currentPlayersTurn]->selectedID].get());
-                Selectable* target = dynamic_cast<Selectable*>(obiekty[ray.closestID].get());
-                if(selectedBefore != nullptr && target != nullptr && selectedBefore->ID == initiativeQueue.front().ID)
+                if(ray.closestID != -1)
                 {
-                    abilityCall tryCalling;
-                    selectedBefore->commandRC(target, &tryCalling);
+                    Selectable* target = dynamic_cast<Selectable*>(obiekty[ray.closestID].get());
+                    if(target != nullptr)
+                    {
+                        target->refresh();
+                    }
                 }
+                ray.closestID = -1;
+                holdRotate = 1;
+                SDL_SetRelativeMouseMode(SDL_TRUE);
             }
-        }
-
-        if(event.button.button == SDL_BUTTON_MIDDLE)
-        {
-            if(ray.closestID != -1)
-            {
-                Selectable* target = dynamic_cast<Selectable*>(obiekty[ray.closestID].get());
-                if(target != nullptr)
-                {
-                    target->refresh();
-                }
-            }
-            ray.closestID = -1;
-            holdRotate = 1;
-            SDL_SetRelativeMouseMode(SDL_TRUE);
-        }
-        break;
+            break;
         }
     }
     case SDL_MOUSEBUTTONUP:
     {
-        if(!pause){
+        if(!pause)
+        {
             if(event.button.button == SDL_BUTTON_MIDDLE)
             {
                 holdRotate = 0;
@@ -343,7 +392,8 @@ void Game::input(const double deltaTime, uint32_t t)
     }
     case SDL_MOUSEMOTION:
     {
-        if(!pause){
+        if(!pause)
+        {
             SDL_GetRelativeMouseState(&mousePosx, &mousePosy);
             if(holdRotate)
             {
@@ -355,7 +405,8 @@ void Game::input(const double deltaTime, uint32_t t)
     }
     case SDL_MOUSEWHEEL:
     {
-        if(!pause){
+        if(!pause)
+        {
             kamera.doZoom((float)(event.wheel.y));
             break;
         }
@@ -367,12 +418,10 @@ void Game::update(const double deltaTime, uint32_t t)
 {
     //auto start = std::chrono::high_resolution_clock::now();
 
-
-    //simulateFluid(shaderPrograms[7],clamp(deltaTime,0.6,1.0));
-
     vector<int> deadPlayers;
 
-    for(const auto& pair : playerIntes){
+    for(const auto& pair : playerIntes)
+    {
         if(pair.second.get()->commanderID == -1)
             deadPlayers.push_back(pair.first);
     }
@@ -395,43 +444,57 @@ void Game::update(const double deltaTime, uint32_t t)
         pair.second->update(deltaTime);
     }
 
-    for(auto it = obiekty.begin(); it != obiekty.end();) {
+    for(auto it = obiekty.begin(); it != obiekty.end();)
+    {
         Unit* isUnit = dynamic_cast<Unit*>(it->second.get());
 
-        if(isUnit != nullptr) {
-            for(auto it: deadPlayers){
+        if(isUnit != nullptr)
+        {
+            for(auto it: deadPlayers)
+            {
                 if(it == isUnit->owner)
                     isUnit->takeDamage(999,true);
             }
 
-            if(isUnit->stats.health <= 0) {
+            if(isUnit->stats.health <= 0)
+            {
                 if(isUnit->ID == playerIntes[isUnit->owner]->commanderID)
                     playerIntes[isUnit->owner]->commanderID = -1;
 
                 if(playerIntes[currentPlayersTurn]->selectedID == isUnit->ID)
                     playerIntes[currentPlayersTurn]->selectedID  = -1;
-                    if(isUnit->stats.flying) {
-                            if(isUnit->ID == HexGrid[isUnit->hexPos].airID){
-                                HexGrid[isUnit->hexPos].airID = -1;
-                                HexGrid[isUnit->hexPos].occupiedAir = false;
-                            }
-                    } else {
-                            if(isUnit->ID == HexGrid[isUnit->hexPos].groundID){
-                                HexGrid[isUnit->hexPos].groundID = -1;
-                                HexGrid[isUnit->hexPos].occupiedGround = false;
-                            }
+                if(isUnit->stats.flying)
+                {
+                    if(isUnit->ID == HexGrid[isUnit->hexPos].airID)
+                    {
+                        HexGrid[isUnit->hexPos].airID = -1;
+                        HexGrid[isUnit->hexPos].occupiedAir = false;
                     }
+                }
+                else
+                {
+                    if(isUnit->ID == HexGrid[isUnit->hexPos].groundID)
+                    {
+                        HexGrid[isUnit->hexPos].groundID = -1;
+                        HexGrid[isUnit->hexPos].occupiedGround = false;
+                    }
+                }
 
                 int64_t tempID = isUnit->ID;
 
                 //it = obiekty.erase(it);
                 autoGraveyard.push_back(it->first);
 
-                for(auto queueIt = initiativeQueue.begin(); queueIt != initiativeQueue.end(); ++queueIt) {
-                    if(queueIt->ID == tempID) {
-                        if(tempID == initiativeQueue.front().ID) {
+                for(auto queueIt = initiativeQueue.begin(); queueIt != initiativeQueue.end(); ++queueIt)
+                {
+                    if(queueIt->ID == tempID)
+                    {
+                        if(tempID == initiativeQueue.front().ID)
+                        {
                             endTurn(tempID);
-                        } else {
+                        }
+                        else
+                        {
                             initiativeQueue.erase(queueIt);
                         }
                         break;
@@ -442,9 +505,11 @@ void Game::update(const double deltaTime, uint32_t t)
             }
         }
 
-        if(!holdRotate) {
+        if(!holdRotate)
+        {
             Selectable* d = dynamic_cast<Selectable*>(it->second.get());
-            if (d != nullptr) {
+            if (d != nullptr)
+            {
                 collisonCubeRay(ray, d->boundingBox, it->first);
                 d->refresh();
                 Globals::currentlyHoveredID = -1;
@@ -473,7 +538,8 @@ void Game::update(const double deltaTime, uint32_t t)
         }
     }
 
-    if(initiativeHighlightFlag && initiativeHighlightID != -1){
+    if(initiativeHighlightFlag && initiativeHighlightID != -1)
+    {
         Unit* isUnit = dynamic_cast<Unit*>(obiekty[initiativeHighlightID].get());
         if(isUnit != nullptr)
         {
@@ -485,21 +551,28 @@ void Game::update(const double deltaTime, uint32_t t)
 
 
     ///GIANT hack zeby pokazac zasieg umiejetnosci
-    if(playerIntes[currentPlayersTurn]->selectedID != -1){
+    if(playerIntes[currentPlayersTurn]->selectedID != -1)
+    {
         Unit* currentSelectedUnit = dynamic_cast<Unit*>(obiekty[playerIntes[currentPlayersTurn]->selectedID].get());
-        if(currentSelectedUnit != nullptr){
-            if(currentSelectedUnit->selectedAbil != -1 && Globals::currentlyHoveredID != -1){
+        if(currentSelectedUnit != nullptr)
+        {
+            if(currentSelectedUnit->selectedAbil != -1 && Globals::currentlyHoveredID != -1)
+            {
                 Hexagon* isHex = dynamic_cast<Hexagon*>(obiekty[Globals::currentlyHoveredID].get());
-                if(isHex != nullptr){
-                   vector<HexCell*> highlighted = getHexesFromAOE(currentSelectedUnit->hexPos,currentSelectedUnit->abilitiesAOE[currentSelectedUnit->selectedAbil],isHex->cell.LogicPos,&HexGrid);
-                    for(auto it : highlighted){
+                if(isHex != nullptr)
+                {
+                    vector<HexCell*> highlighted = getHexesFromAOE(currentSelectedUnit->hexPos,currentSelectedUnit->abilitiesAOE[currentSelectedUnit->selectedAbil],isHex->cell.LogicPos,&HexGrid);
+                    for(auto it : highlighted)
+                    {
                         it->moveRangeView = true;
                     }
                 }
                 Unit* isUnit = dynamic_cast<Unit*>(obiekty[Globals::currentlyHoveredID].get());
-                if(isUnit != nullptr){
-                   vector<HexCell*> highlighted = getHexesFromAOE(currentSelectedUnit->hexPos,currentSelectedUnit->abilitiesAOE[currentSelectedUnit->selectedAbil],isUnit->hexPos,&HexGrid);
-                    for(auto it : highlighted){
+                if(isUnit != nullptr)
+                {
+                    vector<HexCell*> highlighted = getHexesFromAOE(currentSelectedUnit->hexPos,currentSelectedUnit->abilitiesAOE[currentSelectedUnit->selectedAbil],isUnit->hexPos,&HexGrid);
+                    for(auto it : highlighted)
+                    {
                         it->moveRangeView = true;
                     }
                 }
@@ -507,7 +580,8 @@ void Game::update(const double deltaTime, uint32_t t)
         }
     }
 
-    for(auto it: autoGraveyard){
+    for(auto it: autoGraveyard)
+    {
         obiekty.erase(it);
         autoGraveyard.pop_back();
     }
@@ -515,8 +589,10 @@ void Game::update(const double deltaTime, uint32_t t)
     ///TO:DO we no ogarnij sie, czemu particle nie jest potomkiem Object wgl?
     ///bo nie chcemy go usuwac i zawsze ma byc ich tyle ile nr_particles pokazuje klaunie
     ///Particlesy
-    for(auto &it: particles){
-        if(it.life > 0.0f){
+    for(auto &it: particles)
+    {
+        if(it.life > 0.0f)
+        {
             glm::vec3 deltaVelocity = it.velocity * static_cast<float>(deltaTime);
             it.position += deltaVelocity;
             it.velocity.y = max(0.f,static_cast<float>(it.velocity.y - (it.gravity * deltaTime)));
@@ -524,11 +600,13 @@ void Game::update(const double deltaTime, uint32_t t)
             //glm::vec3 acceleration = (direction * glm::vec3(0.5f)) * static_cast<float>(deltaTime);
             //it.velocity += acceleration;
             it.life -= 1.f * deltaTime;
-        }else{
+        }
+        else
+        {
             /*it.position = glm::vec3((rand() % 49) - 24.5f, (rand() % 49) - 24.5f, (rand() % 49) - 24.5f);
             it.velocity = glm::vec3((rand() % 100 - 50) / 100.0f, (rand() % 100 - 50) / 100.0f, (rand() % 100 - 50) / 100.0f);
             it.life = 15.f + rand()%50;
-*/
+            */
 
             it.position = glm::vec3(0.f,3.f,0.f);
             it.velocity = glm::vec3((rand() % 100 - 50) / 100.0f, (rand() % 150) / 50.0f, (rand() % 100 - 50) / 100.0f);
@@ -648,7 +726,17 @@ void Game::render(double deltaTime, uint32_t t)
     //DrawParticles(shaderPrograms[4],particles);
 
     ///Fluid Render Test
-    renderFluid(shaderPrograms[6]);
+    std::array<GLuint,6> test;
+    test[0] = shaderPrograms[7];
+    test[1] = shaderPrograms[8];
+    test[2] = shaderPrograms[9];
+    test[3] = shaderPrograms[10];
+    test[4] = shaderPrograms[11];
+    test[5] = shaderPrograms[12];
+    //simA->simulate(test,clamp(deltaTime,0.1,1.0));
+    glm::mat4 viewProj = view * projection;
+    simA->render(shaderPrograms[6],view, projection);
+
 
     ///UI Render
     initiativeGui->render(shaderPrograms[0],shaderPrograms);

@@ -4,7 +4,8 @@ out vec4 FragColor;
 
 uniform sampler2D dym;
 
-void main() {
+void main()
+{
     vec4 texColor = texture(dym, gl_PointCoord);
     FragColor = ParticleColor * texColor;
 

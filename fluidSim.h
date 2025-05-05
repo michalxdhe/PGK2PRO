@@ -3,70 +3,63 @@
 
 #include "common.h"
 
-const static int width = 85;
-const static int height = 85;
-const static int depth = 85;
+class FluidSim
+{
+public:
+    FluidSim(const glm::vec3& worldPos,
+             const glm::ivec3& gridSize,
+             const glm::vec3& gridSpacing,
+             float dissipation      = 0.99f,
+             float vorticityStrength = 20.0f,
+             int   jacobiIters      = 20,
+             float scaleModifier     = 0.01f);
 
-static float cubeVertices[] = {
-    -0.5f, -0.5f, -0.5f,
-     0.5f, -0.5f, -0.5f,
-     0.5f,  0.5f, -0.5f,
-     0.5f,  0.5f, -0.5f,
-    -0.5f,  0.5f, -0.5f,
-    -0.5f, -0.5f, -0.5f,
+    ~FluidSim();
 
-    -0.5f, -0.5f,  0.5f,
-     0.5f, -0.5f,  0.5f,
-     0.5f,  0.5f,  0.5f,
-     0.5f,  0.5f,  0.5f,
-    -0.5f,  0.5f,  0.5f,
-    -0.5f, -0.5f,  0.5f,
+    void initialize();
 
-    -0.5f,  0.5f,  0.5f,
-    -0.5f,  0.5f, -0.5f,
-    -0.5f, -0.5f, -0.5f,
-    -0.5f, -0.5f, -0.5f,
-    -0.5f, -0.5f,  0.5f,
-    -0.5f,  0.5f,  0.5f,
+    void simulate(const std::array<GLuint,6>& progs, float dt);
 
-     0.5f,  0.5f,  0.5f,
-     0.5f,  0.5f, -0.5f,
-     0.5f, -0.5f, -0.5f,
-     0.5f, -0.5f, -0.5f,
-     0.5f, -0.5f,  0.5f,
-     0.5f,  0.5f,  0.5f,
+    void render(GLuint volumeShader, glm::mat4 view, glm::mat4 proj);
 
-    -0.5f, -0.5f, -0.5f,
-     0.5f, -0.5f, -0.5f,
-     0.5f, -0.5f,  0.5f,
-     0.5f, -0.5f,  0.5f,
-    -0.5f, -0.5f,  0.5f,
-    -0.5f, -0.5f, -0.5f,
+    void addSmokeBox(const glm::ivec3& minGrid,
+                     const glm::ivec3& maxGrid,
+                     const glm::vec4& color);
 
-    -0.5f,  0.5f, -0.5f,
-     0.5f,  0.5f, -0.5f,
-     0.5f,  0.5f,  0.5f,
-     0.5f,  0.5f,  0.5f,
-    -0.5f,  0.5f,  0.5f,
-    -0.5f,  0.5f, -0.5f,
+    void addSmokeSphere(const glm::vec3& centerGrid,
+                        float radius,
+                        const glm::vec4& color);
+
+    void addVelocityImpulse(const glm::vec3& centerGrid,
+                            float radius,
+                            const glm::vec3& impulse);
+
+private:
+    glm::ivec3 _gridSize;
+    glm::vec3  _gridSpacing;
+    float      _dissipation;
+    float      _vorticityStrength;
+    int        _jacobiIters;
+    glm::mat4  _model;
+    float   _scaleModifier;
+
+    GLuint _texVelocity,   _texVelocityPrev,   _texVelocityOut;
+    GLuint _texDensity,    _texDensityPrev,    _texDensityOut;
+    GLuint _texDivergence;
+    GLuint _texPressure,   _texPressurePrev;
+
+    static GLuint _cubeVAO, _cubeVBO;
+
+    GLuint createVolumeTexture(GLenum internalFmt, GLenum fmt, GLenum type);
+    void   initTexturesCPU();
+    void   setupCubeMesh();
+
+    void advect      (GLuint prog, float dt);
+    void applyForce  (GLuint prog, float dt);
+    void vorticityConfinement(GLuint prog, float dt);
+    void computeDivergence   (GLuint prog);
+    void solvePressure       (GLuint prog);
+    void projectVelocity     (GLuint prog);
 };
-
-
-static GLuint velocityTex, velocityTexTmp, velocityTexOut, quantTex, quantTexPrev, outputTex, cubeVAO, cubeVBO;
-
-static std::vector<float> data(width * height * depth * 4);
-
-GLuint createVolumeTexture();
-
-void initializeQuantTexCPU();
-
-void initializeVelocityTexCPU();
-
-void createTextures();
-
-void simulateFluid(unsigned int shaderProgram, float dt);
-
-void renderFluid(unsigned int volumeShader);
-
 
 #endif // FLUIDSIM_H_INCLUDED

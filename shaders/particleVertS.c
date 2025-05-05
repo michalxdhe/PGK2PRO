@@ -10,8 +10,10 @@ uniform mat4 projection;
 uniform vec3 cameraPos;
 uniform float baseSize = 15.f;
 
-void main() {
-    if (aLife > 0.0) {
+void main()
+{
+    if (aLife > 0.0)
+    {
         vec4 worldPos = vec4(aPos, 1.0);
         float testingos = length(cameraPos - aPos);
 

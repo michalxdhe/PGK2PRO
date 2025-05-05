@@ -41,9 +41,10 @@ void main()
         vec4 localPosition = finalBonesMatrices[boneIds[i]] * vec4(aPos,1.0f);
         totalPosition += localPosition * weights[i];
         totalNormal += mat3(finalBonesMatrices[boneIds[i]]) * Normal;
-   }
+    }
 
-    if(totalPosition == vec4(0.0f)){
+    if(totalPosition == vec4(0.0f))
+    {
         gl_Position = projection * view * vec4(FragPos, 1.0);
     }
     else

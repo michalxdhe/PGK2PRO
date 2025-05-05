@@ -100,6 +100,10 @@
 		<Unit filename="particles.cpp" />
 		<Unit filename="particles.h" />
 		<Unit filename="shaders.h" />
+		<Unit filename="shaders/divComput.c">
+			<Option compilerVar="CC" />
+			<Option target="Release" />
+		</Unit>
 		<Unit filename="shaders/fluid.c">
 			<Option compilerVar="CC" />
 			<Option target="Release" />
@@ -107,7 +111,15 @@
 		<Unit filename="shaders/fluid.glsl">
 			<Option target="Release" />
 		</Unit>
+		<Unit filename="shaders/forceComput.c">
+			<Option compilerVar="CC" />
+			<Option target="Release" />
+		</Unit>
 		<Unit filename="shaders/fragmentS.c">
+			<Option compilerVar="CC" />
+			<Option target="Release" />
+		</Unit>
+		<Unit filename="shaders/gradSubComput.c">
 			<Option compilerVar="CC" />
 			<Option target="Release" />
 		</Unit>
@@ -124,6 +136,10 @@
 			<Option target="Release" />
 		</Unit>
 		<Unit filename="shaders/particleVertS.c">
+			<Option compilerVar="CC" />
+			<Option target="Release" />
+		</Unit>
+		<Unit filename="shaders/pressureComput.c">
 			<Option compilerVar="CC" />
 			<Option target="Release" />
 		</Unit>
@@ -148,6 +164,10 @@
 			<Option target="Release" />
 		</Unit>
 		<Unit filename="shaders/vertexS.c">
+			<Option compilerVar="CC" />
+			<Option target="Release" />
+		</Unit>
+		<Unit filename="shaders/vortComput.c">
 			<Option compilerVar="CC" />
 			<Option target="Release" />
 		</Unit>

@@ -23,10 +23,12 @@ float ambientStrength = 0.5;
 
 void main()
 {
-    if(factionHighlight){
+    if(factionHighlight)
+    {
         FragColor = vec4(vec3(1.0), 1.0);
     }
-    else{
+    else
+    {
 
         vec3 color = texture(texture1, TexCoords).rgb;
         vec3 normal = normalize(Normal);
@@ -44,17 +46,20 @@ void main()
         spec = pow(max(dot(normal, halfwayDir), 0.0), 64.0);
         vec3 specular = spec * lightColor;
 
-        if(moveRange){
+        if(moveRange)
+        {
             diffuse *= 0.5;
             specular *= 0.5;
         }
 
-        if(hoveredHex){
+        if(hoveredHex)
+        {
             diffuse *= 0.5;
             specular *= 0.5;
         }
 
-        if(abilityRange){
+        if(abilityRange)
+        {
             diffuse *= 0.5;
             specular *= 0.5;
             color *= vec3(1,0,0);

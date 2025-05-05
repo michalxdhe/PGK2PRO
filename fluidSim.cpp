@@ -1,158 +1,549 @@
-#include "fluidSim.h"
+#include "FluidSim.h"
 
-GLuint createVolumeTexture() {
+GLuint FluidSim::_cubeVAO = 0;
+GLuint FluidSim::_cubeVBO = 0;
+
+FluidSim::FluidSim(const glm::vec3& worldPos,
+                   const glm::ivec3& gridSize,
+                   const glm::vec3& gridSpacing,
+                   float dissipation,
+                   float vorticityStrength,
+                   int jacobiIters,
+                   float scaleModifier)
+    : _gridSize(gridSize)
+    , _gridSpacing(gridSpacing)
+    , _dissipation(dissipation)
+    , _vorticityStrength(vorticityStrength)
+    , _jacobiIters(jacobiIters)
+    , _scaleModifier(scaleModifier)
+{
+
+    glm::vec3 renderSize = glm::vec3(gridSize) * scaleModifier;
+
+    _model = glm::translate(glm::mat4(1.0f), worldPos);
+    _model = glm::scale   (_model, renderSize);
+
+}
+
+FluidSim::~FluidSim()
+{
+    GLuint toDel[9] =
+    {
+        _texVelocity, _texVelocityPrev, _texVelocityOut,
+        _texDensity,  _texDensityPrev,  _texDensityOut,
+        _texDivergence,
+        _texPressure, _texPressurePrev
+    };
+    glDeleteTextures(9, toDel);
+}
+
+void FluidSim::initialize()
+{
+    initTexturesCPU();
+    if (_cubeVAO == 0) setupCubeMesh();
+}
+
+GLuint FluidSim::createVolumeTexture(GLenum internalFmt, GLenum fmt, GLenum type)
+{
     GLuint tex;
     glGenTextures(1, &tex);
     glBindTexture(GL_TEXTURE_3D, tex);
-    glTexImage3D(GL_TEXTURE_3D, 0, GL_RGBA32F, width, height, depth, 0, GL_RGBA, GL_FLOAT, nullptr);
+    glTexImage3D(GL_TEXTURE_3D, 0, internalFmt,
+                 _gridSize.x, _gridSize.y, _gridSize.z,
+                 0, fmt, type, nullptr);
     glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
     glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-    glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-    glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-    glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
+    //float borderColor[] = { 0.0f, 0.0f, 0.0f, 0.0f };
+    //glTexParameterfv(GL_TEXTURE_3D, GL_TEXTURE_BORDER_COLOR, borderColor);
+    glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE );
+    glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE );
+    glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE );
     return tex;
 }
 
-void initializeQuantTexCPU() {
-    int size = width * height * depth * 4;
-    std::vector<float> data(size, 0.0f);
+void FluidSim::initTexturesCPU()
+{
+    _texDensity     = createVolumeTexture(GL_RGBA32F, GL_RGBA, GL_FLOAT);
+    _texDensityPrev = createVolumeTexture(GL_RGBA32F, GL_RGBA, GL_FLOAT);
+    _texDensityOut  = createVolumeTexture(GL_RGBA32F, GL_RGBA, GL_FLOAT);
 
-    for (int z = depth/4; z < 3*depth/4; ++z) {
-        for (int y = height/4; y < 3*height/4; ++y) {
-            for (int x = width/4; x < 3*width/4; ++x) {
-                int i = 4 * (x + y * width + z * width * height);
-                data[i + 0] = 1.0f; // R
-                data[i + 1] = 0.2f; // G
-                data[i + 2] = 0.1f; // B
-                data[i + 3] = 1.0f; // A
-            }
-        }
-    }
+    _texVelocity    = createVolumeTexture(GL_RGBA32F, GL_RGBA, GL_FLOAT);
+    _texVelocityPrev = createVolumeTexture(GL_RGBA32F, GL_RGBA, GL_FLOAT);
+    _texVelocityOut = createVolumeTexture(GL_RGBA32F, GL_RGBA, GL_FLOAT);
 
-    glBindTexture(GL_TEXTURE_3D, quantTex);
-    glTexSubImage3D(GL_TEXTURE_3D, 0, 0, 0, 0, width, height, depth, GL_RGBA, GL_FLOAT, data.data());
+    _texDivergence  = createVolumeTexture(GL_R32F,    GL_RED,  GL_FLOAT);
+    _texPressure    = createVolumeTexture(GL_R32F,    GL_RED,  GL_FLOAT);
+    _texPressurePrev = createVolumeTexture(GL_R32F,    GL_RED,  GL_FLOAT);
 
-    glBindTexture(GL_TEXTURE_3D, quantTexPrev);
-    glTexSubImage3D(GL_TEXTURE_3D, 0, 0, 0, 0, width, height, depth, GL_RGBA, GL_FLOAT, data.data());
+    size_t voxels = size_t(_gridSize.x)*_gridSize.y*_gridSize.z;
+    std::vector<float> zeroRGBA(voxels*4, 0.0f);
+    std::vector<float> zeroR  (voxels,   0.0f);
+
+    auto clearTex = [&](GLuint tex, GLenum fmt, void* data)
+    {
+        glBindTexture(GL_TEXTURE_3D, tex);
+        glTexSubImage3D(GL_TEXTURE_3D,0,0,0,0,
+                        _gridSize.x,_gridSize.y,_gridSize.z,
+                        fmt, GL_FLOAT, data);
+    };
+    clearTex(_texDensity,    GL_RGBA, zeroRGBA.data());
+    clearTex(_texDensityPrev,GL_RGBA, zeroRGBA.data());
+    clearTex(_texVelocity,   GL_RGBA, zeroRGBA.data());
+    clearTex(_texVelocityPrev,GL_RGBA, zeroRGBA.data());
+    clearTex(_texDivergence, GL_RED,  zeroR.data());
+    clearTex(_texPressure,   GL_RED,  zeroR.data());
+    clearTex(_texPressurePrev,GL_RED,  zeroR.data());
+    clearTex(_texDensityOut,  GL_RGBA, zeroRGBA.data());
+    clearTex(_texVelocityOut, GL_RGBA, zeroRGBA.data());
 }
 
-void initializeVelocityTexCPU() {
-    int size = width * height * depth * 4;
-    std::vector<float> data(size, 0.0f);
+void FluidSim::setupCubeMesh()
+{
+    float verts[] =
+    {
+            -0.5f,-0.5f,-0.5f,  0.5f,-0.5f,-0.5f,  0.5f, 0.5f,-0.5f,
+            0.5f, 0.5f,-0.5f, -0.5f, 0.5f,-0.5f, -0.5f,-0.5f,-0.5f,
+            -0.5f,-0.5f, 0.5f,  0.5f,-0.5f, 0.5f,  0.5f, 0.5f, 0.5f,
+            0.5f, 0.5f, 0.5f, -0.5f, 0.5f, 0.5f, -0.5f,-0.5f, 0.5f,
+            -0.5f, 0.5f, 0.5f, -0.5f, 0.5f,-0.5f, -0.5f,-0.5f,-0.5f,
+            -0.5f,-0.5f,-0.5f, -0.5f,-0.5f, 0.5f, -0.5f, 0.5f, 0.5f,
+            0.5f, 0.5f, 0.5f,  0.5f, 0.5f,-0.5f,  0.5f,-0.5f,-0.5f,
+            0.5f,-0.5f,-0.5f,  0.5f,-0.5f, 0.5f,  0.5f, 0.5f, 0.5f,
+            -0.5f,-0.5f, 0.5f,  0.5f,-0.5f, 0.5f,  0.5f,-0.5f,-0.5f,
+            0.5f,-0.5f,-0.5f, -0.5f,-0.5f,-0.5f, -0.5f,-0.5f, 0.5f,
+            -0.5f, 0.5f,-0.5f,  0.5f, 0.5f,-0.5f,  0.5f, 0.5f, 0.5f,
+            0.5f, 0.5f, 0.5f, -0.5f, 0.5f, 0.5f, -0.5f, 0.5f,-0.5f
+        };
+    glGenVertexArrays(1, &_cubeVAO);
+    glGenBuffers(1, &_cubeVBO);
+    glBindVertexArray(_cubeVAO);
+    glBindBuffer(GL_ARRAY_BUFFER, _cubeVBO);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(verts), verts, GL_STATIC_DRAW);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3*sizeof(float), (void*)0);
+    glEnableVertexAttribArray(0);
+    glBindVertexArray(0);
+}
 
-    for (int z = 0; z < depth; ++z) {
-        for (int y = 0; y < height; ++y) {
-            for (int x = 0; x < width; ++x) {
-                int i = 4 * (x + y * width + z * width * height);
+void FluidSim::simulate(const std::array<GLuint,6>& P, float dt)
+{
+    glCopyImageSubData(
+        _texDensity,   GL_TEXTURE_3D, 0, 0,0,0,
+        _texDensityPrev, GL_TEXTURE_3D, 0, 0,0,0,
+        _gridSize.x, _gridSize.y, _gridSize.z
+    );
 
-                if(x > width/2){
-                    data[i + 0] = 2.6f;
-                    data[i + 1] = 2.6f;
-                    data[i + 2] = -2.6f;
-                    data[i + 3] = 1.0f;
-                }else{
-                    data[i + 0] = 2.6f;
-                    data[i + 1] = -2.6f;
-                    data[i + 2] = -2.6f;
-                    data[i + 3] = 1.0f;
+    glMemoryBarrier(GL_TEXTURE_FETCH_BARRIER_BIT | GL_SHADER_IMAGE_ACCESS_BARRIER_BIT);
+
+    glCopyImageSubData(
+        _texVelocity,   GL_TEXTURE_3D, 0, 0,0,0,
+        _texVelocityPrev, GL_TEXTURE_3D, 0, 0,0,0,
+        _gridSize.x, _gridSize.y, _gridSize.z
+    );
+
+    glMemoryBarrier(GL_TEXTURE_FETCH_BARRIER_BIT | GL_SHADER_IMAGE_ACCESS_BARRIER_BIT);
+
+    advect      (P[0], dt);
+    applyForce  (P[1], dt);
+    vorticityConfinement(P[2], dt);
+    computeDivergence   (P[3]);
+    solvePressure       (P[4]);
+    projectVelocity     (P[5]);
+    std::swap(_texDensity,  _texDensityOut);
+    std::swap(_texVelocity, _texVelocityOut);
+}
+
+void FluidSim::advect(GLuint prog, float dt)
+{
+    glUseProgram(prog);
+
+    glUniform1f(glGetUniformLocation(prog, "timeStep"),     dt);
+    glUniform1f(glGetUniformLocation(prog, "dissipation"),  _dissipation);
+    glUniform3fv(glGetUniformLocation(prog,"gridSize"),1, glm::value_ptr(glm::vec3(_gridSize)));
+    glUniform3fv(glGetUniformLocation(prog,"gridSpacing"),1, glm::value_ptr(_gridSpacing));
+
+    glBindImageTexture(0, _texDensityOut, 0, GL_TRUE, 0, GL_WRITE_ONLY, GL_RGBA32F);
+    glBindImageTexture(1, _texVelocityOut,0, GL_TRUE, 0, GL_WRITE_ONLY, GL_RGBA32F);
+
+    glActiveTexture(GL_TEXTURE1);
+    glBindTexture(GL_TEXTURE_3D, _texVelocity);
+    glUniform1i(glGetUniformLocation(prog, "velocity"), 1);
+
+    glActiveTexture(GL_TEXTURE2);
+    glBindTexture(GL_TEXTURE_3D, _texVelocityPrev);
+    glUniform1i(glGetUniformLocation(prog, "velocityTemp"), 2);
+
+    glActiveTexture(GL_TEXTURE3);
+    glBindTexture(GL_TEXTURE_3D, _texDensity);
+    glUniform1i(glGetUniformLocation(prog, "quantity"), 3);
+
+    glActiveTexture(GL_TEXTURE4);
+    glBindTexture(GL_TEXTURE_3D, _texDensityPrev);
+    glUniform1i(glGetUniformLocation(prog, "quantityPrev"), 4);
+
+    GLuint wx = (_gridSize.x +7)/8,
+           wy = (_gridSize.y +7)/8,
+           wz = (_gridSize.z +7)/8;
+    glDispatchCompute(wx, wy, wz);
+    glMemoryBarrier(GL_SHADER_IMAGE_ACCESS_BARRIER_BIT);
+}
+
+void FluidSim::applyForce(GLuint prog, float dt)
+{
+    glUseProgram(prog);
+
+    GLint locVel = glGetUniformLocation(prog, "velocity");
+    assert(locVel >= 0);
+    glActiveTexture(GL_TEXTURE1);
+    glBindTexture(GL_TEXTURE_3D, _texVelocity);
+    glUniform1i(locVel, 1);
+
+    GLint locDen = glGetUniformLocation(prog, "quantity");
+    assert(locDen >= 0);
+    glActiveTexture(GL_TEXTURE2);
+    glBindTexture(GL_TEXTURE_3D, _texDensity);
+    glUniform1i(locDen, 2);
+
+    GLint locTs  = glGetUniformLocation(prog, "timeStep");
+    GLint locGs  = glGetUniformLocation(prog, "gridSize");
+    GLint locAl  = glGetUniformLocation(prog, "alpha");
+    GLint locAd  = glGetUniformLocation(prog, "ambientDensity");
+
+    glUniform1f(locTs, dt);
+    glUniform3fv(locGs,  1, glm::value_ptr(glm::vec3(_gridSize)));
+    glUniform1f(locAl,    0.1f);
+    glUniform1f(locAd,    0.1f);
+
+    glBindImageTexture(0, _texVelocityOut,
+                       0, GL_TRUE, 0,
+                       GL_WRITE_ONLY, GL_RGBA32F);
+
+    GLuint wx = (_gridSize.x +7)/8,
+           wy = (_gridSize.y +7)/8,
+           wz = (_gridSize.z +7)/8;
+    glDispatchCompute(wx, wy, wz);
+    glMemoryBarrier(GL_SHADER_IMAGE_ACCESS_BARRIER_BIT);
+}
+
+
+void FluidSim::vorticityConfinement(GLuint prog, float dt)
+{
+    glUseProgram(prog);
+
+    glUniform1f(glGetUniformLocation(prog, "timeStep"), dt);
+    glUniform3fv(glGetUniformLocation(prog,"gridSize"),1, glm::value_ptr(glm::vec3(_gridSize)));
+    glUniform3fv(glGetUniformLocation(prog,"gridSpacing"),1, glm::value_ptr(_gridSpacing));
+    glUniform1f(glGetUniformLocation(prog, "vorticityStrength"), _vorticityStrength);
+
+    glBindImageTexture(0, _texVelocityOut, 0, GL_TRUE, 0,
+                       GL_WRITE_ONLY, GL_RGBA32F);
+
+    glActiveTexture(GL_TEXTURE1);
+    glBindTexture(GL_TEXTURE_3D, _texVelocity);
+    glUniform1i(glGetUniformLocation(prog, "velocity"), 1);
+
+    GLuint wx = (_gridSize.x +7)/8,
+           wy = (_gridSize.y +7)/8,
+           wz = (_gridSize.z +7)/8;
+    glDispatchCompute(wx, wy, wz);
+    glMemoryBarrier(GL_SHADER_IMAGE_ACCESS_BARRIER_BIT);
+}
+
+void FluidSim::computeDivergence(GLuint prog)
+{
+    glUseProgram(prog);
+
+    GLint locVel = glGetUniformLocation(prog, "velocity");
+    assert(locVel >= 0);
+    glActiveTexture(GL_TEXTURE1);
+    glBindTexture(GL_TEXTURE_3D, _texVelocity);
+    glUniform1i(locVel, 1);
+
+    GLint locGS  = glGetUniformLocation(prog, "gridSize");
+    GLint locGSp = glGetUniformLocation(prog, "gridSpacing");
+
+    glUniform3fv(locGS,  1, glm::value_ptr(glm::vec3(_gridSize)));
+    glUniform3fv(locGSp, 1, glm::value_ptr(_gridSpacing));
+
+    glBindImageTexture(0, _texDivergence,
+                       0, GL_TRUE, 0,
+                       GL_WRITE_ONLY, GL_R32F);
+
+    GLuint wx = (_gridSize.x +7)/8,
+           wy = (_gridSize.y +7)/8,
+           wz = (_gridSize.z +7)/8;
+    glDispatchCompute(wx, wy, wz);
+    glMemoryBarrier(GL_SHADER_IMAGE_ACCESS_BARRIER_BIT);
+}
+
+
+void FluidSim::solvePressure(GLuint prog)
+{
+    glUseProgram(prog);
+
+    float alpha   = -_gridSpacing.x * _gridSpacing.x;
+    float invBeta = 1.0f / 6.0f;
+    glUniform1f(glGetUniformLocation(prog, "alpha"),   alpha);
+    glUniform1f(glGetUniformLocation(prog, "invBeta"), invBeta);
+    glUniform3fv(glGetUniformLocation(prog,"gridSize"),1, glm::value_ptr(glm::vec3(_gridSize)));
+
+    GLuint wx = (_gridSize.x +7)/8,
+           wy = (_gridSize.y +7)/8,
+           wz = (_gridSize.z +7)/8;
+
+    for(int i = 0; i < _jacobiIters; ++i)
+    {
+        glBindImageTexture(0, _texPressurePrev,  0, GL_TRUE, 0, GL_WRITE_ONLY, GL_R32F);
+
+        glActiveTexture(GL_TEXTURE1);
+        glBindTexture(GL_TEXTURE_3D, _texPressure);
+        glUniform1i(glGetUniformLocation(prog, "pressure"), 1);
+
+        glActiveTexture(GL_TEXTURE2);
+        glBindTexture(GL_TEXTURE_3D, _texDivergence);
+        glUniform1i(glGetUniformLocation(prog, "divergence"), 2);
+
+        glDispatchCompute(wx, wy, wz);
+        glMemoryBarrier(GL_SHADER_IMAGE_ACCESS_BARRIER_BIT);
+        std::swap(_texPressure, _texPressurePrev);
+    }
+}
+
+void FluidSim::projectVelocity(GLuint prog)
+{
+    glUseProgram(prog);
+
+    glUniform3fv(glGetUniformLocation(prog,"gridSize"),1, glm::value_ptr(glm::vec3(_gridSize)));
+    glUniform3fv(glGetUniformLocation(prog,"gridSpacing"),1, glm::value_ptr(_gridSpacing));
+
+    glBindImageTexture(0, _texVelocityOut, 0, GL_TRUE, 0,
+                       GL_WRITE_ONLY, GL_RGBA32F);
+
+    glActiveTexture(GL_TEXTURE1);
+    glBindTexture(GL_TEXTURE_3D, _texVelocity);
+    glUniform1i(glGetUniformLocation(prog, "velocity"), 1);
+
+    glActiveTexture(GL_TEXTURE2);
+    glBindTexture(GL_TEXTURE_3D, _texPressure);
+    glUniform1i(glGetUniformLocation(prog, "pressure"), 2);
+
+    GLuint wx = (_gridSize.x +7)/8,
+           wy = (_gridSize.y +7)/8,
+           wz = (_gridSize.z +7)/8;
+    glDispatchCompute(wx, wy, wz);
+    glMemoryBarrier(GL_SHADER_IMAGE_ACCESS_BARRIER_BIT);
+}
+
+
+void FluidSim::render(GLuint volumeShader, glm::mat4 view, glm::mat4 proj)
+{
+ std::array<GLuint,4> textures = {
+        _texDensity,
+        _texVelocity,
+        _texDivergence,
+        _texPressure
+    };
+
+    glUseProgram(volumeShader);
+
+    GLint locModel    = glGetUniformLocation(volumeShader, "model");
+    GLint locInvModel = glGetUniformLocation(volumeShader, "invModel");
+    GLint locView     = glGetUniformLocation(volumeShader, "view");
+    GLint locProj     = glGetUniformLocation(volumeShader, "projection");
+    GLint locVolume   = glGetUniformLocation(volumeShader, "volumeTex");
+
+    glUniformMatrix4fv(locView, 1, GL_FALSE, glm::value_ptr(view));
+    glUniformMatrix4fv(locProj, 1, GL_FALSE, glm::value_ptr(proj));
+
+    float sx = _gridSize.x * _gridSpacing.x;
+    float sy = _gridSize.y * _gridSpacing.y;
+    float sz = _gridSize.z * _gridSpacing.z;
+
+    float cubeSize = std::max(std::max(sx, sy), sz);
+
+    float spacing = cubeSize * 1.2f;
+
+    glBindVertexArray(_cubeVAO);
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    glDepthMask(GL_FALSE);
+
+    for (int i = 0; i < 4; ++i) {
+        float offset = (i - 1.5f) * spacing;
+
+        glm::mat4 M = glm::translate(glm::mat4(1.0f), glm::vec3(offset, 0.0f, 0.0f))* _model;
+
+        glUniformMatrix4fv(locModel,    1, GL_FALSE, glm::value_ptr(M));
+        glUniformMatrix4fv(locInvModel, 1, GL_FALSE,
+             glm::value_ptr(glm::inverse(M)));
+
+        glUniform1i(glGetUniformLocation(volumeShader, "visualizeMode"),i);
+
+        glActiveTexture(GL_TEXTURE0);
+        glBindTexture(GL_TEXTURE_3D, textures[i]);
+        glUniform1i(locVolume, 0);
+
+        glDrawArrays(GL_TRIANGLES, 0, 36);
+        break;
+    }
+
+    glDepthMask(GL_TRUE);
+    glDisable(GL_BLEND);
+    glBindVertexArray(0);
+}
+
+
+void FluidSim::addSmokeBox(const glm::ivec3& minG,
+                           const glm::ivec3& maxG,
+                           const glm::vec4& color)
+{
+    glm::ivec3 lo = glm::clamp(minG, glm::ivec3(0), _gridSize - 1);
+    glm::ivec3 hi = glm::clamp(maxG, glm::ivec3(0), _gridSize - 1);
+
+    int sx = hi.x - lo.x + 1;
+    int sy = hi.y - lo.y + 1;
+    int sz = hi.z - lo.z + 1;
+
+    std::vector<float> block(sx * sy * sz * 4);
+
+    for (int z = 0; z < sz; ++z)
+        for (int y = 0; y < sy; ++y)
+            for (int x = 0; x < sx; ++x)
+            {
+                int i = 4 * (x + y*sx + z*sx*sy);
+                block[i+0] = color.r;
+                block[i+1] = color.g;
+                block[i+2] = color.b;
+                block[i+3] = color.a;
+            }
+
+    for (GLuint tex :
+            {
+                _texDensity, _texDensityPrev
+            })
+    {
+        glBindTexture(GL_TEXTURE_3D, tex);
+        glTexSubImage3D(GL_TEXTURE_3D, 0,
+                        lo.x, lo.y, lo.z,
+                        sx, sy, sz,
+                        GL_RGBA, GL_FLOAT,
+                        block.data());
+    }
+
+    glMemoryBarrier(GL_TEXTURE_FETCH_BARRIER_BIT | GL_SHADER_IMAGE_ACCESS_BARRIER_BIT);
+}
+
+void FluidSim::addSmokeSphere(const glm::vec3& centerG,
+                              float radius,
+                              const glm::vec4& color)
+{
+    int r = int(std::ceil(radius));
+    glm::ivec3 c = glm::ivec3(centerG + glm::vec3(0.5f));
+
+    glm::ivec3 lo = c - glm::ivec3(r);
+    glm::ivec3 hi = c + glm::ivec3(r);
+
+    lo = glm::clamp(lo, glm::ivec3(0), _gridSize - 1);
+    hi = glm::clamp(hi, glm::ivec3(0), _gridSize - 1);
+
+    int sx = hi.x - lo.x + 1;
+    int sy = hi.y - lo.y + 1;
+    int sz = hi.z - lo.z + 1;
+
+    std::vector<float> block(sx * sy * sz * 4, 0.0f);
+    for (int z = 0; z < sz; ++z)
+    {
+        for (int y = 0; y < sy; ++y)
+        {
+            for (int x = 0; x < sx; ++x)
+            {
+                glm::vec3 p = glm::vec3(lo + glm::ivec3(x,y,z)) - centerG;
+                if (glm::dot(p,p) <= radius*radius)
+                {
+                    int i = 4 * (x + y*sx + z*sx*sy);
+                    block[i+0] = color.r;
+                    block[i+1] = color.g;
+                    block[i+2] = color.b;
+                    block[i+3] = color.a;
                 }
             }
         }
     }
 
-    glBindTexture(GL_TEXTURE_3D, velocityTex);
-    glTexSubImage3D(GL_TEXTURE_3D, 0, 0, 0, 0, width, height, depth, GL_RGBA, GL_FLOAT, data.data());
-
-    glBindTexture(GL_TEXTURE_3D, velocityTexTmp);
-    glTexSubImage3D(GL_TEXTURE_3D, 0, 0, 0, 0, width, height, depth, GL_RGBA, GL_FLOAT, data.data());
+    for (GLuint tex :
+            {
+                _texDensity, _texDensityPrev
+            })
+    {
+        glBindTexture(GL_TEXTURE_3D, tex);
+        glTexSubImage3D(GL_TEXTURE_3D, 0,
+                        lo.x, lo.y, lo.z,
+                        sx, sy, sz,
+                        GL_RGBA, GL_FLOAT,
+                        block.data());
+    }
+    glMemoryBarrier(GL_TEXTURE_FETCH_BARRIER_BIT | GL_SHADER_IMAGE_ACCESS_BARRIER_BIT);
 }
 
+void FluidSim::addVelocityImpulse(const glm::vec3& cGrid,
+                                  float radius,
+                                  const glm::vec3& impulse)
+{
+    int nx = _gridSize.x, ny = _gridSize.y, nz = _gridSize.z;
+    size_t totalVoxels = size_t(nx) * ny * nz;
+    size_t totalFloats = totalVoxels * 4;
 
-void createTextures(){
-    velocityTex = createVolumeTexture();
-    quantTex = createVolumeTexture();
-    quantTexPrev = createVolumeTexture();
-    outputTex = createVolumeTexture();
-    velocityTexOut = createVolumeTexture();
-    velocityTexTmp = createVolumeTexture();
+    std::vector<float> velData(totalFloats);
+    glBindTexture(GL_TEXTURE_3D, _texVelocity);
+    glGetTexImage(GL_TEXTURE_3D, 0, GL_RGBA, GL_FLOAT, velData.data());
 
-    glGenVertexArrays(1, &cubeVAO);
-    glGenBuffers(1, &cubeVBO);
+    int r = int(std::ceil(radius));
+    int cx = int(std::round(cGrid.x));
+    int cy = int(std::round(cGrid.y));
+    int cz = int(std::round(cGrid.z));
 
-    glBindVertexArray(cubeVAO);
-    glBindBuffer(GL_ARRAY_BUFFER, cubeVBO);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(cubeVertices), cubeVertices, GL_STATIC_DRAW);
-    glEnableVertexAttribArray(0);
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
-    glBindVertexArray(0);
-}
+    int xmin = glm::clamp(cx - r, 0, nx - 1);
+    int xmax = glm::clamp(cx + r, 0, nx - 1);
+    int ymin = glm::clamp(cy - r, 0, ny - 1);
+    int ymax = glm::clamp(cy + r, 0, ny - 1);
+    int zmin = glm::clamp(cz - r, 0, nz - 1);
+    int zmax = glm::clamp(cz + r, 0, nz - 1);
 
-void simulateFluid(unsigned int shaderProgram, float dt){
-    glUseProgram(shaderProgram);
+    float r2 = radius * radius;
 
-    glm::ivec3 gridSize = glm::ivec3(width,height,depth);
+    for (int z = zmin; z <= zmax; ++z)
+    {
+        for (int y = ymin; y <= ymax; ++y)
+        {
+            for (int x = xmin; x <= xmax; ++x)
+            {
+                float dx = float(x) - cGrid.x;
+                float dy = float(y) - cGrid.y;
+                float dz = float(z) - cGrid.z;
+                if (dx*dx + dy*dy + dz*dz <= r2)
+                {
+                    size_t idx = size_t(z)*ny*nx + size_t(y)*nx + size_t(x);
+                    size_t f = idx * 4;
+                    velData[f+0] += impulse.x;
+                    velData[f+1] += impulse.y;
+                    velData[f+2] += impulse.z;
+                    velData[f+3] = 1.f;
+                }
+            }
+        }
+    }
 
-    glUniform1f(glGetUniformLocation(shaderProgram, "timeStep"), dt);
-    glUniform1f(glGetUniformLocation(shaderProgram, "dissipation"), 0.99f);
-    glUniform3f(glGetUniformLocation(shaderProgram, "gridSize"),
-                gridSize.x, gridSize.y, gridSize.z);
-    glUniform3f(glGetUniformLocation(shaderProgram, "gridSpacing"),
-                1.0f / gridSize.x, 1.0f / gridSize.y, 1.0f / gridSize.z);
+    for (GLuint tex :
+            {
+                _texVelocity, _texVelocityPrev
+            })
+    {
+        glBindTexture(GL_TEXTURE_3D, tex);
+        glTexSubImage3D(GL_TEXTURE_3D, 0,
+                        0, 0, 0,
+                        nx, ny, nz,
+                        GL_RGBA, GL_FLOAT,
+                        velData.data());
+    }
 
-    glUniform1f(glGetUniformLocation(shaderProgram, "vorticityStrength"), 20.0f);
-
-    glBindImageTexture(0, outputTex, 0, GL_TRUE, 0, GL_WRITE_ONLY, GL_RGBA32F);
-    glBindImageTexture(1, velocityTex, 0, GL_TRUE, 0, GL_READ_WRITE, GL_RGBA32F);
-
-    glActiveTexture(GL_TEXTURE1);
-    glBindTexture(GL_TEXTURE_3D, velocityTex);
-    glUniform1i(glGetUniformLocation(shaderProgram, "velocity"), 1);
-
-    glActiveTexture(GL_TEXTURE2);
-    glBindTexture(GL_TEXTURE_3D, quantTex);
-    glUniform1i(glGetUniformLocation(shaderProgram, "quantity"), 2);
-
-    glActiveTexture(GL_TEXTURE3);
-    glBindTexture(GL_TEXTURE_3D, quantTexPrev);
-    glUniform1i(glGetUniformLocation(shaderProgram, "quantityPrev"), 3);
-
-    glActiveTexture(GL_TEXTURE4);
-    glBindTexture(GL_TEXTURE_3D, velocityTexTmp);
-    glUniform1i(glGetUniformLocation(shaderProgram, "velocityTemp"), 4);
-
-    glDispatchCompute((gridSize.x + 7) / 8, (gridSize.y + 7) / 8, (gridSize.z + 7) / 8);
-    glMemoryBarrier(GL_SHADER_IMAGE_ACCESS_BARRIER_BIT);
-
-    //glCopyImageSubData(quantTex, GL_TEXTURE_3D, 0, 0, 0, 0, quantTexPrev, GL_TEXTURE_3D, 0, 0, 0, 0, width, height, depth);
-    std::swap(quantTex, outputTex);
-
-    //glCopyImageSubData(velocityTex, GL_TEXTURE_3D, 0, 0, 0, 0, velocityTexTmp, GL_TEXTURE_3D, 0, 0, 0, 0, width, height, depth);
-    //std::swap(velocityTex, velocityTexOut);
-
-}
-
-void renderFluid(unsigned int volumeShader){
-    glUseProgram(volumeShader);
-
-    glm::mat4 model = glm::mat4(1.0f);
-
-    model = glm::translate(model, glm::vec3(0.f,5.f,0.f));
-
-    glUniformMatrix4fv(glGetUniformLocation(volumeShader, "model"), 1, GL_FALSE, glm::value_ptr(model));
-
-    glUniformMatrix4fv(glGetUniformLocation(volumeShader, "invModel"), 1, GL_FALSE, glm::value_ptr(glm::inverse(model)));
-
-    glEnable(GL_BLEND);
-    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-
-    glActiveTexture(GL_TEXTURE1);
-    glBindTexture(GL_TEXTURE_3D, quantTex);
-    glUniform1i(glGetUniformLocation(volumeShader, "volumeTex"), 1);
-
-    glBindVertexArray(cubeVAO);
-    glDepthMask(GL_FALSE);
-    glDrawArrays(GL_TRIANGLES, 0, 36);
-    glDepthMask(GL_TRUE);
-
-    glDisable(GL_BLEND);
+    glMemoryBarrier(GL_SHADER_IMAGE_ACCESS_BARRIER_BIT | GL_TEXTURE_FETCH_BARRIER_BIT);
 }
