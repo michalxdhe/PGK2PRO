@@ -10,10 +10,9 @@ uniform vec3 gridSpacing;
 void main()
 {
     ivec3 g = ivec3(gl_GlobalInvocationID);
-    // avoid boundaries if you like
+
     vec3 uv = (vec3(g) + 0.5) / gridSize;
 
-    // sample velocity at neighbors
     float vl = texture(velocity, uv - vec3(gridSpacing.x,0,0)).x;
     float vr = texture(velocity, uv + vec3(gridSpacing.x,0,0)).x;
     float vd = texture(velocity, uv - vec3(0,gridSpacing.y,0)).y;

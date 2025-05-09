@@ -100,6 +100,10 @@
 		<Unit filename="particles.cpp" />
 		<Unit filename="particles.h" />
 		<Unit filename="shaders.h" />
+		<Unit filename="shaders/boundryFixComput.c">
+			<Option compilerVar="CC" />
+			<Option target="Release" />
+		</Unit>
 		<Unit filename="shaders/divComput.c">
 			<Option compilerVar="CC" />
 			<Option target="Release" />

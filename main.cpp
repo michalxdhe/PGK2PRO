@@ -97,6 +97,9 @@ void Game::init()
     createAndCompileShader("shaders/gradSubComput.c",GL_COMPUTE_SHADER,computeShader);
     shaderPrograms.push_back(createProgram(computeShader));
 
+    createAndCompileShader("shaders/boundryFixComput.c",GL_COMPUTE_SHADER,computeShader);
+    shaderPrograms.push_back(createProgram(computeShader));
+
 
     glDeleteShader(vertexShader);
     glDeleteShader(fragmentShader);
@@ -203,6 +206,15 @@ void Game::init()
         obiekty[Globals::numberOfEntities++] = make_unique<Hexagon>(envModels[PEDESTAL], pair.second);
     }
 
+    fluidShaders[0] = shaderPrograms[7];
+    fluidShaders[1] = shaderPrograms[8];
+    fluidShaders[2] = shaderPrograms[9];
+    fluidShaders[3] = shaderPrograms[10];
+    fluidShaders[4] = shaderPrograms[11];
+    fluidShaders[5] = shaderPrograms[12];
+    fluidShaders[6] = shaderPrograms[13];
+
+
     simA = new FluidSim({0,5,0}, {85,85,85}, {1.f/85,1.f/85,1.f/85});
     simA->initialize();
 
@@ -215,7 +227,7 @@ void Game::init()
     simA->addSmokeSphere(glm::vec3(40, 40, 40), 10.0f, glm::vec4(0.2f,1.0f,0.0f,1.0f));
     //simA->addVelocityImpulse(glm::vec3(60.0f, 40.0f, 30.0f), 10.0f, glm::vec3(-22.0f, 0.0f, 0.0f));
     //simA->addVelocityImpulse(glm::vec3(15.0f, 45.0f, 30.0f), 10.0f, glm::vec3(27.0f, 0.0f, 0.0f));
-    simA->addVelocityImpulse(glm::vec3(40.0f, 40.0f, 40.0f), 10.0f, glm::vec3(2.0f, -5.0f, 5.0f));
+    //simA->addVelocityImpulse(glm::vec3(40.0f, 40.0f, 40.0f), 10.0f, glm::vec3(2.0f, -5.0f, 5.0f));
 
     //simA->addVelocityImpulse(glm::vec3(60.0f, 42.0f, 30.0f), 15.0f, glm::vec3(25.0f, 25.0f, 0.0f));
 
@@ -257,19 +269,13 @@ void Game::input(const double deltaTime, uint32_t t)
                 shutdown = 1;
             if(event.key.keysym.sym == SDLK_u){
                 simA->addSmokeSphere(glm::vec3(rand()%80, rand()%80, rand()%80), 10.0f, glm::vec4(0.2f,1.0f,0.0f,1.0f));
-                simA->addVelocityImpulse(glm::vec3(rand()%80, rand()%80, rand()%80), 10.0f, glm::vec3(-22.0f, 0.0f, 0.0f));
+                simA->addVelocityImpulse(glm::vec3(rand()%80, rand()%80, rand()%80), 10.0f, glm::vec3(-25.0f, 0.0f, 0.0f));
             }
 
             if(event.key.keysym.sym == SDLK_SPACE)
             {
-                std::array<GLuint,6> test;
-                test[0] = shaderPrograms[7];
-                test[1] = shaderPrograms[8];
-                test[2] = shaderPrograms[9];
-                test[3] = shaderPrograms[10];
-                test[4] = shaderPrograms[11];
-                test[5] = shaderPrograms[12];
-                simA->simulate(test,clamp(deltaTime,0.5,1.0));
+
+                simA->simulate(fluidShaders,clamp(deltaTime,0.5,1.0));
                 endTurn();
             }
         }
@@ -726,14 +732,7 @@ void Game::render(double deltaTime, uint32_t t)
     //DrawParticles(shaderPrograms[4],particles);
 
     ///Fluid Render Test
-    std::array<GLuint,6> test;
-    test[0] = shaderPrograms[7];
-    test[1] = shaderPrograms[8];
-    test[2] = shaderPrograms[9];
-    test[3] = shaderPrograms[10];
-    test[4] = shaderPrograms[11];
-    test[5] = shaderPrograms[12];
-    //simA->simulate(test,clamp(deltaTime,0.1,1.0));
+    simA->simulate(fluidShaders,clamp(deltaTime,0.1,1.0));
     glm::mat4 viewProj = view * projection;
     simA->render(shaderPrograms[6],view, projection);
 

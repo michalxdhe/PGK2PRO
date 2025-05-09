@@ -21,25 +21,35 @@ vec3 curlAt(ivec3 g)
           - (texture(velocity, (g+ivec3(0,1,0))/gridSize).x - texture(velocity, (g+ivec3(0,-1,0))/gridSize).x)/(2*dy);
     return c;
 }
-
 void main()
 {
     ivec3 g = ivec3(gl_GlobalInvocationID);
-    vec3 uvw = (vec3(g)+0.5)/gridSize;
-    vec3 v = texture(velocity, uvw).xyz;
 
-    vec3 w = curlAt(g);
+    if (g.x == 0 || g.x == int(gridSize.x)-1 ||
+        g.y == 0 || g.y == int(gridSize.y)-1 ||
+        g.z == 0 || g.z == int(gridSize.z)-1)
+    {
+        imageStore(outputVelocity, g, vec4(0.0,0.0,0.0,1.0));
+        return;
+    }
+
+    vec3 uvw = (vec3(g) + 0.5) / gridSize;
+    vec3 v   = texture(velocity, uvw).xyz;
+    vec3 w   = curlAt(g);
 
     float magL = length(curlAt(g + ivec3(-1,0,0)));
-    float magR = length(curlAt(g + ivec3(1,0,0)));
+    float magR = length(curlAt(g + ivec3( 1,0,0)));
     float magD = length(curlAt(g + ivec3(0,-1,0)));
-    float magU = length(curlAt(g + ivec3(0,1,0)));
+    float magU = length(curlAt(g + ivec3(0, 1,0)));
     float magB = length(curlAt(g + ivec3(0,0,-1)));
-    float magF = length(curlAt(g + ivec3(0,0,1)));
-    vec3 N = normalize(vec3(magR - magL, magU - magD, magF - magB));
+    float magF = length(curlAt(g + ivec3(0,0, 1)));
+
+    vec3 grad = vec3(magR - magL, magU - magD, magF - magB);
+
+    float lenG = length(grad);
+    vec3  N    = (lenG > 1e-6 ? grad / lenG : vec3(0.0));
 
     vec3 f = vorticityStrength * cross(N, w);
-    v += timeStep * f;
 
-    imageStore(outputVelocity, g, vec4(v,1.0));
+    imageStore(outputVelocity, g, vec4(v, 1.0));
 }

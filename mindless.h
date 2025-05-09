@@ -121,6 +121,7 @@ public:
     unordered_map<int, unique_ptr<Object>> obiekty;
     ///Partikles
     std::vector<Particle> particles;
+    std::array<GLuint,7> fluidShaders;
 
     ///Flaga stanowiaca czy pora isc spac
     bool shutdown = 0;

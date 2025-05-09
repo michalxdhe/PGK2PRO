@@ -124,7 +124,7 @@ void FluidSim::setupCubeMesh()
     glBindVertexArray(0);
 }
 
-void FluidSim::simulate(const std::array<GLuint,6>& P, float dt)
+void FluidSim::simulate(const std::array<GLuint,7>& P, float dt)
 {
     glCopyImageSubData(
         _texDensity,   GL_TEXTURE_3D, 0, 0,0,0,
@@ -142,12 +142,16 @@ void FluidSim::simulate(const std::array<GLuint,6>& P, float dt)
 
     glMemoryBarrier(GL_TEXTURE_FETCH_BARRIER_BIT | GL_SHADER_IMAGE_ACCESS_BARRIER_BIT);
 
-    advect      (P[0], dt);
-    applyForce  (P[1], dt);
+    advect(P[0], dt);
+    std::swap(_texVelocity, _texVelocityOut);
+    applyForce(P[1], dt);
+    std::swap(_texVelocity, _texVelocityOut);
     vorticityConfinement(P[2], dt);
-    computeDivergence   (P[3]);
-    solvePressure       (P[4]);
-    projectVelocity     (P[5]);
+    std::swap(_texVelocity, _texVelocityOut);
+    computeDivergence(P[3]);
+    solvePressure(P[4]);
+    projectVelocity(P[5]);
+    //fixBoundries(P[6]);
     std::swap(_texDensity,  _texDensityOut);
     std::swap(_texVelocity, _texVelocityOut);
 }
@@ -333,6 +337,24 @@ void FluidSim::projectVelocity(GLuint prog)
     glMemoryBarrier(GL_SHADER_IMAGE_ACCESS_BARRIER_BIT);
 }
 
+void FluidSim::fixBoundries(GLuint prog)
+{
+    glUseProgram(prog);
+    glUniform3i(glGetUniformLocation(prog, "gridSize"),
+                _gridSize.x, _gridSize.y, _gridSize.z);
+    glBindImageTexture(0, _texVelocityOut, 0, GL_TRUE, 0,
+                       GL_WRITE_ONLY, GL_RGBA32F);
+
+    GLuint wx = (_gridSize.x +7)/8;
+    GLuint wy = (_gridSize.y +7)/8;
+    GLuint wz = (_gridSize.z +7)/8;
+
+    glDispatchCompute(1, wy, wz);
+    glDispatchCompute(wx, 1, wz);
+    glDispatchCompute(wx, wy, 1);
+
+    glMemoryBarrier(GL_SHADER_IMAGE_ACCESS_BARRIER_BIT);
+}
 
 void FluidSim::render(GLuint volumeShader, glm::mat4 view, glm::mat4 proj)
 {
@@ -383,7 +405,7 @@ void FluidSim::render(GLuint volumeShader, glm::mat4 view, glm::mat4 proj)
         glUniform1i(locVolume, 0);
 
         glDrawArrays(GL_TRIANGLES, 0, 36);
-        break;
+        //break;
     }
 
     glDepthMask(GL_TRUE);
@@ -534,7 +556,7 @@ void FluidSim::addVelocityImpulse(const glm::vec3& cGrid,
 
     for (GLuint tex :
             {
-                _texVelocity, _texVelocityPrev
+                _texVelocity
             })
     {
         glBindTexture(GL_TEXTURE_3D, tex);

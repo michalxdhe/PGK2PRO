@@ -18,7 +18,7 @@ public:
 
     void initialize();
 
-    void simulate(const std::array<GLuint,6>& progs, float dt);
+    void simulate(const std::array<GLuint,7>& progs, float dt);
 
     void render(GLuint volumeShader, glm::mat4 view, glm::mat4 proj);
 
@@ -36,12 +36,13 @@ public:
 
 private:
     glm::ivec3 _gridSize;
-    glm::vec3  _gridSpacing;
-    float      _dissipation;
-    float      _vorticityStrength;
-    int        _jacobiIters;
-    glm::mat4  _model;
-    float   _scaleModifier;
+    glm::vec3 _gridSpacing;
+    float _dissipation;
+    float _vorticityStrength;
+    int _jacobiIters;
+    glm::mat4 _model;
+    float _scaleModifier;
+    bool first = true;
 
     GLuint _texVelocity,   _texVelocityPrev,   _texVelocityOut;
     GLuint _texDensity,    _texDensityPrev,    _texDensityOut;
@@ -54,12 +55,13 @@ private:
     void   initTexturesCPU();
     void   setupCubeMesh();
 
-    void advect      (GLuint prog, float dt);
-    void applyForce  (GLuint prog, float dt);
+    void advect (GLuint prog, float dt);
+    void applyForce (GLuint prog, float dt);
     void vorticityConfinement(GLuint prog, float dt);
-    void computeDivergence   (GLuint prog);
-    void solvePressure       (GLuint prog);
-    void projectVelocity     (GLuint prog);
+    void computeDivergence (GLuint prog);
+    void solvePressure (GLuint prog);
+    void projectVelocity (GLuint prog);
+    void fixBoundries (GLuint prog);
 };
 
 #endif // FLUIDSIM_H_INCLUDED

@@ -64,5 +64,6 @@ void main()
     imageStore(outputQuantity, gid, max(q, vec4(0.0)));
 
     vec3 v = advectVel(uvw);
+    v *= 0.99;
     imageStore(outputVelocity, gid, vec4(v, 1.0));
 }
