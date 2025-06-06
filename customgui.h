@@ -5,8 +5,13 @@
 #include "shaders.h"
 
 static GLuint testOverlay;
+static GLuint unitBarOverlay;
+static GLuint unitBarOverlayCommVer;
 
 extern ImGuiWindowFlags invisPreset;
+
+IMGUI_API void ImageTurner(ImTextureID tex_id, ImVec2 center, ImVec2 size, float* angle_, float round_sec = 0, ImDrawList* draw_list = 0);
+
 
 static glm::vec3 factionColors[10] = {
         glm::vec3(1.0f, 0.0f, 0.0f),
@@ -47,7 +52,7 @@ class GuiElement : public Object
 public:
     ImVec2 windowSpan;
 
-    void renderOverlayTexture(GLuint textID, ImVec4 colorMult);
+    void renderOverlayTexture(GLuint textID, ImVec4 colorMult, float* angle = nullptr, float round_sec = 0.f);
 };
 
 class PauseMenu : public GuiElement
@@ -150,6 +155,11 @@ public:
     float windowX, windowY;
     UnitStats *stats;
     unsigned int marker_text;
+
+    float borderAngle;
+
+    bool markerMoveDir;
+    float markerHeightMult;
 
     int64_t unitID;
     glm::vec3 *unitPos;

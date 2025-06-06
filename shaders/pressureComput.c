@@ -21,6 +21,7 @@ void main()
     float pF = texture(pressure, uv + vec3(0,0,1.0/gridSize.z)).x;
     float div = texture(divergence, uv).x;
 
+    //poisson
     float pNew = (pL + pR + pD + pU + pB + pF + alpha*div) * invBeta;
     imageStore(outputPressure, g, vec4(pNew,0,0,0));
 }

@@ -38,6 +38,37 @@ public:
 	auto& GetBoneInfoMap() { return m_BoneInfoMap; }
 	int& GetBoneCount() { return m_BoneCounter; }
 
+    glm::vec3 GetMinBounds() const
+    {
+        float minX =  std::numeric_limits<float>::infinity();
+        float minY =  std::numeric_limits<float>::infinity();
+        float minZ =  std::numeric_limits<float>::infinity();
+
+        for (const auto& mesh : meshes) {
+            for (const auto& v : mesh.vertices) {
+                minX = std::min(minX, v.Position.x);
+                minY = std::min(minY, v.Position.y);
+                minZ = std::min(minZ, v.Position.z);
+            }
+        }
+        return glm::vec3(minX, minY, minZ);
+    }
+
+    glm::vec3 GetMaxBounds() const
+    {
+        float maxX = -std::numeric_limits<float>::infinity();
+        float maxY = -std::numeric_limits<float>::infinity();
+        float maxZ = -std::numeric_limits<float>::infinity();
+
+        for (const auto& mesh : meshes) {
+            for (const auto& v : mesh.vertices) {
+                maxX = std::max(maxX, v.Position.x);
+                maxY = std::max(maxY, v.Position.y);
+                maxZ = std::max(maxZ, v.Position.z);
+            }
+        }
+        return glm::vec3(maxX, maxY, maxZ);
+    }
 
 private:
 

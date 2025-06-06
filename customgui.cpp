@@ -31,12 +31,85 @@ const glm::vec3 colors[EFFECTS_COUNT] = {
     glm::vec3(0.f,1.f,0.f)
 };
 
-void GuiElement::renderOverlayTexture(GLuint textID, ImVec4 colorMult){
+SDL_Cursor* cursorFromGLTexture(GLuint tex, int hotX, int hotY) {
+    glBindTexture(GL_TEXTURE_2D, tex);
+
+    GLint width = 0, height = 0;
+    glGetTexLevelParameteriv(GL_TEXTURE_2D, 0, GL_TEXTURE_WIDTH,  &width);
+    glGetTexLevelParameteriv(GL_TEXTURE_2D, 0, GL_TEXTURE_HEIGHT, &height);
+    if (width <= 0 || height <= 0) {
+        std::fprintf(stderr, "CursorFromGLTexture: invalid texture size %dx%d\n", width, height);
+        return nullptr;
+    }
+
+    std::vector<unsigned char> pixels(width * height * 4);
+    glGetTexImage(GL_TEXTURE_2D, 0, GL_RGBA, GL_UNSIGNED_BYTE, pixels.data());
+
+    SDL_Surface* surf = SDL_CreateRGBSurfaceWithFormatFrom(
+        pixels.data(),
+        width, height,
+        32,
+        width * 4,
+        SDL_PIXELFORMAT_RGBA32
+    );
+    if (!surf) {
+        std::fprintf(stderr, "CursorFromGLTexture: SDL_CreateRGBSurface failed: %s\n", SDL_GetError());
+        return nullptr;
+    }
+
+    SDL_Cursor* cursor = SDL_CreateColorCursor(surf, hotX, hotY);
+    if (!cursor) {
+        std::fprintf(stderr, "CursorFromGLTexture: SDL_CreateColorCursor failed: %s\n", SDL_GetError());
+    }
+
+    SDL_FreeSurface(surf);
+
+    return cursor;
+}
+
+//https://github.com/ocornut/imgui/pull/5386
+void ImageTurner(ImTextureID tex_id, ImVec2 center, ImVec2 size, float* angle_, float round_sec, ImU32 color, ImDrawList* draw_list)
+{
+    auto& angle = *angle_;
+    auto& io = ImGui::GetIO();
+    float sin_a = sinf(angle);
+    float cos_a = cosf(angle);
+    ImVec2 pos[4] = {
+        center + ImRotate(ImVec2(-size.x * 0.5f, -size.y * 0.5f), cos_a, sin_a),
+        center + ImRotate(ImVec2(+size.x * 0.5f, -size.y * 0.5f), cos_a, sin_a),
+        center + ImRotate(ImVec2(+size.x * 0.5f, +size.y * 0.5f), cos_a, sin_a),
+        center + ImRotate(ImVec2(-size.x * 0.5f, +size.y * 0.5f), cos_a, sin_a)
+    };
+
+    if (!draw_list)
+        draw_list = ImGui::GetBackgroundDrawList();
+    draw_list->AddImageQuad(tex_id, pos[0], pos[1], pos[2], pos[3], ImVec2(0,0), ImVec2(1,0), ImVec2(1,1), ImVec2(0,1), color);
+
+    if (round_sec) {
+        angle += io.DeltaTime * round_sec * 6.2831f;
+        if (angle < -628.0f)
+            angle += 628.0f;
+        else if (angle > 628.0f)
+            angle -= 628.0f;
+    } else if (angle) {
+        angle = 0.0f;
+    }
+}
+
+void GuiElement::renderOverlayTexture(GLuint textID, ImVec4 colorMult, float* angle, float round_sec)
+{
     ImU32 color = ImGui::GetColorU32(colorMult);
     ImVec2 p_min = ImGui::GetWindowPos();
     ImVec2 p_max = ImVec2(p_min.x + ImGui::GetWindowWidth(), p_min.y + ImGui::GetWindowHeight());
-    ImGui::GetWindowDrawList()->AddImage((void*)(intptr_t)textID, p_min, p_max, ImVec2(0.0f, 0.0f), ImVec2(1.0f, 1.0f), color);
+    ImVec2 center = ImVec2(0.5f * (p_min.x + p_max.x), 0.5f * (p_min.y + p_max.y));
+    ImVec2 size = ImVec2(p_max.x - p_min.x, p_max.y - p_min.y);
+    ImDrawList* draw_list = ImGui::GetWindowDrawList();
+    if(angle)
+        ImageTurner((ImTextureID)(intptr_t)textID, center, size, angle, round_sec, color, draw_list);
+    else
+        ImGui::GetWindowDrawList()->AddImage((void*)(intptr_t)textID, p_min, p_max, ImVec2(0.0f, 0.0f), ImVec2(1.0f, 1.0f), color);
 }
+
 
 PauseMenu::PauseMenu() = default;
 
@@ -425,10 +498,14 @@ UnitBar::UnitBar() = default;
 UnitBar::UnitBar(ImVec2 windowSize, UnitStats *stats, glm::vec3 *unitPos, int64_t ID)
     : stats(stats), unitID(ID), unitPos(unitPos)
 {
+    markerMoveDir = true;
+    markerHeightMult = 0.f;
     windowSpan = windowSize;
-    windowHe = 0.013f * windowSpan.y;
-    windowWi = 0.019f * windowSpan.y;
+    windowHe = 0.099f * windowSpan.y;
+    windowWi = 0.099f * windowSpan.y;
     createAndLoadTexture(marker_text,"resTextures/turnMarker.png");
+
+    borderAngle = 0.f;
 
     createAndLoadTexture(effectText[POISON] ,"resTextures/poison.png", false);
     createAndLoadTexture(effectText[BURNING] ,"resTextures/fire.png", false);
@@ -439,9 +516,21 @@ UnitBar::UnitBar(ImVec2 windowSize, UnitStats *stats, glm::vec3 *unitPos, int64_
 
 void UnitBar::update(double deltaTime)
 {
+    if(stats->yourTurn){
+    if(markerHeightMult > 1.0f)
+        markerMoveDir = false;
+    if(markerHeightMult < 0.1f)
+        markerMoveDir = true;
+
+    if(markerMoveDir)
+        markerHeightMult += deltaTime;
+    else
+        markerHeightMult -= deltaTime;
+    }
+
     glm::vec3 aboveUnit = glm::vec3((*unitPos).x,stats->properHeight,(*unitPos).z) + glm::vec3(0.f,1.f,0.f);
     glm::vec2 screenPos = calculateScreenPosition(aboveUnit,*Object::viewRef, *Object::projectionRef,windowSpan.x,windowSpan.y);
-    windowX = screenPos.x - windowWi*2;
+    windowX = screenPos.x;
     windowY = screenPos.y;
 }
 
@@ -452,7 +541,8 @@ void UnitBar::render(unsigned int shaderProgram, std::vector<unsigned int> shade
         float padding = 7.0f;
 
         ImGui::SetNextWindowSize(ImVec2(43, 10), ImGuiCond_Always);
-        ImGui::SetNextWindowPos(ImVec2(windowX, windowY - 13.f), ImGuiCond_Always);
+        ImGui::SetNextWindowPos(ImVec2(windowX, windowY - 13.f), ImGuiCond_Always,ImVec2(0.5f, 0.5f));
+
         ImGui::Begin(("status"+ std::to_string(unitID)).c_str(), nullptr, invisPreset | ImGuiWindowFlags_NoBackground | ImGuiWindowFlags_NoInputs);
         for(int i = 0; i < EFFECTS_COUNT; i++){
             if(stats->effects[i].duration > 0){
@@ -462,24 +552,111 @@ void UnitBar::render(unsigned int shaderProgram, std::vector<unsigned int> shade
         }
         ImGui::End();
 
-        int neededChars = std::to_string(stats->maxHealth).length();
 
         ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(padding, padding));
-        ImGui::SetNextWindowSize(ImVec2(5.f + (neededChars*2*10.f), windowHe), ImGuiCond_Always);
-        ImGui::SetNextWindowPos(ImVec2(windowX, windowY), ImGuiCond_Always);
+        ImGui::SetNextWindowSize(ImVec2(windowHe, windowWi), ImGuiCond_Always);
+        ImGui::SetNextWindowPos(ImVec2(windowX, windowY), ImGuiCond_Always,ImVec2(0.5f, 0.5f));
+
+        float myDistToCam = glm::distance(glm::vec3(*unitPos), glm::vec3(Globals::cameraX, Globals::cameraY, Globals::cameraZ));
+
         ImGui::Begin(("##test"+ std::to_string(unitID)).c_str(), nullptr, invisPreset | ImGuiWindowFlags_NoBackground);
 
-        glm::vec3 ownerColor = factionColors[stats->ownerID-1];
-        renderOverlayTexture(testOverlay,ImVec4(ownerColor.x,ownerColor.y,ownerColor.z,0.8f));
+        if(myDistToCam < Globals::closestUnitToCam || Globals::closestUnitToCam == -1.f){
+            ImGui::BringWindowToDisplayFront(ImGui::GetCurrentWindow());
+            Globals::closestUnitToCam = myDistToCam;
+        }
 
-        ImGui::Text("%d/%d", stats->health, stats->maxHealth);
+        glm::vec3 ownerColor = factionColors[stats->ownerID-1];
+
+        GLuint targetText;
+        if(stats->isCommander)
+            targetText = unitBarOverlayCommVer;
+        else
+            targetText = unitBarOverlay;
+        if(stats->yourTurn)
+            renderOverlayTexture(unitBarOverlayCommVer,ImVec4(ownerColor.x,ownerColor.y,ownerColor.z,0.8f),&borderAngle,0.1f);
+        else
+            renderOverlayTexture(unitBarOverlayCommVer,ImVec4(ownerColor.x,ownerColor.y,ownerColor.z,0.8f),&borderAngle,0.000001f);
+
+        ImDrawList* draw_list = ImGui::GetWindowDrawList();
+        ImVec2 window_pos  = ImGui::GetWindowPos();
+        ImVec2 window_size = ImGui::GetWindowSize();
+
+        ImVec2 center = ImVec2(
+            window_pos.x + window_size.x * 0.5f,
+            window_pos.y + window_size.y * 0.5f
+        );
+
+        float radius = (std::min(window_size.x, window_size.y) * 0.5f) - 18.0f;
+
+        int totalSlices   = stats->maxHealth;
+        int filledSlices  = stats->health;
+
+        if (totalSlices == 1) {
+            radius -= 10;
+            ImVec2 top    = ImVec2(center.x, center.y - radius);
+            ImVec2 right  = ImVec2(center.x + radius, center.y);
+            ImVec2 bottom = ImVec2(center.x, center.y + radius);
+            ImVec2 left   = ImVec2(center.x - radius, center.y);
+
+            ImU32 fillColor = (filledSlices > 0) ? IM_COL32(255, 0, 0, 255) : IM_COL32(0, 0, 0, 255);
+
+            ImVec2 rhombus_pts[4] = { top, right, bottom, left };
+            draw_list->AddConvexPolyFilled(rhombus_pts, 4, fillColor);
+
+            draw_list->AddPolyline(rhombus_pts, 4, IM_COL32(75, 25, 25, 255), true, 1.0f);
+        }
+        else if (totalSlices == 2) {
+            radius -= 5;
+            ImVec2 top    = ImVec2(center.x, center.y - radius);
+            ImVec2 right  = ImVec2(center.x + radius, center.y);
+            ImVec2 bottom = ImVec2(center.x, center.y + radius);
+            ImVec2 left   = ImVec2(center.x - radius, center.y);
+
+            ImU32 leftColor = (filledSlices > 0) ? IM_COL32(255, 0, 0, 255) : IM_COL32(0, 0, 0, 255);
+            ImVec2 left_triangle[3] = { center, top, left };
+            draw_list->AddTriangleFilled(left_triangle[0], left_triangle[1], left_triangle[2], leftColor);
+            ImVec2 left_triangle2[3] = { center, left, bottom };
+            draw_list->AddTriangleFilled(left_triangle2[0], left_triangle2[1], left_triangle2[2], leftColor);
+
+            ImU32 rightColor = (filledSlices > 1) ? IM_COL32(255, 0, 0, 255) : IM_COL32(0, 0, 0, 255);
+            ImVec2 right_triangle[3] = { center, top, right };
+            draw_list->AddTriangleFilled(right_triangle[0], right_triangle[1], right_triangle[2], rightColor);
+            ImVec2 right_triangle2[3] = { center, right, bottom };
+            draw_list->AddTriangleFilled(right_triangle2[0], right_triangle2[1], right_triangle2[2], rightColor);
+
+            draw_list->AddLine(top, bottom, IM_COL32(75, 25, 25, 255), 1.0f);
+            ImVec2 rhombus_pts[4] = { top, right, bottom, left };
+            draw_list->AddPolyline(rhombus_pts, 4, IM_COL32(75, 25, 25, 255), true, 1.0f);
+        }
+        else {
+            for (int i = 0; i < totalSlices; i++)
+            {
+                float t0 = float(i) / float(totalSlices);
+                float t1 = float(i + 1) / float(totalSlices);
+
+                float a0 = 2.0f * 3.14159265f * t0 - 3.14159265f * 0.5f;
+                float a1 = 2.0f * 3.14159265f * t1 - 3.14159265f * 0.5f;
+                ImVec2 p0 = ImVec2(center.x + cosf(a0) * radius, center.y + sinf(a0) * radius);
+                ImVec2 p1 = ImVec2(center.x + cosf(a1) * radius, center.y + sinf(a1) * radius);
+
+                bool filled = (i < filledSlices);
+                ImU32 sliceCol = filled ? IM_COL32(255, 0, 0, 255) : IM_COL32(0, 0, 0, 255);
+                draw_list->AddTriangleFilled(center, p0, p1, sliceCol);
+
+                ImVec2 pts[3] = { center, p0, p1 };
+                draw_list->AddPolyline(pts, 3, IM_COL32(75, 25, 25, 255), true, 1.0f);
+            }
+        }
+
         ImGui::End();
         ImGui::PopStyleVar();
 
         if(stats->yourTurn){
-            ImGui::SetNextWindowSize(ImVec2(25, 12), ImGuiCond_Always);
-            ImGui::SetNextWindowPos(ImVec2(windowX, windowY - 15.f), ImGuiCond_Always);
+            ImGui::SetNextWindowSize(ImVec2(50, 24), ImGuiCond_Always);
+            ImGui::SetNextWindowPos(ImVec2(windowX + 12.f, windowY - (13.f + (glm::smoothstep(0.1f, 1.0f, markerHeightMult)*25))), ImGuiCond_Always,ImVec2(0.5f, 0.5f));
             ImGui::Begin("turn indicator", nullptr, invisPreset | ImGuiWindowFlags_NoBackground | ImGuiWindowFlags_NoInputs);
+            ImGui::BringWindowToDisplayFront(ImGui::GetCurrentWindow());
             ImGui::Image((void*)(intptr_t)marker_text, ImVec2(25, 12));
             ImGui::End();
         }

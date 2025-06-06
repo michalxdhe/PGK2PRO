@@ -19,6 +19,11 @@
 
 using namespace std;
 
+enum CursorTextures{
+    IDLE,
+    CLICKED,
+    CURSORTEXCOUNT
+};
 
 
 /** \brief  Taka tam pomocna funkcja co zwraca znak -1,0,1 dla double'a
@@ -60,7 +65,9 @@ public:
 
     SDL_GLContext gContext;
 
-    /// IRRklang dla dzwieku
+    ///hack dla kursora
+    SDL_Cursor* sdlCursors[CURSORTEXCOUNT];
+    bool cursorVisible = true;
 
     /// Ray dla MousePick'era
     optimizedRay ray;

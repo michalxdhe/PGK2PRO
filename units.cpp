@@ -243,6 +243,8 @@ void Unit::render(unsigned int shaderProgram, std::vector<unsigned int> shaderPr
 
     glUniform1i(glGetUniformLocation(shaderProgram, "unitRender"), true);
     model.Draw(shaderProgram,true);
+
+    //DEBUG
     //boundingBox.Draw(shaderProgram, hovering || isSelected);
     glUniform1i(glGetUniformLocation(shaderProgram, "unitRender"), false);
 
@@ -520,7 +522,7 @@ class Egg : public Unit {
 public:
     Egg(glm::vec3 hexCellCords, unordered_map<glm::vec3, HexCell> *HexGrid, int factionID, int64_t objID)
         : Unit(hexCellCords, unitModels[EGG], HexGrid, factionID, objID, false) {
-        setSomeStats(&stats,5, 5, 1, 0, 2, 0, 0, 0, 3, 0);
+        setSomeStats(&stats,1, 5, 1, 0, 2, 0, 0, 0, 3, 0);
         ///AbilityDec
         abilitiesList[MORPH] = MORPH;
 
@@ -546,6 +548,9 @@ public:
         stats.properHeight = 1.50f;
         boundingBox = Cube(0.13f, 0.1, 0.13f, pos);
         scaleOutline = glm::vec3(1.005);
+
+        stats.effects[HEAL].duration = 4;
+        stats.effects[HEAL].intensity = 1;
     }
 };
 
@@ -775,8 +780,6 @@ public:
         scaleOutline = glm::vec3(1.009);
     }
 };
-
-
 
 struct UnitFactory{
         inline static deque<unique_ptr<Unit>> toBeCreated;

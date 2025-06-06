@@ -1,6 +1,7 @@
 #ifndef FLUIDSIM_H_INCLUDED
 #define FLUIDSIM_H_INCLUDED
 
+#include "model.h"
 #include "common.h"
 
 class FluidSim
@@ -11,7 +12,7 @@ public:
              const glm::vec3& gridSpacing,
              float dissipation      = 0.99f,
              float vorticityStrength = 20.0f,
-             int   jacobiIters      = 20,
+             int jacobiIters      = 20,
              float scaleModifier     = 0.01f);
 
     ~FluidSim();
@@ -22,17 +23,14 @@ public:
 
     void render(GLuint volumeShader, glm::mat4 view, glm::mat4 proj);
 
-    void addSmokeBox(const glm::ivec3& minGrid,
-                     const glm::ivec3& maxGrid,
-                     const glm::vec4& color);
+    void addSmokeBox(const glm::ivec3& minGrid, const glm::ivec3& maxGrid, const glm::vec4& color);
 
-    void addSmokeSphere(const glm::vec3& centerGrid,
-                        float radius,
-                        const glm::vec4& color);
+    void addSmokeSphere(const glm::vec3& centerGrid, float radius, const glm::vec4& color);
 
-    void addVelocityImpulse(const glm::vec3& centerGrid,
-                            float radius,
-                            const glm::vec3& impulse);
+    void addVelocityImpulse(const glm::vec3& centerGrid, float radius, const glm::vec3& impulse);
+
+    void rasterizeVoxelizeModel(Model& model, GLuint voxelProg, const glm::mat4& modelMatrix);
+
 
 private:
     glm::ivec3 _gridSize;
@@ -44,10 +42,10 @@ private:
     float _scaleModifier;
     bool first = true;
 
-    GLuint _texVelocity,   _texVelocityPrev,   _texVelocityOut;
-    GLuint _texDensity,    _texDensityPrev,    _texDensityOut;
+    GLuint _texVelocity, _texVelocityPrev, _texVelocityOut;
+    GLuint _texDensity, _texDensityPrev, _texDensityOut;
     GLuint _texDivergence;
-    GLuint _texPressure,   _texPressurePrev;
+    GLuint _texPressure, _texPressurePrev;
 
     static GLuint _cubeVAO, _cubeVBO;
 

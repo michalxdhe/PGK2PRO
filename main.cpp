@@ -97,8 +97,9 @@ void Game::init()
     createAndCompileShader("shaders/gradSubComput.c",GL_COMPUTE_SHADER,computeShader);
     shaderPrograms.push_back(createProgram(computeShader));
 
-    createAndCompileShader("shaders/boundryFixComput.c",GL_COMPUTE_SHADER,computeShader);
-    shaderPrograms.push_back(createProgram(computeShader));
+    createAndCompileShader("shaders/rasterVert.c",GL_VERTEX_SHADER,vertexShader);
+    createAndCompileShader("shaders/rasterFrag.c",GL_FRAGMENT_SHADER,fragmentShader);
+    shaderPrograms.push_back(createProgram(vertexShader,fragmentShader));
 
 
     glDeleteShader(vertexShader);
@@ -120,7 +121,22 @@ void Game::init()
     ///MISC
     resModels[ORE] = Model("Model/Res/Ore.obj");
     resModels[GAS] = Model("Model/Res/Gas.obj");
+    GLuint teksturaKursoraTest;
     createAndLoadTexture(testOverlay,"uiTextures/UnitInfo.png",false);
+    createAndLoadTexture(unitBarOverlay,"uiTextures/hpOverlay.png",false);
+    createAndLoadTexture(unitBarOverlayCommVer,"uiTextures/hpOverlayComm.png",false);
+    createAndLoadTexture(teksturaKursoraTest,"uiTextures/cursorIdle.png",false);
+    sdlCursors[IDLE] = cursorFromGLTexture(teksturaKursoraTest, 10, 5);
+    createAndLoadTexture(teksturaKursoraTest,"uiTextures/cursorHover.png",false);
+    sdlCursors[CLICKED] = cursorFromGLTexture(teksturaKursoraTest, 9, 5);
+
+    ImGuiIO& io = ImGui::GetIO();
+    io.ConfigFlags |= ImGuiConfigFlags_NoMouseCursorChange;
+
+    SDL_ShowCursor(SDL_ENABLE);
+    SDL_SetCursor(sdlCursors[IDLE]);
+
+    ///crazy hamburger
 
     ///UNIT'Y
     unitModels[LARVE] = {"Model/GenericTest/larve.gltf", Model("Model/GenericTest/larve.gltf")};
@@ -218,10 +234,6 @@ void Game::init()
     simA = new FluidSim({0,5,0}, {85,85,85}, {1.f/85,1.f/85,1.f/85});
     simA->initialize();
 
-    ///TO:DO ogarnij dlaczego jak postawi sie cos blisko border'a to jakies permanentne rany siê robia na macierzach
-    /// divergence i velocity
-    ///TO:DO ogarnij dlaczego jak sie zrobi nie nie-cuebe'owy ksztalt simarea to wszystko sie wywala
-    ///pewnie dlatego ze zakladasz duzo razy ze pracujesz na cube coord
     //simA->addSmokeSphere(glm::vec3(60, 42, 30), 10.0f, glm::vec4(0.0f,0.2f,1.0f,1.0f));
     //simA->addSmokeSphere(glm::vec3(15, 42, 30), 10.0f, glm::vec4(1.0f,0.2f,0.0f,1.0f));
     simA->addSmokeSphere(glm::vec3(40, 40, 40), 10.0f, glm::vec4(0.2f,1.0f,0.0f,1.0f));
@@ -230,7 +242,8 @@ void Game::init()
     //simA->addVelocityImpulse(glm::vec3(40.0f, 40.0f, 40.0f), 10.0f, glm::vec3(2.0f, -5.0f, 5.0f));
 
     //simA->addVelocityImpulse(glm::vec3(60.0f, 42.0f, 30.0f), 15.0f, glm::vec3(25.0f, 25.0f, 0.0f));
-
+    glm::mat4 testmodels = glm::mat4(1.f);
+    simA->rasterizeVoxelizeModel(unitModels[LARVE].model,shaderPrograms[13],testmodels);
     endTurn();
 }
 
@@ -268,8 +281,10 @@ void Game::input(const double deltaTime, uint32_t t)
             if(event.key.keysym.sym == SDLK_ESCAPE)
                 shutdown = 1;
             if(event.key.keysym.sym == SDLK_u){
-                simA->addSmokeSphere(glm::vec3(rand()%80, rand()%80, rand()%80), 10.0f, glm::vec4(0.2f,1.0f,0.0f,1.0f));
-                simA->addVelocityImpulse(glm::vec3(rand()%80, rand()%80, rand()%80), 10.0f, glm::vec3(-25.0f, 0.0f, 0.0f));
+                //simA->addSmokeSphere(glm::vec3(rand()%80, rand()%80, rand()%80), 10.0f, glm::vec4(rand()%100/100.f,rand()%100/100.f,rand()%100/100.f,1.0f));
+                simA->addSmokeSphere(glm::vec3(25, 25, 25), 10.0f, glm::vec4(rand()%100/100.f,rand()%100/100.f,rand()%100/100.f,1.0f));
+                //simA->addVelocityImpulse(glm::vec3(rand()%80, rand()%80, rand()%80), 10.0f, glm::vec3(0.0f, -25.0f, 0.0f));
+                simA->addVelocityImpulse(glm::vec3(25, 25, 25), 10.0f, glm::vec3(0.0f, -25.0f, 0.0f));
             }
 
             if(event.key.keysym.sym == SDLK_SPACE)
@@ -369,6 +384,7 @@ void Game::input(const double deltaTime, uint32_t t)
 
             if(event.button.button == SDL_BUTTON_MIDDLE)
             {
+                cursorVisible = false;
                 if(ray.closestID != -1)
                 {
                     Selectable* target = dynamic_cast<Selectable*>(obiekty[ray.closestID].get());
@@ -390,6 +406,7 @@ void Game::input(const double deltaTime, uint32_t t)
         {
             if(event.button.button == SDL_BUTTON_MIDDLE)
             {
+                cursorVisible = true;
                 holdRotate = 0;
                 SDL_SetRelativeMouseMode(SDL_FALSE);
             }
@@ -444,6 +461,10 @@ void Game::update(const double deltaTime, uint32_t t)
 
     mouseTrack.update(view);
     ray = optimizedRay(kamera.Position,mouseTrack.getCurrentRay());
+
+    Globals::cameraX = kamera.Position.x;
+    Globals::cameraY = kamera.Position.y;
+    Globals::cameraZ = kamera.Position.z;
 
     for(const auto& pair : lights)
     {
@@ -732,7 +753,7 @@ void Game::render(double deltaTime, uint32_t t)
     //DrawParticles(shaderPrograms[4],particles);
 
     ///Fluid Render Test
-    simA->simulate(fluidShaders,clamp(deltaTime,0.1,1.0));
+    //simA->simulate(fluidShaders,clamp(deltaTime,0.1,1.0));
     glm::mat4 viewProj = view * projection;
     simA->render(shaderPrograms[6],view, projection);
 
@@ -743,6 +764,8 @@ void Game::render(double deltaTime, uint32_t t)
 
     if(pause)
         pauseMenuChamp->render(shaderPrograms[0],shaderPrograms);
+
+    Globals::closestUnitToCam = -1.f;
 
     ImGui::Render();
     ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());

@@ -34,8 +34,8 @@ void main()
     }
 
     vec3 uvw = (vec3(g) + 0.5) / gridSize;
-    vec3 v   = texture(velocity, uvw).xyz;
-    vec3 w   = curlAt(g);
+    vec3 v = texture(velocity, uvw).xyz;
+    vec3 w = curlAt(g);
 
     float magL = length(curlAt(g + ivec3(-1,0,0)));
     float magR = length(curlAt(g + ivec3( 1,0,0)));
@@ -44,12 +44,17 @@ void main()
     float magB = length(curlAt(g + ivec3(0,0,-1)));
     float magF = length(curlAt(g + ivec3(0,0, 1)));
 
-    vec3 grad = vec3(magR - magL, magU - magD, magF - magB);
+    vec3 grad = vec3(
+      (magR - magL) / (2.0 * gridSpacing.x),
+      (magU - magD) / (2.0 * gridSpacing.y),
+      (magF - magB) / (2.0 * gridSpacing.z)
+    );
 
     float lenG = length(grad);
-    vec3  N    = (lenG > 1e-6 ? grad / lenG : vec3(0.0));
+    vec3 N = (lenG > 1e-6 ? grad / lenG : vec3(0.0));
 
     vec3 f = vorticityStrength * cross(N, w);
+    //v += timeStep * f;
 
     imageStore(outputVelocity, g, vec4(v, 1.0));
 }

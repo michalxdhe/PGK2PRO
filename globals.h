@@ -8,6 +8,10 @@ static int64_t numberOfEntities = 0;
 static int64_t currentlyHoveredID = -1;
 static int64_t windowH;
 static int64_t windowW;
+static float cameraX;
+static float cameraY;
+static float cameraZ;
+static float closestUnitToCam = -1.f;
 };
 
 

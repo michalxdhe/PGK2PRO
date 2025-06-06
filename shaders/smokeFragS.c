@@ -55,20 +55,20 @@ void main() {
     vec2 b = intersectBox(ro, rd, vec3(-0.5), vec3(0.5));
     if(b.x > b.y) discard;
 
-    float t    = max(b.x, 0.0);
+    float t = max(b.x, 0.0);
     float tEnd = b.y;
 
     vec4 accum = vec4(0.0);
-    for(int i = 0; i < maxSteps && t < tEnd && accum.a < 0.80; ++i)
+    for(int i = 0; i < maxSteps && t < tEnd && accum.a < 0.99; ++i)
     {
-        vec3 pos      = ro + rd * t;
+        vec3 pos = ro + rd * t;
         vec3 texCoord = pos + 0.5;
 
         vec4 samp = sampleField(visualizeMode, texCoord);
 
         float a = samp.a * (1.0 - accum.a);
-        accum.rgb   += samp.rgb * a;
-        accum.a     += a;
+        accum.rgb += samp.rgb * a;
+        accum.a += a;
 
         float localStep = mix(stepSize, stepSize*4.0, accum.a);
 

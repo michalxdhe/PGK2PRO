@@ -1066,7 +1066,7 @@
 
 1714991992 c:\garigette\foryourgood\playerinterface.h
 
-1746461228 source:c:\garigette\pgk2pro\main.cpp
+1749048004 source:c:\garigette\pgk2pro\main.cpp
 	"common.h"
 	"mindless.h"
 
@@ -1094,7 +1094,7 @@
 1744377878 c:\garigette\pgk2pro\metaphysical.h
 	"common.h"
 
-1742638881 c:\garigette\pgk2pro\model.h
+1748345147 c:\garigette\pgk2pro\model.h
 	"common.h"
 	"mesh.h"
 	"stb_image.h"
@@ -1105,9 +1105,9 @@
 
 1742638881 c:\garigette\pgk2pro\mousepick.h
 
-1742638880 c:\garigette\pgk2pro\globals.h
+1749022579 c:\garigette\pgk2pro\globals.h
 
-1746445915 c:\garigette\pgk2pro\mindless.h
+1747249806 c:\garigette\pgk2pro\mindless.h
 	"animator.h"
 	"metaphysical.h"
 	"model.h"
@@ -1296,7 +1296,7 @@
 	<stdint.h>
 	"imstb_textedit.h"
 
-1745778599 c:\garigette\pgk2pro\customgui.h
+1749141905 c:\garigette\pgk2pro\customgui.h
 	"abilities.h"
 	"shaders.h"
 
@@ -1308,7 +1308,7 @@
 	"customgui.h"
 	"units.h"
 
-1742638880 c:\garigette\pgk2pro\common.h
+1749025883 c:\garigette\pgk2pro\common.h
 	<iostream>
 	<fstream>
 	<sstream>
@@ -1330,6 +1330,7 @@
 	<glm/gtx/string_cast.hpp>
 	<glm/gtx/matrix_decompose.hpp>
 	"imgui.h"
+	"imgui_internal.h"
 	"imgui_impl_sdl2.h"
 	"imgui_impl_opengl3.h"
 	<SDL2/SDL.h>
@@ -1342,11 +1343,11 @@
 	"customgui.h"
 	"units.h"
 
-1742759341 c:\garigette\pgk2pro\units.cpp
+1749144225 c:\garigette\pgk2pro\units.cpp
 	"customgui.h"
 	"units.h"
 
-1745779677 c:\garigette\pgk2pro\customgui.cpp
+1749144326 c:\garigette\pgk2pro\customgui.cpp
 	"customgui.h"
 	"units.h"
 
@@ -2086,9 +2087,10 @@
 1744716037 source:c:\garigette\pgk2pro\particles.cpp
 	"particles.h"
 
-1746451234 c:\garigette\pgk2pro\fluidsim.h
+1748258375 c:\garigette\pgk2pro\fluidsim.h
+	"model.h"
 	"common.h"
 
-1746460924 source:c:\garigette\pgk2pro\fluidsim.cpp
+1748948547 source:c:\garigette\pgk2pro\fluidsim.cpp
 	"FluidSim.h"
 
